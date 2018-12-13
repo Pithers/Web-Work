@@ -4,5 +4,10 @@ version: '3'
 services:
   web:
     build: .
+    stdin_open: true
+    tty: true
     volumes:
       - .:/code
+    ports:
+      - 8000:8000
+    command: python /code/testsite/manage.py runserver 0.0.0.0:8000
