@@ -1,7 +1,19 @@
+#myapp/views.py
+
 from django.shortcuts import render
 from django.http import HttpResponse
 
-# Create your views here.
 
+#Default view
 def index(request):
-    return HttpResponse("Hello World")
+    context = {'title':'Title'}
+    return render(request, 'index.html', context=context)
+
+#View provided page, day, and year. ex: site/page/2003/2
+def page(request, day, year):
+    context = {
+        'title':'Title',
+        'day':day,
+        'year':year
+    }
+    return render(request, 'index.html', context=context)

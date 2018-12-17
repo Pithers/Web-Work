@@ -1,6 +1,5 @@
 FROM python
 ENV PYTHONUNBUFFERED 1
-ENV TERM xterm-256color
 RUN mkdir /code
 WORKDIR /code
 ADD . /code/

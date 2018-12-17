@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+<!--myapp/templates/index.html-->
+
+{% block content %}
+    <h1>Hello World Template</h1>
+
+    {% if day %}
+        <h2>Day: {{ day }}</h2>
+    {% endif %}
+
+    {% if year %}
+        <h2>Year: {{ year }}</h2>
+    {% endif %}
+
+{% endblock %}
