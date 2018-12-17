@@ -4,7 +4,10 @@ shopt -s expand_aliases
 alias docker='docker.exe'
 
 echo "Docker cleanup..."
-if [ $(docker ps -aq) ]
+
+variable='docker ps -aq'
+
+if [[ (-z "$variable") ]]
 then
     echo "Stopping docker processes"
     docker stop $(docker ps -aq)
