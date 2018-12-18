@@ -104,3 +104,7 @@ venv.bak/
 .mypy_cache/
 
 .DS_Store
+
+# project specific ignores
+testsite/foundation-6.5.1-complete/
+cleanup_docker.sh
