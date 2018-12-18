@@ -12,7 +12,7 @@ def index(request):
 
         #Check to see if submitted form is valid
         if form_instance.is_valid():
-            #Give the valid form to the database 
+            #Give the valid form to the database
             temp_model = models.SuggestionModel(
                 suggestion=form_instance.cleaned_data['suggestion']
             )
