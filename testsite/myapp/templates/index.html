@@ -11,7 +11,6 @@
     {% endfor %}
     </ul>
 
-
     {% if day %}
         <h2>Day: {{ day }}</h2>
     {% endif %}
@@ -19,5 +18,11 @@
     {% if year %}
         <h2>Year: {{ year }}</h2>
     {% endif %}
+
+    <form action="/" method="post">
+        {% csrf_token %}
+        {{ form_instance }}
+        <input type="submit" value="Submit">
+    </form>
 
 {% endblock %}
