@@ -4,16 +4,8 @@ shopt -s expand_aliases
 alias docker='docker.exe'
 
 echo "Docker cleanup..."
-
-variable='docker ps -aq'
-
-if [[ (-z "$variable") ]]
-then
-    echo "Stopping docker processes"
-    docker stop $(docker ps -aq)
-    docker rm $(docker ps -aq)
-    docker rmi $(docker images -q)
-    echo "Docker processes and images removed/cleaned"
-else
-    echo "Nothing to stop or remove"
-fi
+echo "Stopping docker processes..."
+docker stop $(docker ps -aq) 2>/dev/null
+docker rm $(docker ps -aq) 2>/dev/null
+docker rmi $(docker images -q) 2>/dev/null
+echo "Docker processes and images removed/cleaned"
