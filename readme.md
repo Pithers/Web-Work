@@ -1,8 +1,8 @@
-#Web Work
+# Web Work
 
 A small repository of test work done for web development
 
 
 Master:
-![coverage-prod](https://gitlab.com/pithers/Web-Work/badges/master/coverage.svg?job=test)
-![pipeline-prod](https://gitlab.com/pither/Web-Work/badges/master/build.svg)
+[![coverage report](https://gitlab.com/pithers/Web-Work/badges/master/coverage.svg)](https://gitlab.com/pithers/Web-Work/commits/master)
+[![pipeline status](https://gitlab.com/pithers/Web-Work/badges/master/pipeline.svg)](https://gitlab.com/pithers/Web-Work/commits/master)
