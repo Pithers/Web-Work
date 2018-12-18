@@ -14,7 +14,7 @@ def index(request):
         if form_instance.is_valid():
             #Give the valid form to the database 
             temp_model = models.SuggestionModel(
-                suggestion = form_instance.cleaned_data['suggestion']
+                suggestion=form_instance.cleaned_data['suggestion']
             )
             temp_model.save()
 
