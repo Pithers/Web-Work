@@ -1,6 +1,7 @@
 #myapp/views.py
 
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse
+from django.http import JsonResponse
 
 from . import models
 from . import forms
@@ -39,3 +40,32 @@ def page(request, day, year):
         'year':year
     }
     return render(request, 'index.html', context=context)
+
+#RESTful suggestion view ex: site/suggestion/
+def rest_suggestion(request):
+    if request.method == 'GET':
+        #Get all suggestions
+        suggestions = models.SuggestionModel.objects.all()
+
+        suggestion_list = []
+        for item in suggestions:
+            suggestion_list += [{
+                'suggestion':item.suggestion,
+                'id':item.id
+            }]
+        return JsonResponse({"suggestions":suggestion_list})
+
+    else:
+        return HttpResponse('Invalid HTTP Method')
+    context = {
+    }
+    return render(request, '')
+
+
+
+
+
+
+
+
+
