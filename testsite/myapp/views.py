@@ -54,18 +54,4 @@ def rest_suggestion(request):
                 'id':item.id
             }]
         return JsonResponse({"suggestions":suggestion_list})
-
-    else:
-        return HttpResponse('Invalid HTTP Method')
-    context = {
-    }
-    return render(request, '')
-
-
-
-
-
-
-
-
-
+    return HttpResponse('Invalid HTTP Method')
