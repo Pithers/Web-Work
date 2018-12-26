@@ -18,10 +18,12 @@ def index(request):
 
         #Check to see if submitted form is valid
         if form_instance.is_valid():
-            #Give the valid form to the database
+            #Give the valid form to t
+            #possibly need to add additional logic to deal with guest users
             temp_model = models.SuggestionModel(
-                suggestion=form_instance.cleaned_data['suggestion']
-            )
+                suggestion=form_instance.cleaned_data['suggestion'],
+                author=request.user
+                )
             temp_model.save()
 
             #Refresh the form so a new form can be added
@@ -79,6 +81,7 @@ def rest_suggestion(request):
         for item in suggestions:
             suggestion_list += [{
                 'suggestion':item.suggestion,
+                'author':item.author.username,
                 'id':item.id
             }]
         return JsonResponse({"suggestions":suggestion_list})
