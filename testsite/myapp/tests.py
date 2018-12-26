@@ -10,7 +10,7 @@ class SuggestionTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='bob',email='bob@bob.com',password='randyrandy')
         SuggestionModel.objects.create(suggestion="lion",author=self.user)
-        SuggestionModel.objects.create(suggestion="cat",author=self.user))
+        SuggestionModel.objects.create(suggestion="cat",author=self.user)
 
     def test_suggestions_to_string(self):
         lion = SuggestionModel.objects.get(suggestion="lion")
