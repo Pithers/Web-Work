@@ -1,6 +1,6 @@
 #myapp/views.py
 
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
 
 from . import models
@@ -41,6 +41,21 @@ def page(request, day, year):
     }
     return render(request, 'index.html', context=context)
 
+#RESTful user registration ex: site/register/
+def register(request):
+    if request.method == 'POST':
+        registration_form = forms.RegistrationForm(request.POST)
+        if registration_form.is_valid():
+            registration_form.save(commit=True)
+            return redirect("/")
+    else:
+        registration_form = forms.RegistrationForm()
+
+    context = {
+        'form':registration_form
+    }
+    return render(request, 'registration/register.html', context=context)
+
 #RESTful suggestion view ex: site/suggestion/
 def rest_suggestion(request):
     if request.method == 'GET':
@@ -55,3 +70,4 @@ def rest_suggestion(request):
             }]
         return JsonResponse({"suggestions":suggestion_list})
     return HttpResponse('Invalid HTTP Method')
+
