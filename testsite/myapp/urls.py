@@ -1,8 +1,8 @@
 #myapp/urls.py
 
 from django.urls import path
-from . import views
 from django.contrib.auth import views as adminviews
+from . import views
 
 urlpatterns = [
     path('', views.index),
@@ -10,4 +10,5 @@ urlpatterns = [
     path('suggestions/', views.rest_suggestion),
     path('register/', views.register),
     path('login/', adminviews.LoginView.as_view()),
+    path('logout/', views.logout_view),
 ]
