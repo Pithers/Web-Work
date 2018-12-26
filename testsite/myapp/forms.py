@@ -12,6 +12,12 @@ class SuggestionForm(forms.Form):
         max_length=240
         )
 
+class CommentForm(forms.Form):
+    comment = forms.CharField(
+        label='Comment',
+        max_length=240
+        )
+
 #NIS requirements for passwords, look into this later
 #Need to make sure authenticator on this is the same used in the login form
 #Inherit from UserCreationForm here
