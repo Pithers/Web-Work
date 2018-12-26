@@ -1,5 +1,7 @@
 #myapp/views.py
 
+#Look into google's nautral language api
+
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
 from django.contrib.auth import logout
@@ -39,7 +41,7 @@ def index(request):
     return render(request, 'index.html', context=context)
 
 @login_required
-def comment_view(request):
+def comment_view(request, suggestion_id):
     if request.method == 'POST':
         form_instance = forms.CommentForm(request.POST)
 
@@ -47,20 +49,24 @@ def comment_view(request):
         if form_instance.is_valid():
             #Give the valid form to t
             #possibly need to add additional logic to deal with guest users
+            suggestion_instance = models.SuggestionModel.objects.get(pk=suggestion_id)
             temp_model = models.CommentModel(
                 comment=form_instance.cleaned_data['comment'],
-                author=request.user
+                author=request.user,
+                suggestion=suggestion_instance
                 )
             temp_model.save()
 
             #Refresh the form so a new form can be added
             form_instance = forms.CommentForm()
+            return redirect("/")
     else:
         form_instance = forms.CommentForm()
 
     context = {
         'title':'Title',
-        'form_instance':form_instance
+        'form_instance':form_instance,
+        'suggestion_id':suggestion_id
     }
     return render(request, 'comment.html', context=context)
 
@@ -104,10 +110,23 @@ def rest_suggestion(request):
 
         suggestion_list = []
         for item in suggestions:
-            suggestion_list += [{
+            add_to_list = {
                 'suggestion':item.suggestion,
                 'author':item.author.username,
-                'id':item.id
-            }]
+                'id':item.id,
+                'comments':[]
+            }
+
+            #Add list of comments to each suggestion item
+            comment_query = models.CommentModel.objects.filter(suggestion=item)
+            for comment_item in comment_query:
+                add_to_list['comments'] += [{
+                    'comment':comment_item.comment,
+                    'id':comment_item.id,
+                    'author':comment_item.author.username
+                    }]
+
+            suggestion_list += [add_to_list]
+
         return JsonResponse({"suggestions":suggestion_list})
     return HttpResponse('Invalid HTTP Method')

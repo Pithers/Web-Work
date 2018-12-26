@@ -7,7 +7,7 @@ var fetch_app = new Vue({
   el: '#fetch_suggestion',
   data () {
     return {
-      todos: null
+      suggestions_list: null
     }
   },
 
@@ -22,7 +22,7 @@ var fetch_app = new Vue({
         //Access our own API to get a json object
         .get('/suggestions/')
         //Make sure to grab the response data, not the response itself
-        .then(response => (this.todos = response.data.suggestions))
+        .then(response => (this.suggestions_list = response.data.suggestions))
     },
 
     cancelAutoUpdate: function() {
