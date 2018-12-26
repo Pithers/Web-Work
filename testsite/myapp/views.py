@@ -3,7 +3,7 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
 from django.contrib.auth import logout
-#from django.conf import settings
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
 from . import models
@@ -83,3 +83,4 @@ def rest_suggestion(request):
             }]
         return JsonResponse({"suggestions":suggestion_list})
     return HttpResponse('Invalid HTTP Method')
+
