@@ -38,6 +38,32 @@ def index(request):
     }
     return render(request, 'index.html', context=context)
 
+@login_required
+def comment_view(request):
+    if request.method == 'POST':
+        form_instance = forms.CommentForm(request.POST)
+
+        #Check to see if submitted form is valid
+        if form_instance.is_valid():
+            #Give the valid form to t
+            #possibly need to add additional logic to deal with guest users
+            temp_model = models.CommentModel(
+                comment=form_instance.cleaned_data['comment'],
+                author=request.user
+                )
+            temp_model.save()
+
+            #Refresh the form so a new form can be added
+            form_instance = forms.CommentForm()
+    else:
+        form_instance = forms.CommentForm()
+
+    context = {
+        'title':'Title',
+        'form_instance':form_instance
+    }
+    return render(request, 'comment.html', context=context)
+
 #Consider redirecting to whatever page the user logged out from
 def logout_view(request):
     logout(request)
