@@ -1,55 +1,37 @@
 //myapp/static/js/my_vue.js
 
-//Note: Consider adding delimiters: ['[[',']]'] to the configs so it doesn't need to be typed every time
+//Note: Consider adding delimiters: ['[[',']]'] to the configs.
 
-var app = new Vue({
+var fetch_app = new Vue({
   delimiters: ['[[',']]'],
-  el: '#app',
-  data: {
-    message: 'Hello Vue!'
+  el: '#fetch_suggestion',
+  data () {
+    return {
+      todos: null
+    }
+  },
+
+  mounted: function() {
+    this.getSuggestionsList();
+    this.timer = setInterval(this.getSuggestionsList, 10000)
+  },
+
+  methods: {
+    getSuggestionsList: function() {
+      axios
+        //Access our own API to get a json object
+        .get('/suggestions/')
+        //Make sure to grab the response data, not the response itself
+        .then(response => (this.todos = response.data.suggestions))
+    },
+
+    cancelAutoUpdate: function() {
+      clearInterval(this.timer)
+    }
+  },
+
+  beforeDestroy() {
+    clearInterval(this.timer)
   }
 })
-
-var app2 = new Vue({
-  el: '#app-2',
-  data: {
-    message: 'You loaded this page on ' + new Date().toLocaleString()
-  }
-})
-
-var app3 = new Vue({
-  el: '#app-3',
-  data: {
-    seen: true 
-  }
-})
-
-var example1 = new Vue({
-  delimiters: ['[[',']]'],
-  el: '#example-1',
-  data: {
-    counter: 0
-  }
-})
-
-var app4 = new Vue({
-  delimiters: ['[[',']]'],
-  el: '#app-4',
-  data: {
-    isActive: true
-  }
-});
-
-var app5 = new Vue({
-  delimiters: ['[[',']]'],
-  el: '#app-5',
-  data: {
-    todos: [
-      { text: 'Learn JavaScript' },
-      { text: 'Learn Vue' },
-      { text: 'Build something awesome' }
-    ]
-  }
-})
-
 

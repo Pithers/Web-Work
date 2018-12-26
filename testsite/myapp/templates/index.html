@@ -8,7 +8,16 @@
 
       <!--Page Title-->
       <div class="large-12 cell">
-        <h1>Hello World Template</h1>
+        <h1>Title</h1>
+      </div>
+
+      <!--User Login Detection-->
+      <div class = "large-12 cell">
+        {% if user.is_authenticated %}
+          <p>Welcome, {{ user.username }}. Thanks for logging in.</p>
+        {% else %}
+          <p>Welcome, new user. <a href="/login/">Please log in.</a></p>
+        {% endif %}
       </div>
 
       <!--Database List-->
@@ -35,47 +44,19 @@
     <input type="submit" class="button" value="Submit">
   </form>
 
-  <!--careful because vue.js uses same syntax as Django's template-->
-  <div id="app">
-    [[ message ]]
-  </div>
-
-  <div id="app-2">
-    <span v-bind:title="message">
-      Hover your mouse over me for a few seconds
-      to see my dynamically bound title!
-    </span>
-  </div>
-
-  <div id="app-3">
-    <span v-if="seen">Now you see me</span>
-  </div>
-
-  <div id="example-1">
-    <button v-on:click="counter += 1">Add 1</button>
-    <p>The button above has been clicked [[ counter ]] times.</p>
-  </div>
-
-  <div id="app-4">
-    <button v-on:click="isActive = !isActive">[[ isActive ]]</button>
-  </div>
-
-  <div id="app-5">
+  <div id="fetch_suggestion">
     <ol>
-      <li v-for="todo in todos">
-        [[ todo.text ]]
+      <li v-for="item in todos">
+        [[ item.suggestion ]]
       </li>
     </ol>
   </div>
 
   {% block scripts %}
-    <!-- development version, includes helpful console warnings -->
     <!-- Bug: load order of these two files matters for some reason, need to find out why-->
     <script src="{% static "js/my_vue.js" %}"></script>
+    <script src="https://unpkg.com/axios/dist/axios.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <!-- production version, optimized for size and speed -->
-    <!--script src="https://cdn.jsdelivr.net/npm/vue"></script-->
-
   {% endblock %}
 
 {% endblock %}
