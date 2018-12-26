@@ -37,9 +37,12 @@
 
   <div id="fetch_suggestion">
     <ol>
-      <li v-for="item in todos">
+      <li v-for="item in suggestions_list">
         [[ item.suggestion ]] authored by [[ item.author ]]
-        <a href="/comment/">comment</a>
+        <a v-bind:href="'/comment/' + item.id + '/'">comment</a>
+        <ul v-for="comment_item in item.comments">
+          [[ comment_item.comment ]] authored by [[ comment_item.author ]]
+        </ul>
       </li>
     </ol>
   </div>
