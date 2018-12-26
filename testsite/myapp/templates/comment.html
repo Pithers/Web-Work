@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Comment{% endblock %}
+{% block content %}
+<div class="grid-x grid-padding-x">
+  <div class="cell large-4 medium-6 small-10 large-offset-4 medium-offset-3 small-offset-1">
+    <form action="/comment/" method="post">
+      {% csrf_token %}
+      <h4 class="text-center">Comment</h4>
+      {{ form_instance }}
+      <input type="submit" class="button expanded" value = "Comment">
+    </form>
+  </div>
+</div>
+{% endblock %}
