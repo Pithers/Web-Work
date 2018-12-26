@@ -10,3 +10,11 @@ class SuggestionModel(models.Model):
 
     def __str__(self):
         return "%s authored by %s" % (self.suggestion, self.author)
+
+class CommentModel(models.Model):
+    comment = models.CharField(max_length=240)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    suggestion = models.ForeignKey(SuggestionModel, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "%s authored by %s" % (self.comment, self.author)
