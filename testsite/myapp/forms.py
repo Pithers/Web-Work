@@ -1,8 +1,8 @@
 #myapp/forms.py
 
 from django import forms
-from django.core.validators import validate_slug #validate_email?
-from django.contrib.auth.forms import UserCreationForm #AuthenticationForm
+from django.core.validators import validate_email, validate_slug
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 
 class SuggestionForm(forms.Form):
@@ -27,7 +27,7 @@ class RegistrationForm(UserCreationForm):
                   "password1", "password2")
 
     def save(self, commit=True):
-        user = super(RegistrationForm, self).save(commit=False)
+        user = super(RegistrationForm,self).save(commit=False)
         user.email = self.cleaned_data["email"]
         if commit:
             user.save()
