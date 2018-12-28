@@ -58,9 +58,6 @@ def comment_view(request, suggestion_id):
                 suggestion=suggestion_instance
                 )
             temp_model.save()
-
-            #Refresh the form so a new form can be added
-            form_instance = forms.CommentForm()
             return redirect("/")
     else:
         form_instance = forms.CommentForm()
