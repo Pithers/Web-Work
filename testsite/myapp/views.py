@@ -14,6 +14,7 @@ from . import forms
 #login required function decorator
 @login_required
 def index(request):
+    comm_form = forms.CommentForm()
     if request.method == 'POST':
         form_instance = forms.SuggestionForm(request.POST)
 
@@ -36,7 +37,8 @@ def index(request):
     context = {
         'title':'Title',
         'suggestions':suggestions,
-        'form_instance':form_instance
+        'form_instance':form_instance,
+        'comm_form':comm_form
     }
     return render(request, 'index.html', context=context)
 
@@ -114,6 +116,7 @@ def rest_suggestion(request):
                 'suggestion':item.suggestion,
                 'author':item.author.username,
                 'id':item.id,
+                'created_on':item.creation_date,
                 'comments':[]
             }
 
@@ -123,7 +126,8 @@ def rest_suggestion(request):
                 add_to_list['comments'] += [{
                     'comment':comment_item.comment,
                     'id':comment_item.id,
-                    'author':comment_item.author.username
+                    'author':comment_item.author.username,
+                    'created_on':comment_item.creation_date
                     }]
 
             suggestion_list += [add_to_list]
