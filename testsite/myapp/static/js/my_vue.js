@@ -34,4 +34,3 @@ var fetch_app = new Vue({
     clearInterval(this.timer)
   }
 })
-

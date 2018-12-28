@@ -26,34 +26,48 @@
         <input type="submit" class="button expanded" value="Submit">
       </form>
 
-      <div v-for="item in suggestions_list">
+      <div v-for="(item, index) in suggestions_list">
         <div class="card-info info">
           <div class="card-info-label">
             <div class="card-info-label-text">
-              sugg
+              #[[ index ]]
             </div>
           </div>
           <div class="card-info-content">
             <h3 class="lead">[[ item.suggestion ]]</h3>
             <p>[[ item.author ]] created on [[ item.created_on ]]</p>
+            <div style="text-align:right">
+              <div class="button" v-bind:data-toggle="'add_comments' + index">Add a Comment</div>
+              <div class="button" v-bind:data-toggle="'show_comments' + index">[[ item.comments.length ]] comments</div>
+            </div>
           </div>
         </div>
-        <div class="grid-container">
-          <div class="grid-x grid-padding-x">
-            <div v-for="comment_item in item.comments" class="large-10 large-offset-2 cell">
-              <div class="card-info secondary">
-                <div class="card-info-content">
-                  <h3 class="lead">[[ comment_item.comment ]]</h3>
-                  <p>authored by [[ comment_item.author ]] on [[ comment_item.created_on ]]</p>
+
+        <div style="display:none" class="large-10 large-offset-2" v-bind:id="'add_comments' + index" v-foundation data-toggler data-animate="fade-in fade-out" data-options="showDelay:50;hideDelay:50">
+          <div class="card-info secondary">
+            <div class="card-info-content">
+            <form v-bind:action="'/comment/' + item.id + '/'" method="post">
+              {% csrf_token %}
+              {{ comm_form }}
+              <div style = "text-align:right">
+                <input type="submit" class="button" value = "Submit">
+              </div>
+            </form>
+          </div>
+        </div>
+        </div>
+
+        <div v-if="item.comments.length > 0" v-bind:id="'show_comments' + index" v-foundation data-toggler data-animate="fade-in fade-out" data-options="showDelay:50;hideDelay:50">
+          <div class="grid-container">
+            <div class="grid-x grid-padding-x">
+              <div v-for="comment_item in item.comments" class="large-10 large-offset-2 cell">
+                <div class="card-info secondary">
+                  <div class="card-info-content">
+                    <h3 class="lead">[[ comment_item.comment ]]</h3>
+                    <p>authored by [[ comment_item.author ]] on [[ comment_item.created_on ]]</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="large-10 large-offset-2 cell">
-              <form v-bind:action="'/comment/' + item.id + '/'" method="post">
-                {% csrf_token %}
-                {{ comm_form }}
-                <input type="submit" class="button expanded" value = "Comment">
-              </form>
             </div>
           </div>
         </div>
