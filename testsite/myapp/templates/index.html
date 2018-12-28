@@ -3,55 +3,71 @@
 {% load static %}
 
 {% block content %}
-  <div class="grid-container">
-    <div class="grid-x grid-padding-x">
+<div class="grid-container">
+  <div class="grid-x grid-padding-x">
 
-      <!--Page Title-->
-      <div class="large-12 cell">
-        <h1>Title</h1>
-      </div>
+    <!--Page Title-->
+    <div class="large-12 cell">
+      <h1>Suggestions</h1>
+    </div>
 
-      <!--Database List-->
-      {% for item in suggestions %}
-        <div class="large-4 medium-4 small-12 cell">
-          <p>{{ item.suggestion }}</p>
+    {% if day %}
+    <h2>Day: {{ day }}</h2>
+    {% endif %}
+
+    {% if year %}
+    <h2>Year: {{ year }}</h2>
+    {% endif %}
+
+    <div id="fetch_suggestion" class="large-10 cell">
+      <form action="/" method="post">
+        {% csrf_token %}
+        {{ form_instance }}
+        <input type="submit" class="button expanded" value="Submit">
+      </form>
+
+      <div v-for="item in suggestions_list">
+        <div class="card-info info">
+          <div class="card-info-label">
+            <div class="card-info-label-text">
+              sugg
+            </div>
+          </div>
+          <div class="card-info-content">
+            <h3 class="lead">[[ item.suggestion ]]</h3>
+            <p>[[ item.author ]] created on [[ item.created_on ]]</p>
+          </div>
         </div>
-      {% endfor %}
-
+        <div class="grid-container">
+          <div class="grid-x grid-padding-x">
+            <div v-for="comment_item in item.comments" class="large-10 large-offset-2 cell">
+              <div class="card-info secondary">
+                <div class="card-info-content">
+                  <h3 class="lead">[[ comment_item.comment ]]</h3>
+                  <p>authored by [[ comment_item.author ]] on [[ comment_item.created_on ]]</p>
+                </div>
+              </div>
+            </div>
+            <div class="large-10 large-offset-2 cell">
+              <form v-bind:action="'/comment/' + item.id + '/'" method="post">
+                {% csrf_token %}
+                {{ comm_form }}
+                <input type="submit" class="button expanded" value = "Comment">
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+</div>
 
-  {% if day %}
-    <h2>Day: {{ day }}</h2>
-  {% endif %}
 
-  {% if year %}
-    <h2>Year: {{ year }}</h2>
-  {% endif %}
-
-  <form action="/" method="post">
-    {% csrf_token %}
-    {{ form_instance }}
-    <input type="submit" class="button" value="Submit">
-  </form>
-
-  <div id="fetch_suggestion">
-    <ol>
-      <li v-for="item in suggestions_list">
-        [[ item.suggestion ]] authored by [[ item.author ]]
-        <a v-bind:href="'/comment/' + item.id + '/'">comment</a>
-        <ul v-for="comment_item in item.comments">
-          [[ comment_item.comment ]] authored by [[ comment_item.author ]]
-        </ul>
-      </li>
-    </ol>
-  </div>
-
-  {% block scripts %}
-    <!-- Bug: load order of these two files matters for some reason, need to find out why-->
-    <script src="{% static "js/my_vue.js" %}"></script>
-    <script src="https://unpkg.com/axios/dist/axios.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-  {% endblock %}
+{% block scripts %}
+<!-- Bug: load order of these two files matters for some reason, need to find out why-->
+<script src="{% static "js/my_vue.js" %}"></script>
+<script src="https://unpkg.com/axios/dist/axios.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+{% endblock %}
 
 {% endblock %}
