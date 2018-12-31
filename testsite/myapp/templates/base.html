@@ -17,42 +17,96 @@
   </head>
 
   <body>
-    <div class="top-bar">
-      <div class="top-bar-left">
-        <ul class="dropdown menu" data-dropdown-menu>
-          <li class="menu-text">Suggester</li>
-          <li>
-            <a>One</a>
-            <ul class="menu vertical">
-              <li><a href="#">One</a></li>
-              <li><a href="#">Two</a></li>
-              <li><a href="#">Three</a></li>
+    <div class="main">
+      <div class="off-canvas-content" data-off-canvas-content>
+        <div class="nav-bar">
+          <li><a href="/">Suggester</a></li>
+          <div class="nav-bar-left">
+            <a class="nav-bar-logo"><img class="logo" src="https://placehold.it/150x30"></a>
+          </div>
+          <div class="nav-bar-right">
+            <ul class="menu">
+              {% if user.is_authenticated %}
+              <li><a href="/logout/">Logout</a></li>
+              {% endif %}
+              <li class="hide-for-small-only"><a href="/login/">LOGIN</a></li>
+              <li>
+                <li>
+                  <button class="offcanvas-trigger" type="button" data-open="offCanvasRight">
+                    <span class="offcanvas-trigger-text hide-for-small-only">Menu</span>
+                    <div class="hamburger">
+                      <span class="line"></span>
+                      <span class="line"></span>
+                      <span class="line"></span>
+                    </div>
+                  </button>
+                </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="multilevel-offcanvas off-canvas position-right" id="offCanvasRight" data-off-canvas>
+        <ul class="vertical menu" data-accordion-menu>
+          <li><a href="#">SERVICES</a>
+            <ul class="menu vertical nested">
+              <li><a href="#">Brand</a></li>
+              <li><a href="#">Web Apps</a></li>
+              <li><a href="#">Mobile Apps</a></li>
             </ul>
           </li>
-          <li><a href="/">Home</a></li>
+          <li><a href="#">PRODUCTS</a>
+            <ul class="menu vertical nested">
+              <li><a href="#">Product 1</a></li>
+              <li><a href="#">Product 2</a></li>
+              <li><a href="#">Product 3</a></li>
+            </ul>
+          </li>
+          <li><a href="#">CITIES</a>
+            <ul class="menu vertical nested">
+              <li><a href="#">London</a></li>
+              <li><a href="#">New York</a></li>
+              <li><a href="#">Paris</a></li>
+            </ul>
+          </li>
         </ul>
-      </div>
-      <div class="top-bar-right">
-        <ul class="menu">
-          {% if user.is_authenticated %}
-          <!-- <li><a href="/accounts/">{{ user.username }}</a></li> -->
-          <li><a href="/suggestion/">Add Suggestion</a></li>
-          <li><a href="/logout/">Logout</a></li>
-          {% else %}
-          <!-- <li><a href="/register/">Register</a></li> -->
-          <li><a href="/login/">Log In</a></li>
-          {% endif %}
+        <ul class="vertical menu">
+          <li class="off-canvas-menu-item"><a href="#">Tour</a></li>
+          <li><a href="#">Login</a></li>
+          <li><a href="#">Register</a></li>
+          <li><a href="#">Pricing</a></li>
+          <li><a href="#">Support</a></li>
         </ul>
-      </div>
-    </div>
-    {% block content %}
-    {% endblock %}
+        <ul class="vertical menu">
 
-    <script src="{% static "js/vendor/jquery.js" %}"></script>
-    <script src="{% static "js/vendor/what-input.js" %}"></script>
-    <script src="{% static "js/vendor/foundation.js" %}"></script>
-    <script src="{% static "js/app.js" %}"></script>
-    {% block scripts %}
-    {% endblock %}
+          <div class="switch">
+            <input class="switch-input" id="light_switch" type="checkbox" onchange="themeUpdate(this)">
+            <label class="switch-paddle" for="light_switch"></label>
+          </div>
+
+          <li><a href="#">Journal</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Terms & Conditions</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Students</a></li>
+        </ul>
+        <ul class="menu simple social-links">
+          <li><a href="#" target="_blank"><i class="fa fa-twitter-square" aria-hidden="true"></i></a></li>
+          <li><a href="#" target="_blank"><i class="fa fa-facebook-square" aria-hidden="true"></i></a></li>
+          <li><a href="#" target="_blank"><i class="fa fa-github-square" aria-hidden="true"></i></a></li>
+          <li><a href="#" target="_blank"><i class="fa fa-google-plus-square" aria-hidden="true"></i></a></li>
+        </ul>
+      </div>
+
+      {% block content %}
+      {% endblock %}
+
+      <script src="{% static "js/vendor/jquery.js" %}"></script>
+      <script src="{% static "js/vendor/what-input.js" %}"></script>
+      <script src="{% static "js/vendor/foundation.js" %}"></script>
+      <script src="{% static "js/app.js" %}"></script>
+      {% block scripts %}
+      {% endblock %}
+    </div>
   </body>
 </html>
