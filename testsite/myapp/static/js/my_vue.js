@@ -2,6 +2,16 @@
 
 //Note: Consider adding delimiters: ['[[',']]'] to the configs.
 
+//custom vue direction for foundation
+Vue.directive('foundation', {
+    bind(el) {
+        $(el).foundation()
+    },
+    unbind(el) {
+        $(el).foundation.destroy()
+    }
+})
+
 var fetch_app = new Vue({
   delimiters: ['[[',']]'],
   el: '#fetch_suggestion',
@@ -19,9 +29,9 @@ var fetch_app = new Vue({
   methods: {
     getSuggestionsList: function() {
       axios
-        //Access our own API to get a json object
+      //Access our own API to get a json object
         .get('/suggestions/')
-        //Make sure to grab the response data, not the response itself
+      //Make sure to grab the response data, not the response itself
         .then(response => (this.suggestions_list = response.data.suggestions))
     },
 
