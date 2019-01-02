@@ -5,30 +5,18 @@ would also be nicer to declare each theme rather than make global variables for 
 /*Todo: hook this up to colormind's web api for randomly generated website color schemes*/
 /*    : Make sure colors have a fallback (hex 8 digit color code not supported by everyone*/
 
-:root{
-  --color-bg: #e5e4d3;
-  --color-text: #241a22;
-  --color-text-ui: #241a22;
-  --color-text-invert: #e5e4d3;
-  /*--color-text-highlight: #;*/
-  --color-base: #817b7b;
-  --color-accent: #667075;
-  --color-border: #838378;
-  --color-border-transparent: #e5e4d399;
-  /*--color-border-accent: #;*/
-  --color-drop-shadow: rgba(0, 0, 0, 0.2);
-}
-
 .day-mode {
   --color-bg: #e5e4d3;
   --color-text: #241a22;
   --color-text-ui: #241a22;
   --color-text-invert: #e5e4d3;
+  --color-text-highlight: #e5e4d3;
   --color-base: #817b7b;
   --color-accent: #667075;
   --color-border: #838378;
+  --color-border-accent: #727267;
   --color-border-transparent: #e5e4d399;
-  --color-drop-shadow: rgba(0, 0, 0, 0.2);
+  --color-drop-shadow: #00000033; /*rgba(0, 0, 0, 0.2);*/
 }
 
 .night-mode {
@@ -39,8 +27,9 @@ would also be nicer to declare each theme rather than make global variables for 
   --color-base: #7f838e;
   --color-accent: #7dacc4;
   --color-border: #826c73;
+  --color-border-accent: #715d62;
   --color-border-transparent: #24252f99;
-  --color-drop-shadow: rgba(255, 255, 255, 0.2);
+  --color-drop-shadow: #ffffff33; /*rgba(0, 0, 0, 0.2);*/
 }
 
 body{
@@ -48,12 +37,26 @@ body{
   color: var(--color-text);
 }
 
-/*Switch*/
+/*UI Overwrites*/
+.button {
+  background: var(--color-base);
+  color: var(--color-text);
+}
+
+.button:hover {
+  background: var(--color-accent);
+  color: var(--color-text-invert);
+}
+
 .switch input:checked ~ .switch-paddle {
   background: var(--color-base);
 }
 
-/*Menu Content*/
+.suggestion-css-class {
+  color: var(--color-text);
+}
+
+/*Main Menu Bar Content*/
 .nav-bar {
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -78,12 +81,12 @@ body{
 }
 
 .nav-bar a {
-  color: var(--color-accent); /*#fefefe;*/
+  color: var(--color-text-ui); /*#fefefe;*/
   transition: color 0.2s ease-in;
 }
 
 .nav-bar a:hover {
-  color: #a8b8c3;
+  color: var(--color-text-highlight); /*#a8b8c3;*/
 }
 
 @media screen and (max-width: 39.9375em) {
@@ -112,7 +115,6 @@ body{
 
 .nav-bar .offcanvas-trigger .offcanvas-trigger-text {
   margin-right: 0.25rem;
-  margin-top: 0.25rem;
 }
 
 .nav-bar .offcanvas-trigger:hover {
@@ -140,14 +142,19 @@ body{
 }
 
 .multilevel-offcanvas .menu a {
-  /*color: rgba(254, 254, 254, 0.6);*/
   color: var(--color-text);
   opacity 0.6
-  padding-top: 7px;
+  padding-top: 34px;/*7px;*/
   padding-bottom: 7px;
   transition: color 0.2s ease-in;
 }
 
+.menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
 
 .multilevel-offcanvas .menu a:hover {
   color: var(--color-accent);/*#fefefe;*/
@@ -158,7 +165,6 @@ body{
 }
 
 .multilevel-offcanvas .is-accordion-submenu-parent > a::after {
-  /*border-color: rgba(254, 254, 254, 0.6) transparent transparent;*/
   border-color: var(--color-border-transparent) transparent transparent;
 }
 
@@ -209,20 +215,20 @@ body{
 .hamburger .line {
   width: 20px;
   height: 2px;
-  background-color: var(--colog-bg); /*#fefefe;*/
+  background-color: var(--color-text); /*#fefefe;*/
   display: block;
   margin: 3px auto;
   transition: all 0.3s ease-in-out;
 }
 
 .hamburger .line:last-child {
-  margin-bottom: 0;
+  margin-bottom: 0.25rem;
 }
 
 /*Card Content*/
 .card-info {
   background: var(--color-bg); /*#fefefe;*/
-  border: 1px solid var(--color-accent); /*#8a8a8a;*/
+  border: 1px solid var(--color-border); /*#8a8a8a;*/
   box-shadow: 0 10px 20px var(--color-drop-shadow);
   margin: 1rem 0;
   overflow: hidden;
@@ -230,17 +236,17 @@ body{
 }
 
 .card-info .card-info-label {
-  border-color: transparent var(--color-accent) transparent transparent;
-  border-color: var(--color-border-transparent) var(--color-accent) var(--color-border-transparent) var(--color-border-transparent)
+  border-color: transparent var(--color-border) transparent transparent;
+  border-color: var(--color-border-transparent) var(--color-border) var(--color-border-transparent) var(--color-border-transparent)
 }
 
 .card-info.secondary {
-  border-color: var(--color-border); /*#767676;*/
+  border-color: var(--color-border-accent); /*#767676;*/
 }
 
 .card-info.secondary .card-info-label {
-  border-color: transparent var(--color-accent) transparent transparent;
-  border-color: var(--color-border-transparent) var(--color-accent) var(--color-border-transparent) var(--color-border-transparent)
+  border-color: transparent var(--color-border-accent) transparent transparent;
+  border-color: var(--color-border-transparent) var(--color-border-accent) var(--color-border-transparent) var(--color-border-transparent)
 }
 
 .card-info .card-info-label {

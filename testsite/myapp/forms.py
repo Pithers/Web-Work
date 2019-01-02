@@ -6,6 +6,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 class SuggestionForm(forms.Form):
+    error_css_class = 'suggestion-css-class-error'
+    required_css_class = 'suggestion-css-class'
     suggestion = forms.CharField(
         validators=[validate_slug], #Add slug validator
         label='Suggestion',
@@ -13,6 +15,8 @@ class SuggestionForm(forms.Form):
         )
 
 class CommentForm(forms.Form):
+    error_css_class = 'comment-css-class_error'
+    required_css_class = 'suggestion-css-class'
     comment = forms.CharField(
         label='Comment',
         max_length=240
@@ -22,6 +26,8 @@ class CommentForm(forms.Form):
 #Need to make sure authenticator on this is the same used in the login form
 #Inherit from UserCreationForm here
 class RegistrationForm(UserCreationForm):
+    error_css_class = 'registration-css-class-error'
+    required_css_class = 'registration-css-class'
     email = forms.EmailField(
         label="Email",
         required=True
