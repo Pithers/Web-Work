@@ -1,22 +1,59 @@
-
 /*need to look into session storage for these variables so it stays between pages
 also need to attach them to the user database for remembering preferences
 would also be nicer to declare each theme rather than make global variables for each style*/
-:root {
-  --bg: white;
-  --bg-text: black;
+
+/*Todo: hook this up to colormind's web api for randomly generated website color schemes*/
+/*    : Make sure colors have a fallback (hex 8 digit color code not supported by everyone*/
+
+:root{
+  --color-bg: #e5e4d3;
+  --color-text: #241a22;
+  --color-text-ui: #241a22;
+  --color-text-invert: #e5e4d3;
+  /*--color-text-highlight: #;*/
+  --color-base: #817b7b;
+  --color-accent: #667075;
+  --color-border: #838378;
+  --color-border-transparent: #e5e4d399;
+  /*--color-border-accent: #;*/
+  --color-drop-shadow: rgba(0, 0, 0, 0.2);
 }
 
-/*need to propagate these stylings to all children of main*/
-.main{
-  background: var(--bg);
-  color: var(--bg-text);
+.day-mode {
+  --color-bg: #e5e4d3;
+  --color-text: #241a22;
+  --color-text-ui: #241a22;
+  --color-text-invert: #e5e4d3;
+  --color-base: #817b7b;
+  --color-accent: #667075;
+  --color-border: #838378;
+  --color-border-transparent: #e5e4d399;
+  --color-drop-shadow: rgba(0, 0, 0, 0.2);
 }
 
+.night-mode {
+  --color-bg: #24252f;
+  --color-text: #eaeced;
+  --color-text-ui: #eaeced;
+  --color-text-invert: #24252f;
+  --color-base: #7f838e;
+  --color-accent: #7dacc4;
+  --color-border: #826c73;
+  --color-border-transparent: #24252f99;
+  --color-drop-shadow: rgba(255, 255, 255, 0.2);
+}
+
+body{
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/*Switch*/
 .switch input:checked ~ .switch-paddle {
-  background: #1779ba;
+  background: var(--color-base);
 }
 
+/*Menu Content*/
 .nav-bar {
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -27,7 +64,7 @@ would also be nicer to declare each theme rather than make global variables for 
   -webkit-align-items: center;
   -ms-flex-align: center;
   align-items: center;
-  background: #2c3840;
+  background: var(--color-base); /*#2c3840;*/
   height: 75px;
   margin-bottom: 75px;
 }
@@ -37,11 +74,11 @@ would also be nicer to declare each theme rather than make global variables for 
 }
 
 .nav-bar li {
-  background: #2c3840;
+  background: var(--color-base); /*#2c3840;*/
 }
 
 .nav-bar a {
-  color: #fefefe;
+  color: var(--color-accent); /*#fefefe;*/
   transition: color 0.2s ease-in;
 }
 
@@ -66,9 +103,9 @@ would also be nicer to declare each theme rather than make global variables for 
   -ms-flex-pack: center;
   justify-content: center;
   padding: 1.6rem;
-  color: #fefefe;
+  color: var(--color-accent) /*#fefefe;*/
   text-transform: uppercase;
-  background-color: #566d7c;
+  background-color: var(--color-base) /*#566d7c;*/
   transition: background-color 0.2s ease-in;
   cursor: pointer;
 }
@@ -79,7 +116,7 @@ would also be nicer to declare each theme rather than make global variables for 
 }
 
 .nav-bar .offcanvas-trigger:hover {
-  background-color: #6b879a;
+  background-color: var(--color-bg); /*#6b879a;*/
 }
 
 @media screen and (max-width: 39.9375em) {
@@ -89,9 +126,9 @@ would also be nicer to declare each theme rather than make global variables for 
 }
 
 .multilevel-offcanvas {
-  background: #222b31;
+  background: var(--color-bg);/*#222b31;*/
   padding: 20px;
-  color: #fefefe;
+  color: var(--color-text); /*#fefefe;*/
 }
 
 .multilevel-offcanvas .switch {
@@ -103,22 +140,26 @@ would also be nicer to declare each theme rather than make global variables for 
 }
 
 .multilevel-offcanvas .menu a {
-  color: rgba(254, 254, 254, 0.6);
+  /*color: rgba(254, 254, 254, 0.6);*/
+  color: var(--color-text);
+  opacity 0.6
   padding-top: 7px;
   padding-bottom: 7px;
   transition: color 0.2s ease-in;
 }
 
+
 .multilevel-offcanvas .menu a:hover {
-  color: #fefefe;
+  color: var(--color-accent);/*#fefefe;*/
 }
 
 .multilevel-offcanvas .fa {
-  color: #fefefe;
+  color: var(--color-accent);/*#fefefe;*/
 }
 
 .multilevel-offcanvas .is-accordion-submenu-parent > a::after {
-  border-color: rgba(254, 254, 254, 0.6) transparent transparent;
+  /*border-color: rgba(254, 254, 254, 0.6) transparent transparent;*/
+  border-color: var(--color-border-transparent) transparent transparent;
 }
 
 .multilevel-offcanvas .social-links {
@@ -130,7 +171,7 @@ would also be nicer to declare each theme rather than make global variables for 
 }
 
 .multilevel-offcanvas .social-links a:hover .fa {
-  color: #bebebe;
+  color: var(--color-text); /*#bebebe;*/
   transition: color .2s ease-in;
 }
 
@@ -140,7 +181,7 @@ would also be nicer to declare each theme rather than make global variables for 
 
 .body-info {
   text-align: center;
-  color: #2c3840;
+  color: var(--color-text); /*#3c3840;*/
 }
 
 .body-info .button {
@@ -168,7 +209,7 @@ would also be nicer to declare each theme rather than make global variables for 
 .hamburger .line {
   width: 20px;
   height: 2px;
-  background-color: #fefefe;
+  background-color: var(--colog-bg); /*#fefefe;*/
   display: block;
   margin: 3px auto;
   transition: all 0.3s ease-in-out;
@@ -178,72 +219,28 @@ would also be nicer to declare each theme rather than make global variables for 
   margin-bottom: 0;
 }
 
+/*Card Content*/
 .card-info {
-  background: #fefefe;
-  border: 1px solid #8a8a8a;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  background: var(--color-bg); /*#fefefe;*/
+  border: 1px solid var(--color-accent); /*#8a8a8a;*/
+  box-shadow: 0 10px 20px var(--color-drop-shadow);
   margin: 1rem 0;
   overflow: hidden;
   border-radius: 0;
 }
 
 .card-info .card-info-label {
-  border-color: transparent #8a8a8a transparent transparent;
-  border-color: rgba(255, 255, 255, 0) #8a8a8a rgba(255, 255, 255, 0) rgba(255, 255, 255, 0);
-}
-
-.card-info.primary {
-  border-color: #1779ba;
-}
-
-.card-info.primary .card-info-label {
-  border-color: transparent #1779ba transparent transparent;
-  border-color: rgba(255, 255, 255, 0) #1779ba rgba(255, 255, 255, 0) rgba(255, 255, 255, 0);
+  border-color: transparent var(--color-accent) transparent transparent;
+  border-color: var(--color-border-transparent) var(--color-accent) var(--color-border-transparent) var(--color-border-transparent)
 }
 
 .card-info.secondary {
-  border-color: #767676;
+  border-color: var(--color-border); /*#767676;*/
 }
 
 .card-info.secondary .card-info-label {
-  border-color: transparent #767676 transparent transparent;
-  border-color: rgba(255, 255, 255, 0) #767676 rgba(255, 255, 255, 0) rgba(255, 255, 255, 0);
-}
-
-.card-info.info {
-  border-color: #37a0e6;
-}
-
-.card-info.info .card-info-label {
-  border-color: transparent #37a0e6 transparent transparent;
-  border-color: rgba(255, 255, 255, 0) #37a0e6 rgba(255, 255, 255, 0) rgba(255, 255, 255, 0);
-}
-
-.card-info.alert {
-  border-color: #cc4b37;
-}
-
-.card-info.alert .card-info-label {
-  border-color: transparent #cc4b37 transparent transparent;
-  border-color: rgba(255, 255, 255, 0) #cc4b37 rgba(255, 255, 255, 0) rgba(255, 255, 255, 0);
-}
-
-.card-info.success {
-  border-color: #3adb76;
-}
-
-.card-info.success .card-info-label {
-  border-color: transparent #3adb76 transparent transparent;
-  border-color: rgba(255, 255, 255, 0) #3adb76 rgba(255, 255, 255, 0) rgba(255, 255, 255, 0);
-}
-
-.card-info.warning {
-  border-color: #ffae00;
-}
-
-.card-info.warning .card-info-label {
-  border-color: transparent #ffae00 transparent transparent;
-  border-color: rgba(255, 255, 255, 0) #ffae00 rgba(255, 255, 255, 0) rgba(255, 255, 255, 0);
+  border-color: transparent var(--color-accent) transparent transparent;
+  border-color: var(--color-border-transparent) var(--color-accent) var(--color-border-transparent) var(--color-border-transparent)
 }
 
 .card-info .card-info-label {
@@ -262,7 +259,7 @@ would also be nicer to declare each theme rather than make global variables for 
 }
 
 .card-info .card-info-label-text {
-  color: #fefefe;
+  color: var(--color-text-invert); /*#fefefe;*/
   font-size: 0.75rem;
   font-weight: bold;
   position: relative;
