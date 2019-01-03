@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{% static "css/app.css" %}">
   </head>
 
-  <body class="day-mode">
+  <body class="light-mode" onload="loadSession()">
     <div class="off-canvas-content" data-off-canvas-content>
       <div class="nav-bar">
         <div class="nav-bar-left">
@@ -77,8 +77,8 @@
       <ul class="vertical menu">
 
         <div class="switch">
-          <input class="switch-input" id="light_switch" type="checkbox" onchange="themeUpdate(this)">
-          <label class="switch-paddle" for="light_switch"></label>
+          <input class="switch-input" id="light-switch" type="checkbox" onchange="themeUpdate(this)">
+          <label class="switch-paddle" for="light-switch"></label>
         </div>
 
         <li><a href="#">Journal</a></li>
