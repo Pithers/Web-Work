@@ -68,8 +68,21 @@ label{
   background: var(--color-base);
 }
 
+.switch-paddle {
+  background: var(--color-accent);
+  border-radius: 20px;
+}
+
+.switch-paddle:after {
+  border-radius: 50%;
+}
+
 .suggestion-css-class {
   color: var(--color-text);
+}
+
+.title-icon .fa:hover, .title-icon .fas:hover {
+  color: var(--color-text-invert);
 }
 
 /*Main Menu Bar Content*/
@@ -88,6 +101,10 @@ label{
   margin-bottom: 75px;
 }
 
+.nav-bar-left {
+  margin-left: 15px;
+}
+
 .nav-bar .nav-bar-logo {
   padding: 1.8rem;
 }
@@ -102,6 +119,10 @@ label{
 }
 
 .nav-bar a:hover {
+  color: var(--color-text-highlight); /*#a8b8c3;*/
+}
+
+.menu a:hover {
   color: var(--color-text-highlight); /*#a8b8c3;*/
 }
 
@@ -150,7 +171,7 @@ label{
 }
 
 .multilevel-offcanvas .switch {
-  margin-left: 20px;
+  margin-left: 0.1rem;
 }
 
 .multilevel-offcanvas > .menu {

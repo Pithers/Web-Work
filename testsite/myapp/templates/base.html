@@ -10,6 +10,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
     <link rel="stylesheet" href="{% static "css/foundation.css" %}">
     <link rel="stylesheet" href="{% static "css/app.css" %}">
   </head>
@@ -18,8 +19,10 @@
     <div class="off-canvas-content" data-off-canvas-content>
       <div class="nav-bar">
         <div class="nav-bar-left">
-          <a href="/">Suggester</a>
-          <a class="nav-bar-logo"><img class="logo" src="https://placehold.it/150x30"></a>
+          <ul class="menu title-icon">
+            <a href="/" class="hide-for-small-only"><i class="fas fa-chess-knight fa-3x"> Suggester</i></a>
+            <a href="/" class="show-for-small-only"><i class="fas fa-chess-knight fa-2x"></i></a>
+          </ul>
         </div>
         <div class="nav-bar-right">
           <ul class="menu">
@@ -75,12 +78,13 @@
         <li><a href="#">Support</a></li>
       </ul>
       <ul class="vertical menu">
-
         <div class="switch">
           <input class="switch-input" id="light-switch" type="checkbox" onchange="themeUpdate(this)">
-          <label class="switch-paddle" for="light-switch"></label>
+          <label class="switch-paddle" for="light-switch"> 
+            <i class="switch-active fas fa-moon fa-lg" style="color:#fefcd7"></i>
+            <i class="switch-inactive fas fa-sun fa-lg" style="color:#fcd440"></i>
+          </label>
         </div>
-
         <li><a href="#">Journal</a></li>
         <li><a href="#">FAQ</a></li>
         <li><a href="#">Terms & Conditions</a></li>
@@ -88,10 +92,8 @@
         <li><a href="#">Students</a></li>
       </ul>
       <ul class="menu simple social-links">
-        <li><a href="#" target="_blank"><i class="fa fa-twitter-square" aria-hidden="true"></i></a></li>
-        <li><a href="#" target="_blank"><i class="fa fa-facebook-square" aria-hidden="true"></i></a></li>
-        <li><a href="#" target="_blank"><i class="fa fa-github-square" aria-hidden="true"></i></a></li>
-        <li><a href="#" target="_blank"><i class="fa fa-google-plus-square" aria-hidden="true"></i></a></li>
+        <li><a href="#" target="_blank"><i class="fab fa-gitlab fa-2x"></i></a></li>
+        <li><a href="#" target="_blank"><i class="fab fa-github-square fa-2x"></i></a></li>
       </ul>
     </div>
 
