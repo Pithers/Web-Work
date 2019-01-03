@@ -5,7 +5,7 @@ would also be nicer to declare each theme rather than make global variables for 
 /*Todo: hook this up to colormind's web api for randomly generated website color schemes*/
 /*    : Make sure colors have a fallback (hex 8 digit color code not supported by everyone*/
 
-.day-mode {
+.light-mode {
   --color-bg: #e5e4d3;
   --color-text: #241a22;
   --color-text-ui: #241a22;
@@ -13,19 +13,21 @@ would also be nicer to declare each theme rather than make global variables for 
   --color-text-highlight: #e5e4d3;
   --color-base: #817b7b;
   --color-accent: #667075;
+  --color-tertiary: #666666;
   --color-border: #838378;
   --color-border-accent: #727267;
   --color-border-transparent: #e5e4d399;
   --color-drop-shadow: #00000033; /*rgba(0, 0, 0, 0.2);*/
 }
 
-.night-mode {
+.dark-mode {
   --color-bg: #24252f;
   --color-text: #eaeced;
   --color-text-ui: #eaeced;
   --color-text-invert: #24252f;
   --color-base: #7f838e;
   --color-accent: #7dacc4;
+  --color-tertiary: #666666;
   --color-border: #826c73;
   --color-border-accent: #715d62;
   --color-border-transparent: #24252f99;
@@ -37,6 +39,10 @@ body{
   color: var(--color-text);
 }
 
+label{
+  color: var(--color-text);
+}
+
 /*UI Overwrites*/
 .button {
   background: var(--color-base);
@@ -44,6 +50,16 @@ body{
 }
 
 .button:hover {
+  background: var(--color-accent);
+  color: var(--color-text-invert);
+}
+
+.button.secondary {
+  background: var(--color-tertiary);
+  color: var(--color-text);
+}
+
+.button.secondary:hover {
   background: var(--color-accent);
   color: var(--color-text-invert);
 }
