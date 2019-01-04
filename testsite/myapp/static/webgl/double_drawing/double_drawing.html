@@ -1,0 +1,67 @@
+<!--Author: Brandon Smith-->
+<!--Filename: assignment2.html-->
+<!--Desc: Html file for assignment2-->
+<!--Date: 9/18/2016-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Assignment2</title>
+  </head>
+
+  <body onload="main()">
+    <canvas id="webgl" width="400" height="400">
+    Please use a browser that supports "canvas"
+    </canvas>
+    <!--User Interface-->
+    <br/>
+    <button type="button" id="button1"> Invert Object1 </button>
+    <button type="button" id="button2"> Invert Object2 </button>
+    <button type="button" id="button3"> Invert Background </button>
+    <br/>
+    Object1
+    <br/>
+    Select an draw array type:  
+    <select id="dropdown1">
+      <option value="0">Points</option>
+      <option value="1">Line Strip</option>
+      <option value="2">Line Loop</option>
+      <option value="3">Lines</option>
+      <option value="4">Triangle Strip</option>
+      <option value="5">Triangle Fan</option>
+      <option value="6">Triangles</option>
+    </select>
+    <br/>
+    Select vertex size (1 to 20):
+    <input type="number" id="size_input1" value="1" min="1" max="20">
+    <br/>
+    Select rotation transform (0 to 360):
+    <input type="number" id="rot_input1" value="0" min="0" max="360">
+    <br/>
+    <p>Object2
+    <br/>
+    Select an draw array type:  
+    <select id="dropdown2">
+      <option value="0">Points</option>
+      <option value="1">Line Strip</option>
+      <option value="2">Line Loop</option>
+      <option value="3">Lines</option>
+      <option value="4">Triangle Strip</option>
+      <option value="5">Triangle Fan</option>
+      <option value="6">Triangles</option>
+    </select>
+    <br/>
+    Select vertex size (1 to 20):
+    <input type="number" id="size_input2" value="1" min="1" max="20">
+    <br/>
+    Select rotation transform (0 to 360):
+    <input type="number" id="rot_input2" value="0" min="0" max="360">
+    <br/>
+    <!--Includes-->
+    <script src="../lib/webgl-utils.js <view-source:http://www.ecst.csuchico.edu/~bsmith83/lib/webgl-utils.js>"></script>
+    <script src="../lib/webgl-debug.js <view-source:http://www.ecst.csuchico.edu/~bsmith83/lib/webgl-debug.js>"></script>
+    <script src="../lib/cuon-utils.js <view-source:http://www.ecst.csuchico.edu/~bsmith83/lib/cuon-utils.js>"></script>
+    <script src="../lib/cuon-matrix.js <view-source:http://www.ecst.csuchico.edu/~bsmith83/lib/cuon-matrix.js>"></script>
+    <script src="assignment2.js <view-source:http://www.ecst.csuchico.edu/~bsmith83/Assignment2/assignment2.js>"></script>
+  </body>
+</html>
+

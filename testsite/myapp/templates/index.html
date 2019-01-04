@@ -8,23 +8,17 @@
 
     <!--Page Title-->
     <div class="large-12 cell">
-      <h1>Suggestions</h1>
+      <h1>Posts</h1>
     </div>
 
-    {% if day %}
-    <h2>Day: {{ day }}</h2>
-    {% endif %}
-
-    {% if year %}
-    <h2>Year: {{ year }}</h2>
-    {% endif %}
-
     <div id="fetch_suggestion" class="large-10 cell">
+      {% if user.is_authenticated %}
       <form action="/" method="post">
         {% csrf_token %}
         {{ form_instance }}
         <input type="submit" class="button expanded" value="Submit">
       </form>
+      {% endif %}
 
       <div v-for="(item, index) in suggestions_list">
         <div class="card-info">
@@ -37,7 +31,11 @@
             <h3 class="lead">[[ item.suggestion ]]</h3>
             <p>[[ item.author ]] created on [[ item.created_on ]]</p>
             <div style="text-align:right">
-              <div class="button" v-bind:data-toggle="'add_comments' + index">Add a Comment</div>
+              {% if user.is_authenticated %}
+              <div class="button" v-bind:data-toggle="'add_comments' + index">Comment</div>
+              {% else %}
+              <a class="button" href="/login/">Comment</a>
+              {% endif %}
               <div class="button" v-bind:data-toggle="'show_comments' + index">[[ item.comments.length ]] comments</div>
             </div>
           </div>
@@ -46,15 +44,15 @@
         <div style="display:none" class="large-10 large-offset-2" v-bind:id="'add_comments' + index" v-foundation data-toggler data-animate="fade-in fade-out" data-options="showDelay:50;hideDelay:50">
           <div class="card-info secondary">
             <div class="card-info-content">
-            <form v-bind:action="'/comment/' + item.id + '/'" method="post">
-              {% csrf_token %}
-              {{ comm_form }}
-              <div style = "text-align:right">
-                <input type="submit" class="button" value = "Submit">
-              </div>
-            </form>
+              <form v-bind:action="'/comment/' + item.id + '/'" method="post">
+                {% csrf_token %}
+                {{ comm_form }}
+                <div style = "text-align:right">
+                  <input type="submit" class="button" value = "Submit">
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
         </div>
 
         <div v-if="item.comments.length > 0" v-bind:id="'show_comments' + index" v-foundation data-toggler data-animate="fade-in fade-out" data-options="showDelay:50;hideDelay:50">

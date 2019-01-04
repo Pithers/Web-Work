@@ -25,11 +25,16 @@
           </ul>
         </div>
         <div class="nav-bar-right">
-          <ul class="menu">
+          <ul class="menu title-icon">
             {% if user.is_authenticated %}
             <li class="hide-for-small-only"><a href="/logout/">Logout</a></li>
+            <a href="/login/"><i class="fas fa-cog fa-lg"></i></a>
+            <a href="/login/" class="hide-for-small-only"><i class="fas fa-user fa-lg"> {{ user.username }}</i></a>
+            <a href="/login/" class="show-for-small-only"><i class="fas fa-user fa-lg"></i></a>
+            {% else %}
+            <a href="/login/" class="hide-for-small-only"><i class="fas fa-user-times fa-lg"> Guest</i></a>
+            <a href="/login/" class="show-for-small-only"><i class="fas fa-user-times fa-lg"></i></a>
             {% endif %}
-            <li class="hide-for-small-only"><a href="/login/">Login</a></li>
             <li>
               <li>
                 <button class="offcanvas-trigger" type="button" data-open="offCanvasRight">
@@ -48,33 +53,30 @@
 
     <div class="multilevel-offcanvas off-canvas position-right" id="offCanvasRight" data-off-canvas>
       <ul class="vertical menu" data-accordion-menu>
-        <li><a href="#">SERVICES</a>
+        <li><a href="#">Account</a>
           <ul class="menu vertical nested">
-            <li><a href="#">Brand</a></li>
-            <li><a href="#">Web Apps</a></li>
-            <li><a href="#">Mobile Apps</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="#">Preferences</a></li>
+            {% if user.is_authenticated %}
+            <li><a href="/logout/">Logout</a></li>
+            {% else %}
+            <li><a href="/login/">Login</a></li>
+            {% endif %}
           </ul>
         </li>
-        <li><a href="#">PRODUCTS</a>
+        <li><a href="#">WegGL</a>
           <ul class="menu vertical nested">
-            <li><a href="#">Product 1</a></li>
-            <li><a href="#">Product 2</a></li>
-            <li><a href="#">Product 3</a></li>
-          </ul>
-        </li>
-        <li><a href="#">CITIES</a>
-          <ul class="menu vertical nested">
-            <li><a href="#">London</a></li>
-            <li><a href="#">New York</a></li>
-            <li><a href="#">Paris</a></li>
+            <li><a href="/webgl/drawing">Drawing</a></li>
+            <li><a href="/webgl/double_drawing">Double Drawing</a></li>
+            <li><a href="/webgl/platformer">Platformer</a></li>
+            <li><a href="/webgl/bootleg_mario">Bootleg Mario</a></li>
+            <li><a href="/webgl/3d_windmill">3D Windmill</a></li>
+            <li><a href="/webgl/3d_lighting">3D Lighting</a></li>
           </ul>
         </li>
       </ul>
       <ul class="vertical menu">
         <li class="off-canvas-menu-item"><a href="#">Tour</a></li>
-        <li><a href="#">Login</a></li>
-        <li><a href="#">Register</a></li>
-        <li><a href="#">Pricing</a></li>
         <li><a href="#">Support</a></li>
       </ul>
       <ul class="vertical menu">
@@ -92,8 +94,8 @@
         <li><a href="#">Students</a></li>
       </ul>
       <ul class="menu simple social-links">
-        <li><a href="#" target="_blank"><i class="fab fa-gitlab fa-2x"></i></a></li>
-        <li><a href="#" target="_blank"><i class="fab fa-github-square fa-2x"></i></a></li>
+        <li><a href="https://github.com/pithers/Web-Work" target="_blank"><i class="fab fa-github-square fa-2x"></i></a></li>
+        <li><a href="https://gitlab.com/pithers/Web-Work" target="_blank"><i class="fab fa-gitlab fa-2x"></i></a></li>
       </ul>
     </div>
 

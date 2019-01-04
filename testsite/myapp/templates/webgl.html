@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+{% if name %}
+<script type="text/javascript">
+  function init(){
+    main()
+  }
+window.onload = init;
+</script>
+{% endif %}
+
+{% if name == "drawing" %}
+  <canvas id="webgl" width="400" height="400">
+    Please use a browser that supports "canvas"
+  </canvas>
+  <!--User Interface-->
+  <br />
+  <button type="button" id="button1"> Invert Colors </button>
+  <br/>
+  <p>Select an draw array type:  
+  <select id="dropdown">
+    <option value="0">Points</option>
+    <option value="1">Line Strip</option>
+    <option value="2">Line Loop</option>
+    <option value="3">Lines</option>
+    <option value="4">Triangle Strip</option>
+    <option value="5">Triangle Fan</option>
+    <option value="6">Triangles</option>
+  </select>
+  <br/>
+  <form>
+    Select vertex size (1 to 20):
+    <input type="number" id="size_input" value="1" min="1" max="20">
+  </form>
+  <br/>
+  <form>
+    Select rotation transform (0 to 360):
+    <input type="number" id="rot_input" value="0" min="0" max="360">
+  </form>
+{% endif %}
+{% if name == "double_drawing" %}
+{% endif %}
+{% if name == "platformer" %}
+{% endif %}
+{% if name == "bootleg_mario" %}
+{% endif %}
+{% if name == "3d_windmill" %}
+{% endif %}
+{% if name == "3d_lighting" %}
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "webgl/lib/webgl-utils.js" %}"></script>
+<script src="{% static "webgl/lib/webgl-debug.js" %}"></script>
+<script src="{% static "webgl/lib/cuon-utils.js" %}"></script>
+<script src="{% static "webgl/lib/cuon-matrix.js" %}"></script>
+
+{% if name == "drawing" %}
+<script src="{% static "webgl/drawing/drawing.js" %}"></script>
+{% endif %}
+
+{% if name == "double_drawing" %}
+<script src="{% static "webgl/double_drawing/double_drawing.js" %}"></script>
+{% endif %}
+
+{% if name == "platformer" %}
+<script src="{% static "webgl/platformer/platformer.js" %}"></script>
+{% endif %}
+
+{% if name == "bootleg_mario" %}
+<script src="{% static "webgl/bootleg_mario/bootleg_mario.js" %}"></script>
+{% endif %}
+
+{% if name == "3d_windmill" %}
+<script src="{% static "webgl/3d_windmill/3d_windmill.js" %}"></script>
+{% endif %}
+
+{% if name == "3d_lighting" %}
+<script src="{% static "webgl/3d_lighting/3d_lighting.js" %}"></script>
+{% endif %}
+{% endblock %}
