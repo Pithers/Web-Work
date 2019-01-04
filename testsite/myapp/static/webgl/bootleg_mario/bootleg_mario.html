@@ -1,0 +1,40 @@
+<!--Author: Brandon Smith-->
+<!--Filename: assignment4.html-->
+<!--Desc: Html file for assignment4-->
+<!--Date: 10/16/2016-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Assignment4</title>
+  </head>
+
+  <body onload="main()">
+    <body bgcolor = "PaleGreen">
+    <p align = "center">
+      <canvas id="webgl" width="400" height="400">
+      Please use a browser that supports "canvas"
+      </canvas>
+      </p>
+    <style>
+    .overlay {
+      background-color: transparent;
+      position: absolute;
+      z-index: 10;
+      left: 39%;
+      top: 10px;
+    }
+    </style>
+
+    <div class = "overlay topleft">
+      Score:<p id="score">
+    </div>
+
+    <!--Includes-->
+    <script src="../lib/webgl-utils.js <view-source:http://www.ecst.csuchico.edu/~bsmith83/lib/webgl-utils.js>"></script>
+    <script src="../lib/webgl-debug.js <view-source:http://www.ecst.csuchico.edu/~bsmith83/lib/webgl-debug.js>"></script>
+    <script src="../lib/cuon-utils.js <view-source:http://www.ecst.csuchico.edu/~bsmith83/lib/cuon-utils.js>"></script>
+    <script src="../lib/cuon-matrix.js <view-source:http://www.ecst.csuchico.edu/~bsmith83/lib/cuon-matrix.js>"></script>
+    <script src="assignment4.js <view-source:http://www.ecst.csuchico.edu/~bsmith83/Assignment4/assignment4.js>"></script>
+  </body>
+</html>
+

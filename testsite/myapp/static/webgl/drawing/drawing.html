@@ -1,0 +1,49 @@
+<!--Author: Brandon Smith-->
+<!--Filename: assignment1.html-->
+<!--Desc: Html file for assignment1-->
+<!--Date: 9/5/2016-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Test</title>
+  </head>
+
+  <body onload="main()">
+    <canvas id="webgl" width="400" height="400">
+    Please use a browser that supports "canvas"
+    </canvas>
+    <!--User Interface-->
+    <br />
+    <button type="button" id="button1"> Invert Colors </button>
+    <br/>
+    <p>Select an draw array type:  
+    <select id="dropdown">
+      <option value="0">Points</option>
+      <option value="1">Line Strip</option>
+      <option value="2">Line Loop</option>
+      <option value="3">Lines</option>
+      <option value="4">Triangle Strip</option>
+      <option value="5">Triangle Fan</option>
+      <option value="6">Triangles</option>
+    </select>
+    <br/>
+    <form>
+      Select vertex size (1 to 20):
+      <input type="number" id="size_input" value="1" min="1" max="20">
+    </form>
+    <br/>
+    <form>
+      Select rotation transform (0 to 360):
+      <input type="number" id="rot_input" value="0" min="0" max="360">
+    </form>
+
+    <!--Includes-->
+    <script src="../lib/webgl-utils.js <view-source:http://www.ecst.csuchico.edu/~bsmith83/lib/webgl-utils.js>"></script>
+    <script src="../lib/webgl-debug.js <view-source:http://www.ecst.csuchico.edu/~bsmith83/lib/webgl-debug.js>"></script>
+    <script src="../lib/cuon-utils.js <view-source:http://www.ecst.csuchico.edu/~bsmith83/lib/cuon-utils.js>"></script>
+    <script src="../lib/cuon-matrix.js <view-source:http://www.ecst.csuchico.edu/~bsmith83/lib/cuon-matrix.js>"></script>
+    <script src="assignment1.js <view-source:http://www.ecst.csuchico.edu/~bsmith83/Assignment1/assignment1.js>"></script>
+  </body>
+</html>
+
