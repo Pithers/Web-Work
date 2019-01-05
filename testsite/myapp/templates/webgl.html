@@ -3,54 +3,201 @@
 
 {% block content %}
 
-{% if name %}
-<script type="text/javascript">
-  function init(){
-    main()
-  }
+<style>
+.webgl-overlay {
+  background-color: transparent;
+  position: absolute;
+  z-index: 5;
+  left: 20%;
+  top: 40%;
+}
+</style>
+
+<ul>
+  <a class="button" href="/webgl/drawing/">Drawing</a>
+  <a class="button" href="/webgl/double_drawing/">Double Drawing</a>
+  <a class="button" href="/webgl/platformer/">Platformer</a>
+  <a class="button" href="/webgl/bootleg_mario/">Bootleg Mario</a>
+  <a class="button" href="/webgl/3d_windmill/">3D Windmill</a>
+  <a class="button" href="/webgl/3d_lighting/">3D Lighting</a>
+</ul>
+
+<div class="grid-x grid-padding-x" align="center">
+
+  {% if name %}
+  <script type="text/javascript">
+    function init(){
+      main()
+    }
 window.onload = init;
-</script>
+  </script>
+  {% endif %}
+
+  {% if name == "drawing" %}
+  <div class="cell medium-4">
+    <p>Draw shapes. Left-click in canvas to place data points.</p>
+    <button class="button" type="button" id="button1">Invert Colors</button>
+    <div class="grid-x grid-padding-x">
+      <div class="cell medium-offset-6 medium-6">
+        <div class="cell medium-6">
+          Draw type:
+          <select id="dropdown">
+            <option value="0">Points</option>
+            <option value="1">Line Strip</option>
+            <option value="2">Line Loop</option>
+            <option value="3">Lines</option>
+            <option value="4">Triangle Strip</option>
+            <option value="5">Triangle Fan</option>
+            <option value="6">Triangles</option>
+          </select>
+        </div>
+        <div class="cell medium-6">
+          Vertex size (1 to 20):
+          <input type="number" id="size_input" value="1" min="1" max="20">
+        </div>
+        <div class="cell medium-6">
+          Rotation (0 to 360):
+          <input type="number" id="rot_input" value="0" min="0" max="360">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="cell medium-4 align-center">
+    <canvas id="webgl" width="400" height="400">
+      Please use a browser that supports "canvas"
+    </canvas>
+  </div>
+  {% endif %}
+
+  {% if name == "double_drawing" %}
+  <div class="cell medium-4">
+    <p>Draw shapes. Left or right-click in canvas to place data points.</p>
+    <button class="button" type="button" id="button1"> Invert Object1 </button>
+    <button class="button" type="button" id="button2"> Invert Object2 </button>
+    <button class="button" type="button" id="button3"> Invert Background </button>
+    <div class="grid-x grid-padding-x">
+      <div class="cell medium-6">
+        <div class="cell medium-6">
+          Object 1 (left-click)
+        </div>
+        <div class="cell medium-6">
+          Draw type:
+          <select id="dropdown1">
+            <option value="0">Points</option>
+            <option value="1">Line Strip</option>
+            <option value="2">Line Loop</option>
+            <option value="3">Lines</option>
+            <option value="4">Triangle Strip</option>
+            <option value="5">Triangle Fan</option>
+            <option value="6">Triangles</option>
+          </select>
+        </div>
+        <div class="cell medium-6">
+          Vertex size (1 to 20):
+          <input type="number" id="size_input1" value="1" min="1" max="20">
+        </div>
+        <div class="cell medium-6">
+          Rotation (0 to 360):
+          <input type="number" id="rot_input1" value="0" min="0" max="360">
+        </div>
+      </div>
+      <div class="cell medium-6">
+        <div class="cell medium-6">
+          Object 2 (right-click)
+        </div>
+        <div class="cell medium-6">
+          Draw type:
+          <select id="dropdown2">
+            <option value="0">Points</option>
+            <option value="1">Line Strip</option>
+            <option value="2">Line Loop</option>
+            <option value="3">Lines</option>
+            <option value="4">Triangle Strip</option>
+            <option value="5">Triangle Fan</option>
+            <option value="6">Triangles</option>
+          </select>
+        </div>
+        <div class="cell medium-6">
+          Vertex size (1 to 20):
+          <input type="number" id="size_input2" value="1" min="1" max="20">
+        </div>
+        <div class="cell medium-6">
+          Rotation (0 to 360):
+          <input type="number" id="rot_input2" value="0" min="0" max="360">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cell medium-4 align-center">
+    <canvas id="webgl" width="400" height="400">
+      Please use a browser that supports "canvas"
+    </canvas>
+  </div>
+  {% endif %}
+
+  {% if name == "platformer" %}
+  <div class="cell medium-4">
+    <p>Jump over the boxes to get to the finish. Use the arrow keys to move.</p>
+    <a class="button" type="button" id="button1">Invert Colors</a>
+    <p>Score:</p>
+    <p id="score"></p>
+  </div>
+  <div class="cell medium-4 align-center">
+    <canvas id="webgl" width="600" height="600">
+      Please use a browser that supports "canvas"
+    </canvas>
+  </div>
+  {% endif %}
+
+  {% if name == "bootleg_mario" %}
+  <div class="cell medium-4">
+    <p>Jump over the boxes to get to the finish. Use the arrow keys to move.</p>
+    <p>Score:</p>
+    <p id="score"></p>
+  </div>
+  <div class="cell medium-4 align-center">
+    <canvas id="webgl" width="600" height="600">
+      Please use a browser that supports "canvas"
+    </canvas>
+  </div>
+  {% endif %}
+
+  {% if name == "3d_windmill" %}
+  <div class="cell medium-4">
+    <p>Controls:</p>
+    <p>Arrow keys: move camera</p>
+    <p>w: toggle windmill</p>
+    <p>y: rotate entire windmill</p>
+  </div>
+  <div class="cell medium-4 align-center">
+    <canvas id="webgl" width="600" height="600">
+      Please use a browser that supports "canvas"
+    </canvas>
+  </div>
+</div>
 {% endif %}
 
-{% if name == "drawing" %}
-  <canvas id="webgl" width="400" height="400">
+<!--Currently runs super fast on firefox, really slow on chrome-->
+{% if name == "3d_lighting" %}
+<div class="cell medium-4">
+  <p>Controls:</p>
+  <p>wasd: move point lights</p>
+  <p>arrow keys: move camera</p>
+  <p>1: toggle blue point light</p>
+  <p>2: toggle red point light</p>
+  <p>g: toggle directional light</p>
+  <p>f: toggle fog</p>
+</div>
+<div class="cell medium-4 align-center">
+  <canvas id="webgl" width="600" height="600">
     Please use a browser that supports "canvas"
   </canvas>
-  <!--User Interface-->
-  <br />
-  <button type="button" id="button1"> Invert Colors </button>
-  <br/>
-  <p>Select an draw array type:  
-  <select id="dropdown">
-    <option value="0">Points</option>
-    <option value="1">Line Strip</option>
-    <option value="2">Line Loop</option>
-    <option value="3">Lines</option>
-    <option value="4">Triangle Strip</option>
-    <option value="5">Triangle Fan</option>
-    <option value="6">Triangles</option>
-  </select>
-  <br/>
-  <form>
-    Select vertex size (1 to 20):
-    <input type="number" id="size_input" value="1" min="1" max="20">
-  </form>
-  <br/>
-  <form>
-    Select rotation transform (0 to 360):
-    <input type="number" id="rot_input" value="0" min="0" max="360">
-  </form>
+</div>
+</div>
+
 {% endif %}
-{% if name == "double_drawing" %}
-{% endif %}
-{% if name == "platformer" %}
-{% endif %}
-{% if name == "bootleg_mario" %}
-{% endif %}
-{% if name == "3d_windmill" %}
-{% endif %}
-{% if name == "3d_lighting" %}
-{% endif %}
+
 {% endblock %}
 
 {% block scripts %}
@@ -80,6 +227,10 @@ window.onload = init;
 {% endif %}
 
 {% if name == "3d_lighting" %}
+<script src="{% static "webgl/3d_lighting/shaders.js" %}"></script>
+<script src="{% static "webgl/3d_lighting/initialize.js" %}"></script>
+<script src="{% static "webgl/3d_lighting/objects.js" %}"></script>
+<script src="{% static "webgl/3d_lighting/keys.js" %}"></script>
 <script src="{% static "webgl/3d_lighting/3d_lighting.js" %}"></script>
 {% endif %}
 {% endblock %}
