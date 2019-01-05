@@ -154,7 +154,7 @@ function main()
   i_background.onload = function() {loadTexture(i_background)};
 
   //Load images
-  i_background.src = './background.jpg';
+  i_background.src = '/static/webgl/background.jpg';
   //------------------------------------------------
 
 /**

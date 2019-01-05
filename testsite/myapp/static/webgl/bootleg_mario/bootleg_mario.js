@@ -333,8 +333,8 @@ function main()
   i_mario.onload = function() {loadTexture(i_mario, 0)};
 
   //Load images
-  i_background.src = './background_sprites.png';
-  i_mario.src = './mario_sprites.png';
+  i_background.src = '/static/webgl/background_sprites.png';
+  i_mario.src = '/static/webgl/mario_sprites.png';
   //------------------------------------------------
 
 //***************Finished Initialization*************************
