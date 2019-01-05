@@ -2,17 +2,6 @@
 {% load static %}
 
 {% block content %}
-
-<style>
-.webgl-overlay {
-  background-color: transparent;
-  position: absolute;
-  z-index: 5;
-  left: 20%;
-  top: 40%;
-}
-</style>
-
 <ul>
   <a class="button" href="/webgl/drawing/">Drawing</a>
   <a class="button" href="/webgl/double_drawing/">Double Drawing</a>
@@ -26,10 +15,10 @@
 
   {% if name %}
   <script type="text/javascript">
-    function init(){
+    function init() {
+      loadSession()
       main()
-    }
-window.onload = init;
+    }window.onload = init;
   </script>
   {% endif %}
 
@@ -194,10 +183,8 @@ window.onload = init;
     Please use a browser that supports "canvas"
   </canvas>
 </div>
-</div>
-
 {% endif %}
-
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -205,27 +192,21 @@ window.onload = init;
 <script src="{% static "webgl/lib/webgl-debug.js" %}"></script>
 <script src="{% static "webgl/lib/cuon-utils.js" %}"></script>
 <script src="{% static "webgl/lib/cuon-matrix.js" %}"></script>
-
 {% if name == "drawing" %}
 <script src="{% static "webgl/drawing/drawing.js" %}"></script>
 {% endif %}
-
 {% if name == "double_drawing" %}
 <script src="{% static "webgl/double_drawing/double_drawing.js" %}"></script>
 {% endif %}
-
 {% if name == "platformer" %}
 <script src="{% static "webgl/platformer/platformer.js" %}"></script>
 {% endif %}
-
 {% if name == "bootleg_mario" %}
 <script src="{% static "webgl/bootleg_mario/bootleg_mario.js" %}"></script>
 {% endif %}
-
 {% if name == "3d_windmill" %}
 <script src="{% static "webgl/3d_windmill/3d_windmill.js" %}"></script>
 {% endif %}
-
 {% if name == "3d_lighting" %}
 <script src="{% static "webgl/3d_lighting/shaders.js" %}"></script>
 <script src="{% static "webgl/3d_lighting/initialize.js" %}"></script>
