@@ -128,3 +128,6 @@ def webgl_view(request, name):
         'name':name
     }
     return render(request, 'webgl.html', context=context)
+
+def about_view(request):
+    return render(request, 'about.html')

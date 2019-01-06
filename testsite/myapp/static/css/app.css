@@ -34,15 +34,15 @@ would also be nicer to declare each theme rather than make global variables for 
   --color-drop-shadow: #ffffff33; /*rgba(0, 0, 0, 0.2);*/
 }
 
-body {
-  background: var(--color-bg);
-  color: var(--color-text);
-}
-
 .main-wrapper {
   min-height: 100vh;
   height: auto !important;
   padding-bottom: 50px;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 footer {
@@ -55,7 +55,15 @@ footer p {
   margin-bottom: 0;
 }
 
-label{
+footer a {
+  color: var(--color-text-ui); /*#fefefe;*/
+}
+
+footer a:hover {
+  color: var(--color-text-highlight); /*#a8b8c3;*/
+}
+
+label {
   color: var(--color-text);
 }
 
@@ -101,6 +109,14 @@ label{
   color: var(--color-text-invert);
 }
 
+select {
+  width: auto;
+}
+
+[type="number"] {
+  width: auto;
+}
+
 /*Main Menu Bar Content*/
 .nav-bar {
   display: -webkit-flex;
@@ -114,11 +130,15 @@ label{
   align-items: center;
   background: var(--color-base); /*#2c3840;*/
   height: 75px;
-  margin-bottom: 75px;
+  margin-bottom: 20px;
 }
 
 .nav-bar-left {
   margin-left: 15px;
+}
+
+.nav-bar-center h2 {
+  align-content: left;
 }
 
 .nav-bar .nav-bar-logo {
