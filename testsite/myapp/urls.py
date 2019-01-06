@@ -12,4 +12,5 @@ urlpatterns = [
     path('login/', adminviews.LoginView.as_view()),
     path('logout/', views.logout_view),
     path('webgl/<slug:name>/', views.webgl_view),
+    path('about/', views.about_view),
 ]

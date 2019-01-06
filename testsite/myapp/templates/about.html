@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="about-container" align="center">
+  <div class="grid-x grid-padding-x">
+    <div class="large-12 cell">
+      <h1>About Me</h1>
+    </div>
+    <div class="cell medium-6">
+      <p>Need a picture here and personal description.</p>
+    </div>
+    <div class="cell medium-6">
+      <embed src="{% static "assets/resume.pdf" %}" width="840" height="810" type='application/pdf'></embed>
+    </div>
+  </div>
+</div>
+{% endblock %}

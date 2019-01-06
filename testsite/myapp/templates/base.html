@@ -25,6 +25,9 @@
               <a href="/" class="show-for-small-only"><i class="fas fa-chess-knight fa-2x"></i></a>
             </ul>
           </div>
+          <div class="nav-bar-center">
+            <h2>{% block page_name %}{% endblock %}</h2>
+          </div>
           <div class="nav-bar-right">
             <ul class="menu title-icon">
               {% if user.is_authenticated %}
@@ -53,6 +56,23 @@
       </div>
       <div class="multilevel-offcanvas off-canvas position-right" id="offCanvasRight" data-off-canvas>
         <ul class="vertical menu" data-accordion-menu>
+          <li><a href="#">WegGL</a>
+            <ul class="menu vertical nested">
+              <li><a href="/webgl/drawing">Drawing</a></li>
+              <li><a href="/webgl/double_drawing">Double Drawing</a></li>
+              <li><a href="/webgl/platformer">Platformer</a></li>
+              <li><a href="/webgl/bootleg_mario">Bootleg Mario</a></li>
+              <li><a href="/webgl/3d_windmill">3D Windmill</a></li>
+              <li><a href="/webgl/3d_lighting">3D Lighting</a></li>
+            </ul>
+          </li>
+          <li><a href="#">Post System</a></li>
+          <li><a href="#">Music</a></li>
+          <li><a href="#">Art</a></li>
+          <li><a href="#">Visual Novel</a></li>
+        </ul>
+        </br>
+        <ul class="vertical menu" data-accordion-menu>
           <li><a href="#">Account</a>
             <ul class="menu vertical nested">
               <li><a href="#">Settings</a></li>
@@ -64,16 +84,7 @@
               {% endif %}
             </ul>
           </li>
-          <li><a href="#">WegGL</a>
-            <ul class="menu vertical nested">
-              <li><a href="/webgl/drawing">Drawing</a></li>
-              <li><a href="/webgl/double_drawing">Double Drawing</a></li>
-              <li><a href="/webgl/platformer">Platformer</a></li>
-              <li><a href="/webgl/bootleg_mario">Bootleg Mario</a></li>
-              <li><a href="/webgl/3d_windmill">3D Windmill</a></li>
-              <li><a href="/webgl/3d_lighting">3D Lighting</a></li>
-            </ul>
-          </li>
+          <li><a href="/about/">About Me</a></li>
         </ul>
         <ul class="vertical menu">
           <div class="switch">
@@ -83,7 +94,6 @@
               <i class="switch-inactive fas fa-sun fa-lg" style="color:#fcd440"></i>
             </label>
           </div>
-          <li><a href="#">About</a></li>
         </ul>
         <ul class="menu simple social-links">
           <li><a href="https://github.com/pithers/Web-Work" target="_blank"><i class="fab fa-github-square fa-2x"></i></a></li>
@@ -95,7 +105,7 @@
     </div>
 
     <footer>
-      <p>Created by Brandon Smith</p>
+      <p>Created by <a href="/about/">Brandon Smith</a></p>
       <p>brandonsmithsemail@gmail.com</p>
     </footer>
 
