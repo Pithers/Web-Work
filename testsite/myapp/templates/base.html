@@ -16,89 +16,89 @@
   </head>
 
   <body class="light-mode" onload="loadSession()">
-    <div class="off-canvas-content" data-off-canvas-content>
-      <div class="nav-bar">
-        <div class="nav-bar-left">
-          <ul class="menu title-icon">
-            <a href="/" class="hide-for-small-only"><i class="fas fa-chess-knight fa-3x"> Suggester</i></a>
-            <a href="/" class="show-for-small-only"><i class="fas fa-chess-knight fa-2x"></i></a>
-          </ul>
-        </div>
-        <div class="nav-bar-right">
-          <ul class="menu title-icon">
-            {% if user.is_authenticated %}
-            <li class="hide-for-small-only"><a href="/logout/">Logout</a></li>
-            <a href="/login/"><i class="fas fa-cog fa-lg"></i></a>
-            <a href="/login/" class="hide-for-small-only"><i class="fas fa-user fa-lg"> {{ user.username }}</i></a>
-            <a href="/login/" class="show-for-small-only"><i class="fas fa-user fa-lg"></i></a>
-            {% else %}
-            <a href="/login/" class="hide-for-small-only"><i class="fas fa-user-times fa-lg"> Guest</i></a>
-            <a href="/login/" class="show-for-small-only"><i class="fas fa-user-times fa-lg"></i></a>
-            {% endif %}
-            <li>
+    <div class="main-wrapper">
+      <div class="off-canvas-content" data-off-canvas-content>
+        <div class="nav-bar">
+          <div class="nav-bar-left">
+            <ul class="menu title-icon">
+              <a href="/" class="hide-for-small-only"><i class="fas fa-chess-knight fa-3x"> Suggester</i></a>
+              <a href="/" class="show-for-small-only"><i class="fas fa-chess-knight fa-2x"></i></a>
+            </ul>
+          </div>
+          <div class="nav-bar-right">
+            <ul class="menu title-icon">
+              {% if user.is_authenticated %}
+              <li class="hide-for-small-only"><a href="/logout/">Logout</a></li>
+              <a href="/login/"><i class="fas fa-cog fa-lg"></i></a>
+              <a href="/login/" class="hide-for-small-only"><i class="fas fa-user fa-lg"> {{ user.username }}</i></a>
+              <a href="/login/" class="show-for-small-only"><i class="fas fa-user fa-lg"></i></a>
+              {% else %}
+              <a href="/login/" class="hide-for-small-only"><i class="fas fa-user-times fa-lg"> Guest</i></a>
+              <a href="/login/" class="show-for-small-only"><i class="fas fa-user-times fa-lg"></i></a>
+              {% endif %}
               <li>
-                <button class="offcanvas-trigger" type="button" data-open="offCanvasRight">
-                  <span class="offcanvas-trigger-text hide-for-small-only">Menu</span>
-                  <div class="hamburger">
-                    <span class="line"></span>
-                    <span class="line"></span>
-                    <span class="line"></span>
-                  </div>
-                </button>
-              </li>
-          </ul>
+                <li>
+                  <button class="offcanvas-trigger" type="button" data-open="offCanvasRight">
+                    <span class="offcanvas-trigger-text hide-for-small-only">Menu</span>
+                    <div class="hamburger">
+                      <span class="line"></span>
+                      <span class="line"></span>
+                      <span class="line"></span>
+                    </div>
+                  </button>
+                </li>
+            </ul>
+          </div>
         </div>
       </div>
+      <div class="multilevel-offcanvas off-canvas position-right" id="offCanvasRight" data-off-canvas>
+        <ul class="vertical menu" data-accordion-menu>
+          <li><a href="#">Account</a>
+            <ul class="menu vertical nested">
+              <li><a href="#">Settings</a></li>
+              <li><a href="#">Preferences</a></li>
+              {% if user.is_authenticated %}
+              <li><a href="/logout/">Logout</a></li>
+              {% else %}
+              <li><a href="/login/">Login</a></li>
+              {% endif %}
+            </ul>
+          </li>
+          <li><a href="#">WegGL</a>
+            <ul class="menu vertical nested">
+              <li><a href="/webgl/drawing">Drawing</a></li>
+              <li><a href="/webgl/double_drawing">Double Drawing</a></li>
+              <li><a href="/webgl/platformer">Platformer</a></li>
+              <li><a href="/webgl/bootleg_mario">Bootleg Mario</a></li>
+              <li><a href="/webgl/3d_windmill">3D Windmill</a></li>
+              <li><a href="/webgl/3d_lighting">3D Lighting</a></li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="vertical menu">
+          <div class="switch">
+            <input class="switch-input" id="light-switch" type="checkbox" onchange="themeUpdate(this)">
+            <label class="switch-paddle" for="light-switch"> 
+              <i class="switch-active fas fa-moon fa-lg" style="color:#fefcd7"></i>
+              <i class="switch-inactive fas fa-sun fa-lg" style="color:#fcd440"></i>
+            </label>
+          </div>
+          <li><a href="#">About</a></li>
+        </ul>
+        <ul class="menu simple social-links">
+          <li><a href="https://github.com/pithers/Web-Work" target="_blank"><i class="fab fa-github-square fa-2x"></i></a></li>
+          <li><a href="https://gitlab.com/pithers/Web-Work" target="_blank"><i class="fab fa-gitlab fa-2x"></i></a></li>
+        </ul>
+      </div>
+      {% block content %}
+      {% endblock %}
     </div>
-    <div class="multilevel-offcanvas off-canvas position-right" id="offCanvasRight" data-off-canvas>
-      <ul class="vertical menu" data-accordion-menu>
-        <li><a href="#">Account</a>
-          <ul class="menu vertical nested">
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Preferences</a></li>
-            {% if user.is_authenticated %}
-            <li><a href="/logout/">Logout</a></li>
-            {% else %}
-            <li><a href="/login/">Login</a></li>
-            {% endif %}
-          </ul>
-        </li>
-        <li><a href="#">WegGL</a>
-          <ul class="menu vertical nested">
-            <li><a href="/webgl/drawing">Drawing</a></li>
-            <li><a href="/webgl/double_drawing">Double Drawing</a></li>
-            <li><a href="/webgl/platformer">Platformer</a></li>
-            <li><a href="/webgl/bootleg_mario">Bootleg Mario</a></li>
-            <li><a href="/webgl/3d_windmill">3D Windmill</a></li>
-            <li><a href="/webgl/3d_lighting">3D Lighting</a></li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="vertical menu">
-        <li class="off-canvas-menu-item"><a href="#">Tour</a></li>
-        <li><a href="#">Support</a></li>
-      </ul>
-      <ul class="vertical menu">
-        <div class="switch">
-          <input class="switch-input" id="light-switch" type="checkbox" onchange="themeUpdate(this)">
-          <label class="switch-paddle" for="light-switch"> 
-            <i class="switch-active fas fa-moon fa-lg" style="color:#fefcd7"></i>
-            <i class="switch-inactive fas fa-sun fa-lg" style="color:#fcd440"></i>
-          </label>
-        </div>
-        <li><a href="#">Journal</a></li>
-        <li><a href="#">FAQ</a></li>
-        <li><a href="#">Terms & Conditions</a></li>
-        <li><a href="#">Careers</a></li>
-        <li><a href="#">Students</a></li>
-      </ul>
-      <ul class="menu simple social-links">
-        <li><a href="https://github.com/pithers/Web-Work" target="_blank"><i class="fab fa-github-square fa-2x"></i></a></li>
-        <li><a href="https://gitlab.com/pithers/Web-Work" target="_blank"><i class="fab fa-gitlab fa-2x"></i></a></li>
-      </ul>
-    </div>
-    {% block content %}
-    {% endblock %}
+
+    <footer>
+      <p>Created by Brandon Smith</p>
+      <p>brandonsmithsemail@gmail.com</p>
+    </footer>
+
     <script src="{% static "js/vendor/jquery.js" %}"></script>
     <script src="{% static "js/vendor/what-input.js" %}"></script>
     <script src="{% static "js/vendor/foundation.js" %}"></script>
