@@ -34,9 +34,25 @@ would also be nicer to declare each theme rather than make global variables for 
   --color-drop-shadow: #ffffff33; /*rgba(0, 0, 0, 0.2);*/
 }
 
-body{
+body {
   background: var(--color-bg);
   color: var(--color-text);
+}
+
+.main-wrapper {
+  min-height: 100vh;
+  height: auto !important;
+  padding-bottom: 50px;
+}
+
+footer {
+  text-align: center;
+  background: var(--color-base);
+  color: var(--color-text);
+}
+
+footer p {
+  margin-bottom: 0;
 }
 
 label{
@@ -313,5 +329,3 @@ label{
   -ms-transform: rotate(30deg);
   transform: rotate(30deg);
 }
-
-
