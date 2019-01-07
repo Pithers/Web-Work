@@ -16,11 +16,10 @@
       </form>
       {% endif %}
 
-      <!--Sorting is currently partially working, however sorting confuses comments with buttons-->
-      <div class="button" v-on:click ="sort_type = (sort_type=='oldest'?'newest':'oldest')">Sort by Newest</div>
-      <div class="button" v-on:click ="sort_type = (sort_type=='a_to_z'?'z_to_a':'a_to_z')">Sort by Title</div>
-      <div class="button" v-on:click ="sort_type = (sort_type=='most'?'least':'most')">Sort by Comments</div>
-      <div class="button" v-on:click ="sort_type = (sort_type=='author_a'?'author_z':'author_a')">Sort by Author</div>
+      <div class="button" v-on:click ="sort_type = (sort_type=='oldest'?'newest':'oldest')">[[ (sort_type=='oldest'?'Newest':'Oldest') ]]</div>
+      <div class="button" v-on:click ="sort_type = (sort_type=='a_to_z'?'z_to_a':'a_to_z')">Posts [[ (sort_type=='a_to_z'?'Z to A':'A to Z') ]]</div>
+      <div class="button" v-on:click ="sort_type = (sort_type=='most'?'least':'most')">[[ (sort_type=='most'?'Least':'Most') ]] Comments</div>
+      <div class="button" v-on:click ="sort_type = (sort_type=='author_a'?'author_z':'author_a')">Authors [[ (sort_type=='author_a'?'Z to A':'A to Z') ]]</div>
       <div v-for="(item, index) in sortedList()">
         <div class="card-info">
           <div class="card-info-label">
