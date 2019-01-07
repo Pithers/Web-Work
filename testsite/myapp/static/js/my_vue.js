@@ -7,9 +7,10 @@ Vue.directive('foundation', {
   bind(el) {
     $(el).foundation()
   },
-  unbind(el) {
+  //Unbind was having problems with mixing foundation and vue.js
+  /*unbind(el) {
     $(el).foundation.destroy()
-  }
+  }*/
 })
 
 var fetch_app = new Vue({
@@ -37,19 +38,19 @@ var fetch_app = new Vue({
           return this.suggestions_list.slice().sort(function(a,b){return a.id-b.id});
           break;
         case 'a_to_z':
-          return this.suggestions_list.slice().sort(function(a,b){return a.suggestion-b.suggestion});
+          return this.suggestions_list.slice().sort(function(a,b){return a.suggestion.localeCompare(b.suggestion)});
           break;
         case 'z_to_a':
-          return this.suggestions_list.slice().sort(function(a,b){return b.suggestion-a.suggestion});
+          return this.suggestions_list.slice().sort(function(a,b){return b.suggestion.localeCompare(a.suggestion)});
           break;
         case 'author_a':
-          return this.suggestions_list.slice().sort(function(a,b){return a.author-b.author});
+          return this.suggestions_list.slice().sort(function(a,b){return a.author.localeCompare(b.author)});
           break;
         case 'author_z':
-          return this.suggestions_list.slice().sort(function(a,b){return b.author-a.author});
+          return this.suggestions_list.slice().sort(function(a,b){return b.author.localeCompare(a.author)});
           break;
         case 'most':
-          return this.suggestions_list.slice().sort(function(a,b){return a.comments.length-b.comments.length});
+          return this.suggestions_list.slice().sort(function(a,b){return b.comments.length-a.comments.length});
           break;
         case 'least':
           return this.suggestions_list.slice().sort(function(a,b){return a.comments.length-b.comments.length});
