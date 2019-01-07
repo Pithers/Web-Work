@@ -21,7 +21,7 @@
       <div class="button" v-on:click ="sort_type = (sort_type=='a_to_z'?'z_to_a':'a_to_z')">Sort by Title</div>
       <div class="button" v-on:click ="sort_type = (sort_type=='most'?'least':'most')">Sort by Comments</div>
       <div class="button" v-on:click ="sort_type = (sort_type=='author_a'?'author_z':'author_a')">Sort by Author</div>
-      <div v-for="(item, index) in sortedList()" :key="item.id">
+      <div v-for="(item, index) in sortedList()">
         <div class="card-info">
           <div class="card-info-label">
           </div>
