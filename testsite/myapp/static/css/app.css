@@ -67,6 +67,11 @@ label {
   color: var(--color-text);
 }
 
+.title-block {
+  margin-left: 1.25rem;
+  margin-bottom: 1rem;
+}
+
 /*UI Overwrites*/
 .button {
   background: var(--color-base);
@@ -117,6 +122,24 @@ select {
   width: auto;
 }
 
+.user-icon {
+  height: 120px;
+  width: 120px;
+  padding-left: 0px;
+  padding-right: 10px;
+  vertical-align: middle;
+}
+
+.user-name {
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+}
+
+hr {
+  padding-top: 0px;
+  margin-top: 0px;
+}
+
 /*Main Menu Bar Content*/
 .nav-bar {
   display: -webkit-flex;
@@ -135,10 +158,6 @@ select {
 
 .nav-bar-left {
   margin-left: 15px;
-}
-
-.nav-bar-center h2 {
-  align-content: left;
 }
 
 .nav-bar .nav-bar-logo {

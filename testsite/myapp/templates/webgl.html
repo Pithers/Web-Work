@@ -130,6 +130,14 @@
 
 <!--Currently runs super fast on firefox, really slow on chrome-->
 {% if name == "3d_windmill" or name == "3d_lighting" %}
+<script>
+  window.addEventListener("keydown", function(e) {
+    // space and arrow keys
+    if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+      e.preventDefault();
+    }
+  }, false);
+</script>
 <div align="center">
   <p>(Works best with Firefox, performs poorly on Chrome)</p>
   <canvas id="webgl" width="600" height="600">

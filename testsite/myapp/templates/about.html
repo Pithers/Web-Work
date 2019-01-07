@@ -1,17 +1,16 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block page_name %}About Me{% endblock %}
+
 {% block content %}
 <div class="about-container" align="center">
   <div class="grid-x grid-padding-x">
-    <div class="large-12 cell">
-      <h1>About Me</h1>
-    </div>
     <div class="cell medium-6">
+      <embed src="{% static "assets/resume.pdf" %}" width="100%" height=800px type='application/pdf'></embed>
+    </div>
+    <div class="cell auto">
       <p>Need a picture here and personal description.</p>
-    </div>
-    <div class="cell medium-6">
-      <embed src="{% static "assets/resume.pdf" %}" width="840" height="810" type='application/pdf'></embed>
     </div>
   </div>
 </div>

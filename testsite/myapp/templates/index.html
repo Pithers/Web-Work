@@ -2,15 +2,11 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block page_name %}Posts{% endblock %}
+
 {% block content %}
 <div class="grid-container">
   <div class="grid-x grid-padding-x">
-
-    <!--Page Title-->
-    <div class="cell" align="center">
-      <h1>Posts</h1>
-    </div>
-
     <div id="fetch_suggestion" class="large-10 cell">
       {% if user.is_authenticated %}
       <form action="/" method="post">
@@ -20,23 +16,38 @@
       </form>
       {% endif %}
 
-      <div v-for="(item, index) in suggestions_list">
+      <!--Sorting is currently partially working, however sorting confuses comments with buttons-->
+      <div class="button" v-on:click ="sort_type = (sort_type=='oldest'?'newest':'oldest')">Sort by Newest</div>
+      <div class="button" v-on:click ="sort_type = (sort_type=='a_to_z'?'z_to_a':'a_to_z')">Sort by Title</div>
+      <div class="button" v-on:click ="sort_type = (sort_type=='most'?'least':'most')">Sort by Comments</div>
+      <div class="button" v-on:click ="sort_type = (sort_type=='author_a'?'author_z':'author_a')">Sort by Author</div>
+      <div v-for="(item, index) in sortedList()" :key="item.id">
         <div class="card-info">
           <div class="card-info-label">
-            <div class="card-info-label-text">
-              #[[ index ]]
-            </div>
           </div>
           <div class="card-info-content">
-            <h3 class="lead">[[ item.suggestion ]]</h3>
-            <p>[[ item.author ]] created on [[ item.created_on ]]</p>
-            <div style="text-align:right">
-              {% if user.is_authenticated %}
-              <div class="button" v-bind:data-toggle="'add_comments' + index">Comment</div>
-              {% else %}
-              <a class="button" href="/login/">Comment</a>
-              {% endif %}
-              <div class="button" v-bind:data-toggle="'show_comments' + index">[[ item.comments.length ]] comments</div>
+            <div class="grid-x">
+              <div class="cell small-2">
+                <img class="user-icon" v-bind:src="'https://avatars.dicebear.com/v2/identicon/' + item.author + '.svg'"></img>
+              </div>
+              <div class="cell auto">
+                <h3 class="user-name">[[ item.author ]]</h3>
+                <hr>
+                <p>[[ item.suggestion ]]<p>
+              </div>
+            </div>
+            <div class="grid-x">
+              <div class="cell small-6">
+                [[ item.created_on ]]
+              </div>
+              <div class="cell auto" style="text-align:right">
+                {% if user.is_authenticated %}
+                <div class="button" v-bind:data-toggle="'add_comments' + index">Comment</div>
+                {% else %}
+                <a class="button" href="/login/">Comment</a>
+                {% endif %}
+                <div class="button" v-bind:data-toggle="'show_comments' + index">[[ item.comments.length ]] comments</div>
+              </div>
             </div>
           </div>
         </div>
@@ -61,8 +72,17 @@
               <div v-for="comment_item in item.comments" class="large-10 large-offset-2 cell">
                 <div class="card-info secondary">
                   <div class="card-info-content">
-                    <h3 class="lead">[[ comment_item.comment ]]</h3>
-                    <p>authored by [[ comment_item.author ]] on [[ comment_item.created_on ]]</p>
+                    <div class="grid-x">
+                      <div class="cell small-2">
+                        <img class="user-icon" v-bind:src="'https://avatars.dicebear.com/v2/identicon/' + comment_item.author + '.svg'"></img>
+                      </div>
+                      <div class="cell auto">
+                        <h3 class="lead">[[ comment_item.author ]]</h3>
+                        <hr>
+                        <p>[[ comment_item.comment ]]</p>
+                      </div>
+                    </div>
+                    [[ comment_item.created_on ]]
                   </div>
                 </div>
               </div>
