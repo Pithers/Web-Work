@@ -25,9 +25,6 @@
               <a href="/" class="show-for-small-only"><i class="fas fa-chess-knight fa-2x"></i></a>
             </ul>
           </div>
-          <div class="nav-bar-center">
-            <h2>{% block page_name %}{% endblock %}</h2>
-          </div>
           <div class="nav-bar-right">
             <ul class="menu title-icon">
               {% if user.is_authenticated %}
@@ -100,6 +97,12 @@
           <li><a href="https://gitlab.com/pithers/Web-Work" target="_blank"><i class="fab fa-gitlab fa-2x"></i></a></li>
         </ul>
       </div>
+
+      <!--Page Title-->
+      <div class="title-block">
+        <h1>{% block page_name %}{% endblock %}</h1>
+      </div>
+
       {% block content %}
       {% endblock %}
     </div>
