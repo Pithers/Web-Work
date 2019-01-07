@@ -5,7 +5,7 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
 from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
+#from django.contrib.auth.decorators import login_required
 
 from . import models
 from . import forms
