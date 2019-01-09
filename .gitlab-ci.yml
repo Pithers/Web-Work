@@ -18,9 +18,18 @@ pylint:
   stage: lint
   script:
     - python -V
-    #Change paths to your project/app folders
     - pylint --load-plugins pylint_django --disable=missing-docstring ./testsite/testsite
     - pylint --load-plugins pylint_django --disable=missing-docstring ./testsite/myapp
+
+#Run linters on all other types of files
+gitlinter:
+  image: "$CI_REGISTRY_IMAGE:testing"
+  stage: lint
+  script:
+    - git-lint -f ./testsite/myapp/templates
+    - git-lint -f ./testsite/myapp/static/scss
+    - git-lint -f ./testsite/myapp/static/webgl
+    - git-lint -f ./testsite/myapp/static/js
 
 #Build test container
 build:
