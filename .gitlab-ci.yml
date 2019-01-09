@@ -49,6 +49,13 @@ test:
     - coverage run --source='.' ./manage.py test
     - coverage report --skip-covered
 
+# Minify code before deployment
+minify:
+  stage: minify
+  image: "$CI_REGISTRY_IMAGE:testing"
+  script:
+    - python css-html-js-minify.py ./testsite/myapp/static
+
 # Create latest docker container if all the tests/lint passes on master
 deploy:
   only:

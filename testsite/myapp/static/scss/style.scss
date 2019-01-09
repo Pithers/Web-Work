@@ -1,4 +1,17 @@
+//**Style SCSS
+//## Color Classes (contain color variables that propagate to other classes)
+//## Basic Overwrites (body, footer, etc.)
+//## Page Containers (html page specific)
+//## UI and Foundation Overwrites (buttons, sliders, etc.)
+//## Icons
+//## Nav Bar Overlay
+//## Card Content (post and comment boxes)
 
+//Code Reference/Credit:
+//Laurel Beyers: https://foundation.zurb.com/building-blocks/blocks/multilevel-offcanvas-menu.html
+//Rafi: https://foundation.zurb.com/building-blocks/blocks/card-info.html
+
+//Color Classes
 .light-mode {
   --color-bg: #e5e4d3;
   --color-text: #241a22;
@@ -10,7 +23,7 @@
   --color-tertiary: #666666;
   --color-border: #838378;
   --color-border-accent: #727267;
-  --color-border-transparent: #e5e4d399;
+  --color-border-transp: #e5e4d399;
   --color-drop-shadow: #00000033;
 }
 
@@ -24,16 +37,11 @@
   --color-tertiary: #666666;
   --color-border: #826c73;
   --color-border-accent: #715d62;
-  --color-border-transparent: #24252f99;
+  --color-border-transp: #24252f99;
   --color-drop-shadow: #ffffff33;
 }
 
-.main-wrapper {
-  min-height: 100vh;
-  height: auto !important;
-  padding-bottom: 50px;
-}
-
+//Basic overwrites
 body {
   background: var(--color-bg);
   color: var(--color-text);
@@ -58,6 +66,18 @@ label {
   color: var(--color-text);
 }
 
+hr {
+  padding-top: 0px;
+  margin-top: 0px;
+}
+
+//Page Containers
+.main-wrapper {
+  min-height: 100vh;
+  height: auto !important;
+  padding-bottom: 50px;
+}
+
 .title-block {
   margin-left: 1.25rem;
   margin-bottom: 1rem;
@@ -70,8 +90,7 @@ label {
   padding-right: 1rem;
 }
 
-/*UI Overwrites*/
-
+//UI and Foundation Overwrites
 .button {
   background: var(--color-base);
   color: var(--color-text);
@@ -87,6 +106,10 @@ label {
       color: var(--color-text-invert);
     }
   }
+}
+
+select, [type="number"] {
+  width: auto;
 }
 
 .switch input:checked ~ .switch-paddle {
@@ -105,14 +128,11 @@ label {
   color: var(--color-text);
 }
 
+//Icons
 .title-icon {
   .fa:hover, .fas:hover {
     color: var(--color-text-invert);
   }
-}
-
-select, [type="number"] {
-  width: auto;
 }
 
 .user-icon {
@@ -128,12 +148,7 @@ select, [type="number"] {
   margin-bottom: 0px;
 }
 
-hr {
-  padding-top: 0px;
-  margin-top: 0px;
-}
-
-/*Main Menu Bar Content*/
+//Nav Bar Overlay
 .nav-bar {
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -190,7 +205,7 @@ hr {
   -ms-flex-pack: center;
   justify-content: center;
   padding: 1.6rem;
-  color: var(--color-accent);
+  color: var(--color-text);
   text-transform: uppercase;
   background-color: var(--color-base);
   transition: background-color 0.2s ease-in;
@@ -239,7 +254,7 @@ hr {
     color: var(--color-accent);
   }
   .is-accordion-submenu-parent > a::after {
-    border-color: var(--color-border-transparent) transparent transparent;
+    border-color: var(--color-border-transp) transparent transparent;
   }
   .social-links {
     margin-left: 20px;
@@ -293,7 +308,7 @@ hr {
   }
 }
 
-/*Card Content*/
+//Card Content
 .card-info {
   background: var(--color-bg);
   border: 1px solid var(--color-border);
@@ -303,13 +318,13 @@ hr {
   border-radius: 0;
   .card-info-label {
     border-color: transparent var(--color-border) transparent transparent;
-    border-color: var(--color-border-transparent) var(--color-border) var(--color-border-transparent) var(--color-border-transparent);
+    border-color: var(--color-border-transp) var(--color-border) var(--color-border-transp) var(--color-border-transp);
   }
   &.secondary {
     border-color: var(--color-border-accent);
     .card-info-label {
       border-color: transparent var(--color-border-accent) transparent transparent;
-      border-color: var(--color-border-transparent) var(--color-border-accent) var(--color-border-transparent) var(--color-border-transparent);
+      border-color: var(--color-border-transp) var(--color-border-accent) var(--color-border-transp) var(--color-border-transp);
     }
   }
   .card-info-label {
