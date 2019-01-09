@@ -30,6 +30,24 @@ yamllint:
   script:
     - yamllint -d "{extends:default,rules:{line-length:{max:120}}}" .
 
+jslint:
+  image: "$CI_REGISTRY_IMAGE:testing"
+  stage: lint
+  script:
+    - jslint ./testsite/myapp/static/js
+
+htmllint:
+  image: "$CI_REGISTRY_IMAGE:testing"
+  stage: lint
+  script:
+    - htmlhint ./testsite/myapp/templates
+
+scsslint:
+  image: "$CI_REGISTRY_IMAGE:testing"
+  stage: lint
+  script:
+    - sass-lint ./testsite/myapp/static/scss
+
 # Build test container
 build:
   stage: build
