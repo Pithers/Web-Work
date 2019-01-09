@@ -6,4 +6,4 @@ coverage
 libsass
 django-compressor
 django-sass-processor
-git-lint
+yamllint

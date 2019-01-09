@@ -22,14 +22,11 @@ pylint:
     - pylint --load-plugins pylint_django --disable=missing-docstring ./testsite/myapp
 
 #Run linters on all other types of files
-gitlinter:
+yamllint:
   image: "$CI_REGISTRY_IMAGE:testing"
   stage: lint
   script:
-    - find ./testsite/myapp/templates/ -type f -exec git-lint -f {} ';'
-    - find ./testsite/myapp/static/scss/ -type f -exec git-lint -f {} ';'
-    - find ./testsite/myapp/static/js/ -type f -exec git-lint -f {} ';'
-    - find ./testsite/myapp/statis/webgl/ -type f -exec git-lint -f {} ';'
+    -yamllint .
 
 #Build test container
 build:
