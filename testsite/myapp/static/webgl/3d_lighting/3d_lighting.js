@@ -407,7 +407,7 @@ function Draw(drawObject)
 /**
  *  Binds a draw buffer from the provided vertices
  *
- *  @param {drawObject}     object of buffer to bind        
+ *  @param {drawObject}     object of buffer to bind
  */
 function bindVertexBuffer(drawObject)
 {
