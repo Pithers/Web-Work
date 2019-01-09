@@ -6,3 +6,4 @@ coverage
 libsass
 django-compressor
 django-sass-processor
+css-html-js-minify

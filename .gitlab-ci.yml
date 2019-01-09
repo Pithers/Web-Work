@@ -55,7 +55,7 @@ minify:
   stage: minify
   image: "$CI_REGISTRY_IMAGE:testing"
   script:
-    - css-html-js-minify.py ./testsite/myapp/static
+    - css-html-js-minify /code/testsite/myapp/static
 
 # Create latest docker container if all the tests/lint passes on master
 deploy:
