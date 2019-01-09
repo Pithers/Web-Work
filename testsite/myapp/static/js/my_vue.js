@@ -2,7 +2,7 @@
 
 //Note: Consider adding delimiters: ['[[',']]'] to the configs.
 
-//custom vue direction for foundation
+//Custom vue direction for use with Foundation
 Vue.directive('foundation', {
   bind(el) {
     $(el).foundation()
@@ -13,6 +13,7 @@ Vue.directive('foundation', {
   }*/
 })
 
+//Vue object that fetches our suggestions/comment model from the database
 var fetch_app = new Vue({
   delimiters: ['[[',']]'],
   el: '#fetch_suggestion',
@@ -24,11 +25,13 @@ var fetch_app = new Vue({
   },
 
   mounted: function() {
+    //Grab suggestions list and then periodically update every 10 seconds
     this.getSuggestionsList();
     this.timer = setInterval(this.getSuggestionsList, 10000);
   },
 
   methods: {
+    //Sorts the suggestion_list object by id, suggestion, author, and num of comments
     sortedList: function() {
       switch(this.sort_type) {
         case 'newest':

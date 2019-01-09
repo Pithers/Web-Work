@@ -13,9 +13,8 @@
     <title>{{ title }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
-    <link rel="stylesheet" href="{% static "css/foundation.css" %}">
+    <link rel="stylesheet" href="{% static "css/foundation.min.css" %}">
     <link rel="stylesheet" href="{% sass_src "scss/style.scss" %}">
-    <!--link rel="stylesheet" href="{% static "css/app.css" %}"-->
   </head>
 
   <body class="light-mode" onload="loadSession()">
@@ -117,7 +116,7 @@
 
     <script src="{% static "js/vendor/jquery.js" %}"></script>
     <script src="{% static "js/vendor/what-input.js" %}"></script>
-    <script src="{% static "js/vendor/foundation.js" %}"></script>
+    <script src="{% static "js/vendor/foundation.min.js" %}"></script>
     <script src="{% static "js/app.js" %}"></script>
     {% block scripts %}
     {% endblock %}
