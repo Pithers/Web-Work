@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'sass_processor',
     'myapp',
 ]
 
@@ -103,6 +104,15 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Static file finders
+# https://docs.djangoproject.com/en/2.1/ref/settings/#std:setting-STATICFILES_FINDERS
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'sass_processor.finders.CssFinder',
+]
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
@@ -121,3 +131,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+SASS_PROCESSOR_ROOT = STATIC_URL

@@ -13,4 +13,5 @@ urlpatterns = [
     path('logout/', views.logout_view),
     path('webgl/<slug:name>/', views.webgl_view),
     path('about/', views.about_view),
+    path('music/', views.music_view),
 ]

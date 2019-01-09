@@ -3,3 +3,6 @@ pytz==2018.7
 pylint
 pylint_django
 coverage
+libsass
+django-compressor
+django-sass-processor

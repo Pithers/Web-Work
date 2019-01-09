@@ -72,6 +72,13 @@ label {
   margin-bottom: 1rem;
 }
 
+.music-container {
+  margin-left: 1rem;
+  margin-right: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 /*UI Overwrites*/
 .button {
   background: var(--color-base);
@@ -198,9 +205,9 @@ hr {
   -ms-flex-pack: center;
   justify-content: center;
   padding: 1.6rem;
-  color: var(--color-accent) /*#fefefe;*/
+  color: var(--color-accent); /*#fefefe;*/
   text-transform: uppercase;
-  background-color: var(--color-base) /*#566d7c;*/
+  background-color: var(--color-base); /*#566d7c;*/
   transition: background-color 0.2s ease-in;
   cursor: pointer;
 }
@@ -235,7 +242,7 @@ hr {
 
 .multilevel-offcanvas .menu a {
   color: var(--color-text);
-  opacity 0.6
+  opacity: 0.6;
   padding-top: 34px;/*7px;*/
   padding-bottom: 7px;
   transition: color 0.2s ease-in;

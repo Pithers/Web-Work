@@ -4,15 +4,18 @@
 
 <!DOCTYPE html>
 {% load static %}
+{% load sass_tags %}
 <html class="no-js" lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
     <link rel="stylesheet" href="{% static "css/foundation.css" %}">
-    <link rel="stylesheet" href="{% static "css/app.css" %}">
+    <link rel="stylesheet" href="{% sass_src "scss/style.scss" %}">
+    <!--link rel="stylesheet" href="{% static "css/app.css" %}"-->
   </head>
 
   <body class="light-mode" onload="loadSession()">
@@ -64,7 +67,7 @@
             </ul>
           </li>
           <li><a href="#">Post System</a></li>
-          <li><a href="#">Music</a></li>
+          <li><a href="/music/">Music</a></li>
           <li><a href="#">Art</a></li>
           <li><a href="#">Visual Novel</a></li>
         </ul>
