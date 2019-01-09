@@ -23,25 +23,6 @@ pylint:
     - pylint --load-plugins pylint_django --disable=missing-docstring ./testsite/testsite
     - pylint --load-plugins pylint_django --disable=missing-docstring ./testsite/myapp
 
-# Run linters on all other types of files
-yamllint:
-  image: "$CI_REGISTRY_IMAGE:testing"
-  stage: lint
-  script:
-    - yamllint -d "{extends:relaxed,rules:{line-length:{max:120}}}" .
-
-jslint:
-  image: "$CI_REGISTRY_IMAGE:testing"
-  stage: lint
-  script:
-    - jshint ./testsite/myapp/static/js
-
-htmllint:
-  image: "$CI_REGISTRY_IMAGE:testing"
-  stage: lint
-  script:
-    - htmlhint --rules dock-type-first=false,spec-char-escape=false ./testsite/myapp/templates
-
 scsslint:
   image: "$CI_REGISTRY_IMAGE:testing"
   stage: lint
