@@ -12,6 +12,7 @@ stages:
   - build
   - lint
   - test
+  - minify
   - deploy
 
 # Run pylint_django on site/app code given default app/site folder names
