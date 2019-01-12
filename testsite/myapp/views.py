@@ -10,40 +10,40 @@ from django.contrib.auth import logout
 from . import models
 from . import forms
 
-#Default view
+#Post view
 #login required function decorator
 #@login_required
-def index(request):
+def post_view(request):
     comm_form = forms.CommentForm()
     if request.method == 'POST':
-        form_instance = forms.SuggestionForm(request.POST)
+        form_instance = forms.PostForm(request.POST)
 
         #Check to see if submitted form is valid
         if form_instance.is_valid():
             #Give the valid form to t
             #possibly need to add additional logic to deal with guest users
-            temp_model = models.SuggestionModel(
-                suggestion=form_instance.cleaned_data['suggestion'],
+            temp_model = models.PostModel(
+                post=form_instance.cleaned_data['post'],
                 author=request.user
                 )
             temp_model.save()
 
             #Refresh the form so a new form can be added
-            form_instance = forms.SuggestionForm()
+            form_instance = forms.PostForm()
     else:
-        form_instance = forms.SuggestionForm()
+        form_instance = forms.PostForm()
 
-    suggestions = models.SuggestionModel.objects.all()
+    posts = models.PostModel.objects.all()
     context = {
         'title':'Title',
-        'suggestions':suggestions,
+        'posts':posts,
         'form_instance':form_instance,
         'comm_form':comm_form
     }
-    return render(request, 'index.html', context=context)
+    return render(request, 'posts.html', context=context)
 
 #@login_required
-def comment_view(request, suggestion_id):
+def comment_view(request, post_id):
     if request.method == 'POST':
         form_instance = forms.CommentForm(request.POST)
 
@@ -51,11 +51,11 @@ def comment_view(request, suggestion_id):
         if form_instance.is_valid():
             #Give the valid form to t
             #possibly need to add additional logic to deal with guest users
-            suggestion_instance = models.SuggestionModel.objects.get(pk=suggestion_id)
+            post_instance = models.PostModel.objects.get(pk=post_id)
             temp_model = models.CommentModel(
                 comment=form_instance.cleaned_data['comment'],
                 author=request.user,
-                suggestion=suggestion_instance
+                post=post_instance
                 )
             temp_model.save()
             return redirect("/")
@@ -65,7 +65,7 @@ def comment_view(request, suggestion_id):
     context = {
         'title':'Title',
         'form_instance':form_instance,
-        'suggestion_id':suggestion_id
+        'post_id':post_id
     }
     return render(request, 'comment.html', context=context)
 
@@ -89,27 +89,27 @@ def register(request):
     }
     return render(request, 'registration/register.html', context=context)
 
-#RESTful suggestion view ex: site/suggestion/
-def rest_suggestion(request):
+#RESTful post view ex: site/rest_post/
+def rest_post(request):
    #if not request.user.is_authenticated:
         #return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-        #return JsonResponse({"suggestions":[]})
+        #return JsonResponse({"posts":[]})
     if request.method == 'GET':
-        #Get all suggestions
-        suggestions = models.SuggestionModel.objects.all()
+        #Get all posts
+        posts = models.PostModel.objects.all()
 
-        suggestion_list = []
-        for item in suggestions:
+        post_list = []
+        for item in posts:
             add_to_list = {
-                'suggestion':item.suggestion,
+                'post':item.post,
                 'author':item.author.username,
                 'id':item.id,
                 'created_on':item.creation_date,
                 'comments':[]
             }
 
-            #Add list of comments to each suggestion item
-            comment_query = models.CommentModel.objects.filter(suggestion=item)
+            #Add list of comments to each post item
+            comment_query = models.CommentModel.objects.filter(post=item)
             for comment_item in comment_query:
                 add_to_list['comments'] += [{
                     'comment':comment_item.comment,
@@ -118,9 +118,9 @@ def rest_suggestion(request):
                     'created_on':comment_item.creation_date
                     }]
 
-            suggestion_list += [add_to_list]
+            post_list += [add_to_list]
 
-        return JsonResponse({"suggestions":suggestion_list})
+        return JsonResponse({"posts":post_list})
     return HttpResponse('Invalid HTTP Method')
 
 def webgl_view(request, name):
@@ -134,3 +134,6 @@ def about_view(request):
 
 def music_view(request):
     return render(request, 'music.html')
+
+def index_view(request):
+    return render(request, 'index.html')

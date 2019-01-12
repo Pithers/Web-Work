@@ -1,0 +1,107 @@
+<!--myapp/templates/index.html-->
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_name %}Posts{% endblock %}
+
+{% block content %}
+<div class="grid-container">
+  <div class="grid-x grid-padding-x">
+    <!--This div is attached to Vue object for dealing with posts-->
+    <div id="fetch_post" class="cell large-10 large-offset-1">
+      {% if user.is_authenticated %}
+      <form action="/" method="post">
+        {% csrf_token %}
+        {{ form_instance }}
+        <input type="submit" class="button expanded" value="Submit">
+      </form>
+      {% endif %}
+
+      <!--Sorting buttons for post types-->
+      <div class="button" v-on:click ="sort_type=(sort_type=='oldest'?'newest':'oldest')">[[ (sort_type=='oldest'?'Newest':'Oldest') ]]</div>
+      <div class="button" v-on:click ="sort_type=(sort_type=='a_to_z'?'z_to_a':'a_to_z')">Posts [[ (sort_type=='a_to_z'?'Z to A':'A to Z') ]]</div>
+      <div class="button" v-on:click ="sort_type=(sort_type=='most'?'least':'most')">[[ (sort_type=='most'?'Least':'Most') ]] Comments</div>
+      <div class="button" v-on:click ="sort_type=(sort_type=='author_a'?'author_z':'author_a')">Authors [[ (sort_type=='author_a'?'Z to A':'A to Z') ]]</div>
+
+      <!--Create card list for every post depending on sort type chosen-->
+      <div v-for="(item, index) in sortedList()">
+        <div class="card-info">
+          <div class="card-info-label">
+          </div>
+          <div class="card-info-content">
+            <div class="grid-x">
+              <div class="cell small-2">
+                <img class="user-icon" v-bind:src="'https://avatars.dicebear.com/v2/identicon/' + item.author + '.svg'"></img>
+              </div>
+              <div class="cell auto">
+                <h3 class="user-name">[[ item.author ]]</h3>
+                <hr>
+                <p>[[ item.post ]]<p>
+              </div>
+            </div>
+            <div class="grid-x">
+              <div class="cell small-6">
+                [[ item.created_on ]]
+              </div>
+              <div class="cell auto" style="text-align:right">
+                {% if user.is_authenticated %}
+                <div class="button" v-bind:data-toggle="'add_comments' + index">Comment</div>
+                {% else %}
+                <a class="button" href="/login/">Comment</a>
+                {% endif %}
+                <div class="button" v-bind:data-toggle="'show_comments' + index">[[ item.comments.length ]] comments</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--Comment submission form-->
+        <div style="display:none" class="large-10 large-offset-2" v-bind:id="'add_comments' + index" v-foundation data-toggler data-animate="fade-in fade-out" data-options="showDelay:50;hideDelay:50">
+          <div class="card-info secondary">
+            <div class="card-info-content">
+              <form v-bind:action="'/comment/' + item.id + '/'" method="post">
+                {% csrf_token %}
+                {{ comm_form }}
+                <div style = "text-align:right">
+                  <input type="submit" class="button" value = "Submit">
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!--If each particular post has comments to show, show those comment boxes-->
+        <div v-if="item.comments.length > 0" v-bind:id="'show_comments' + index" v-foundation data-toggler data-animate="fade-in fade-out" data-options="showDelay:50;hideDelay:50">
+          <div class="grid-container">
+            <div class="grid-x grid-padding-x">
+              <div v-for="comment_item in item.comments" class="large-10 large-offset-2 cell">
+                <div class="card-info secondary">
+                  <div class="card-info-content">
+                    <div class="grid-x">
+                      <div class="cell small-2">
+                        <img class="user-icon" v-bind:src="'https://avatars.dicebear.com/v2/identicon/' + comment_item.author + '.svg'"></img>
+                      </div>
+                      <div class="cell auto">
+                        <h3 class="lead">[[ comment_item.author ]]</h3>
+                        <hr>
+                        <p>[[ comment_item.comment ]]</p>
+                      </div>
+                    </div>
+                    [[ comment_item.created_on ]]
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/axios/dist/axios.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="{% static "js/my_vue.js" %}"></script>
+{% endblock %}

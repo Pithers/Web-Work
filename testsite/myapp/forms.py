@@ -1,22 +1,21 @@
 #myapp/forms.py
 
 from django import forms
-from django.core.validators import validate_slug #validate email?
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from .models import CustomUser
+#from django.contrib.auth.models import User
 
-class SuggestionForm(forms.Form):
-    error_css_class = 'suggestion-css-class-error'
-    required_css_class = 'suggestion-css-class'
-    suggestion = forms.CharField(
-        validators=[validate_slug], #Add slug validator
-        label='Suggestion',
+class PostForm(forms.Form):
+    error_css_class = 'post-css-class-error'
+    required_css_class = 'post-css-class'
+    post = forms.CharField(
+        label='Post',
         max_length=240
         )
 
 class CommentForm(forms.Form):
     error_css_class = 'comment-css-class_error'
-    required_css_class = 'suggestion-css-class'
+    required_css_class = 'comment-css-class'
     comment = forms.CharField(
         label='Comment',
         max_length=240
@@ -34,7 +33,7 @@ class RegistrationForm(UserCreationForm):
         )
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ("username", "email",
                   "password1", "password2")
 
@@ -44,3 +43,11 @@ class RegistrationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+# Form for changing users
+class CustomUserChangeForm(UserChangeForm):
+
+    class Meta:
+        model = CustomUser
+        fields = ("username", "email")
+

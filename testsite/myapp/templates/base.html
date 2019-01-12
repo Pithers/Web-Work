@@ -17,17 +17,20 @@
     <link rel="stylesheet" href="{% sass_src "scss/style.scss" %}">
   </head>
 
+  <!--Use onload to load a javascript module to change the CSS coloscheme-->
   <body class="light-mode" onload="loadSession()">
     <div class="main-wrapper">
       <div class="off-canvas-content" data-off-canvas-content>
         <div class="nav-bar">
           <div class="nav-bar-left">
             <ul class="menu title-icon">
-              <a href="/" class="hide-for-small-only"><i class="fas fa-chess-knight fa-3x"> Suggester</i></a>
+              <!--Main Logo-->
+              <a href="/" class="hide-for-small-only"><i class="fas fa-chess-knight fa-3x"> Pithers</i></a>
               <a href="/" class="show-for-small-only"><i class="fas fa-chess-knight fa-2x"></i></a>
             </ul>
           </div>
           <div class="nav-bar-right">
+            <!--Top of the screen nav-bar-->
             <ul class="menu title-icon">
               {% if user.is_authenticated %}
               <li class="hide-for-small-only"><a href="/logout/">Logout</a></li>
@@ -53,6 +56,7 @@
           </div>
         </div>
       </div>
+      <!--Offcanvas sidebar-->
       <div class="multilevel-offcanvas off-canvas position-right" id="offCanvasRight" data-off-canvas>
         <ul class="vertical menu" data-accordion-menu>
           <li><a href="#">WegGL</a>
@@ -65,7 +69,7 @@
               <li><a href="/webgl/3d_lighting">3D Lighting</a></li>
             </ul>
           </li>
-          <li><a href="#">Post System</a></li>
+          <li><a href="/posts/">Post System</a></li>
           <li><a href="/music/">Music</a></li>
           <li><a href="#">Art</a></li>
           <li><a href="#">Visual Novel</a></li>
@@ -74,7 +78,6 @@
         <ul class="vertical menu" data-accordion-menu>
           <li><a href="#">Account</a>
             <ul class="menu vertical nested">
-              <li><a href="#">Settings</a></li>
               <li><a href="#">Preferences</a></li>
               {% if user.is_authenticated %}
               <li><a href="/logout/">Logout</a></li>
@@ -83,7 +86,7 @@
               {% endif %}
             </ul>
           </li>
-          <li><a href="/about/">About Me</a></li>
+          <li><a href="/about/">About</a></li>
         </ul>
         <ul class="vertical menu">
           <div class="switch">

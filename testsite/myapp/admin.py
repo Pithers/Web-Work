@@ -1,9 +1,19 @@
 #myapp/admin.py
 
 from django.contrib import admin
+from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin
 
-from . import models
+from .forms import RegistrationForm, CustomUserChangeForm
+from .models import CustomUser, PostModel, CommentModel
+
+class CustomUserAdmin(UserAdmin):
+    add_form = RegistrationForm
+    form = CustomUserChangeForm
+    model = CustomUser
+    list_display = ['email', 'username',]
 
 # Register your models here
-admin.site.register(models.SuggestionModel)
-admin.site.register(models.CommentModel)
+admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(PostModel)
+admin.site.register(CommentModel)
