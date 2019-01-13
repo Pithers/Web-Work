@@ -1,7 +1,83 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block page_name %}Index{% endblock %}
+{% block page_name %}Color Palette Picker{% endblock %}
 
 {% block content %}
+<div class="grid-container">
+  <div class="grid-x grid-padding-x">
+    <ul>
+      <li>
+      Background Color:
+      <input type="hidden" id="color-bg" value="000000">
+      <button class="jscolor {valueElement: 'color-bg'}">Pick a color</button>
+      </li>
+      <li>
+      Text Color:
+      <input type="hidden" id="color-text" value="000000">
+      <button class="jscolor {valueElement: 'color-text'}">Pick a color</button>
+      </li>
+      <li>
+      Text UI Color:
+      <input type="hidden" id="color-text-ui" value="000000">
+      <button class="jscolor {valueElement: 'color-text-ui'}">Pick a color</button>
+      </li>
+      <li>
+      Text Inverted Color:
+      <input type="hidden" id="color-text-invert" value="000000">
+      <button class="jscolor {valueElement: 'color-text-invert'}">Pick a color</button>
+      </li>
+      <li>
+      Text Highlight Color:
+      <input type="hidden" id="color-text-highlight" value="000000">
+      <button class="jscolor {valueElement: 'color-text-highlight'}">Pick a color</button>
+      </li>
+      <li>
+      Base Color:
+      <input type="hidden" id="color-base" value="000000">
+      <button class="jscolor {valueElement: 'color-base'}">Pick a color</button>
+      </li>
+      <li>
+      Accent Color:
+      <input type="hidden" id="color-accent" value="000000">
+      <button class="jscolor {valueElement: 'color-accent'}">Pick a color</button>
+      </li>
+      <li>
+      Tertiary Color:
+      <input type="hidden" id="color-tertiary" value="000000">
+      <button class="jscolor {valueElement: 'color-tertiary'}">Pick a color</button>
+      </li>
+      <li>
+      Border Color:
+      <input type="hidden" id="color-border" value="000000">
+      <button class="jscolor {valueElement: 'color-border'}">Pick a color</button>
+      </li>
+      <li>
+      Border Accent Color:
+      <input type="hidden" id="color-border-accent" value="000000">
+      <button class="jscolor {valueElement: 'color-border-accent'}">Pick a color</button>
+      </li>
+      <li>
+      Border Transparent Color:
+      <input type="hidden" id="color-border-transp" value="000000">
+      <button class="jscolor {valueElement: 'color-border-transp'}">Pick a color</button>
+      </li>
+      <li>
+      Border Drop Shadow:
+      <input type="hidden" id="color-drop-shadow" value="000000">
+      <button class="jscolor {valueElement: 'color-drop-shadow'}">Pick a color</button>
+      </li>
+    </ul>
+    {% if user.is_authenticated %}
+    <div>Save color scheme to profile.</div>
+    {% else %}
+    <div>Please login to save color scheme to profile.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.0.4/jscolor.min.js"></script>
+<script src="{% static "js/color_mode.js" %}"></script>
 {% endblock %}
