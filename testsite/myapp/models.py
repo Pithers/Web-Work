@@ -8,7 +8,7 @@ from django.db import models
 # Custom User Model
 class CustomUser(AbstractUser):
     def __str__(self):
-      return self.email
+        return self.email
 
 # Model that contains something like a Post
 class PostModel(models.Model):

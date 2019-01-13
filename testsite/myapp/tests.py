@@ -3,7 +3,7 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
 
-from .models import SuggestionModel
+from .models import PostModel
 
 #This will all be handled in a fake database
 class PostTestCase(TestCase):
