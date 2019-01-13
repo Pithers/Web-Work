@@ -12,7 +12,8 @@
 //Rafi: https://foundation.zurb.com/building-blocks/blocks/card-info.html
 
 //Color Classes
-.light-mode {
+//.light-mode {
+:root {
   --color-bg: #e5e4d3;
   --color-text: #241a22;
   --color-text-ui: #241a22;
@@ -27,7 +28,7 @@
   --color-drop-shadow: #00000033;
 }
 
-.dark-mode {
+/*.dark-mode {
   --color-bg: #24252f;
   --color-text: #eaeced;
   --color-text-ui: #eaeced;
@@ -40,6 +41,20 @@
   --color-border-transp: #24252f99;
   --color-drop-shadow: #ffffff33;
 }
+
+.custom-mode {
+  --color-bg: #24252f;
+  --color-text: #eaeced;
+  --color-text-ui: #eaeced;
+  --color-text-invert: #24252f;
+  --color-base: #7f838e;
+  --color-accent: #7dacc4;
+  --color-tertiary: #666666;
+  --color-border: #826c73;
+  --color-border-accent: #715d62;
+  --color-border-transp: #24252f99;
+  --color-drop-shadow: #ffffff33;
+}*/
 
 //Basic overwrites
 body {

@@ -1,14 +1,13 @@
 #myapp/tests.py
 
-from django.contrib.auth.models import User
 from django.test import TestCase
-
+from .models import CustomUser
 from .models import PostModel
 
 #This will all be handled in a fake database
 class PostTestCase(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
+        self.user = CustomUser.objects.create_user(
             username='bob', email='bob@bob.com', password='top_secret')
         PostModel.objects.create(post="lion", author=self.user)
         PostModel.objects.create(post="cat", author=self.user)
