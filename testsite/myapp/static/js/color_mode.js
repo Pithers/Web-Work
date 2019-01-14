@@ -3,7 +3,6 @@
 //Color elements
 var color_bg = document.getElementById("color-bg");
 var color_text = document.getElementById("color-text");
-var color_text_ui = document.getElementById("color-text-ui");
 var color_text_invert = document.getElementById("color-text-invert");
 var color_text_highlight = document.getElementById("color-text-highlight");
 var color_base = document.getElementById("color-base");
@@ -19,9 +18,6 @@ color_bg.onchange = function() {
 };
 color_text.onchange = function() {
   document.documentElement.style.setProperty("--color-text", "#" + color_text.value);
-};
-color_text_ui.onchange = function() {
-  document.documentElement.style.setProperty("--color-text-ui", "#" + color_text_ui.value);
 };
 color_text_invert.onchange = function() {
   document.documentElement.style.setProperty("--color-text-invert", "#" + color_text_invert.value);

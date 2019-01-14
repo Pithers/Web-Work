@@ -3,21 +3,30 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser
+from .models import ColorScheme
 #from django.contrib.auth.models import User
 
+class ColorSchemeForm(forms.ModelForm):
+    class Meta:
+        model = ColorScheme
+        fields = ["color_scheme_name", "color_bg", "color_text", "color_text_invert",
+                  "color_text_highlight", "color_base", "color_accent", "color_tertiary",
+                  "color_border", "color_border_accent", "color_border_transp",
+                  "color_drop_shadow"]
+
 class PostForm(forms.Form):
-    error_css_class = 'post-css-class-error'
-    required_css_class = 'post-css-class'
+    error_css_class = "post-css-class-error"
+    required_css_class = "post-css-class"
     post = forms.CharField(
-        label='Post',
+        label="Post",
         max_length=240
         )
 
 class CommentForm(forms.Form):
-    error_css_class = 'comment-css-class_error'
-    required_css_class = 'comment-css-class'
+    error_css_class = "comment-css-class_error"
+    required_css_class = "comment-css-class"
     comment = forms.CharField(
-        label='Comment',
+        label="Comment",
         max_length=240
         )
 
@@ -25,8 +34,8 @@ class CommentForm(forms.Form):
 #Need to make sure authenticator on this is the same used in the login form
 #Inherit from UserCreationForm here
 class RegistrationForm(UserCreationForm):
-    error_css_class = 'registration-css-class-error'
-    required_css_class = 'registration-css-class'
+    error_css_class = "registration-css-class-error"
+    required_css_class = "registration-css-class"
     email = forms.EmailField(
         label="Email",
         required=True

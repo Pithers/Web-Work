@@ -11,12 +11,10 @@
 //Laurel Beyers: https://foundation.zurb.com/building-blocks/blocks/multilevel-offcanvas-menu.html
 //Rafi: https://foundation.zurb.com/building-blocks/blocks/card-info.html
 
-//Color Classes
-//.light-mode {
+//Color references
 :root {
   --color-bg: #e5e4d3;
   --color-text: #241a22;
-  --color-text-ui: #241a22;
   --color-text-invert: #e5e4d3;
   --color-text-highlight: #e5e4d3;
   --color-base: #817b7b;
@@ -27,34 +25,6 @@
   --color-border-transp: #e5e4d399;
   --color-drop-shadow: #00000033;
 }
-
-/*.dark-mode {
-  --color-bg: #24252f;
-  --color-text: #eaeced;
-  --color-text-ui: #eaeced;
-  --color-text-invert: #24252f;
-  --color-base: #7f838e;
-  --color-accent: #7dacc4;
-  --color-tertiary: #666666;
-  --color-border: #826c73;
-  --color-border-accent: #715d62;
-  --color-border-transp: #24252f99;
-  --color-drop-shadow: #ffffff33;
-}
-
-.custom-mode {
-  --color-bg: #24252f;
-  --color-text: #eaeced;
-  --color-text-ui: #eaeced;
-  --color-text-invert: #24252f;
-  --color-base: #7f838e;
-  --color-accent: #7dacc4;
-  --color-tertiary: #666666;
-  --color-border: #826c73;
-  --color-border-accent: #715d62;
-  --color-border-transp: #24252f99;
-  --color-drop-shadow: #ffffff33;
-}*/
 
 //Basic overwrites
 body {
@@ -70,7 +40,7 @@ footer {
     margin-bottom: 0;
   }
   a {
-    color: var(--color-text-ui);
+    color: var(--color-text);
     &:hover {
       color: var(--color-text-highlight);
     }
@@ -146,7 +116,7 @@ select, [type="number"] {
 //Icons
 .title-icon {
   .fa:hover, .fas:hover {
-    color: var(--color-text-invert);
+    color: var(--color-text-highlight);
   }
 }
 
@@ -191,7 +161,7 @@ select, [type="number"] {
     background: var(--color-base);
   }
   a {
-    color: var(--color-text-ui);
+    color: var(--color-text);
     transition: color 0.2s ease-in;
     &:hover {
       color: var(--color-text-highlight);
