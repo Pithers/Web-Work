@@ -3,7 +3,6 @@ $(document).foundation();
 function light_mode() {
     document.documentElement.style.setProperty("--color-bg", "#e5e4d3");
     document.documentElement.style.setProperty("--color-text", "#241a22");
-    document.documentElement.style.setProperty("--color-text-ui", "#241a22");
     document.documentElement.style.setProperty("--color-text-invert", "#e5e4d3");
     document.documentElement.style.setProperty("--color-text-highlight", "#e5e4d3");
     document.documentElement.style.setProperty("--color-base", "#817b7b");
@@ -18,7 +17,6 @@ function light_mode() {
 function dark_mode() {
     document.documentElement.style.setProperty("--color-bg", "#24252f");
     document.documentElement.style.setProperty("--color-text", "#eaeced");
-    document.documentElement.style.setProperty("--color-text-ui", "#eaeced");
     document.documentElement.style.setProperty("--color-text-invert", "#24252f");
     document.documentElement.style.setProperty("--color-text-highlight", "#24252f");
     document.documentElement.style.setProperty("--color-base", "#7f838e");

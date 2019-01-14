@@ -136,4 +136,11 @@ def music_view(request):
     return render(request, 'music.html')
 
 def index_view(request):
-    return render(request, 'index.html')
+    if request.method == "POST":
+        color_scheme_form = forms.ColorSchemeForm(request.POST)
+        if color_scheme_form.is_valid():
+            color_scheme_form.save()
+            return redirect('/')
+    else:
+        color_scheme_form = forms.ColorSchemeForm()
+    return render(request, 'index.html', {'color_scheme_form': color_scheme_form})
