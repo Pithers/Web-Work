@@ -6,6 +6,7 @@
 //## Icons
 //## Nav Bar Overlay
 //## Card Content (post and comment boxes)
+//## Palette Styling
 
 //Code Reference/Credit:
 //Laurel Beyers: https://foundation.zurb.com/building-blocks/blocks/multilevel-offcanvas-menu.html
@@ -22,7 +23,6 @@
   --color-tertiary: #666666;
   --color-border: #838378;
   --color-border-accent: #727267;
-  --color-border-transp: #e5e4d399;
   --color-drop-shadow: #00000033;
 }
 
@@ -239,7 +239,7 @@ select, [type="number"] {
     color: var(--color-accent);
   }
   .is-accordion-submenu-parent > a::after {
-    border-color: var(--color-border-transp) transparent transparent;
+    border-color: var(--color-bg) transparent transparent;
   }
   .social-links {
     margin-left: 20px;
@@ -303,13 +303,13 @@ select, [type="number"] {
   border-radius: 0;
   .card-info-label {
     border-color: transparent var(--color-border) transparent transparent;
-    border-color: var(--color-border-transp) var(--color-border) var(--color-border-transp) var(--color-border-transp);
+    border-color: var(--color-bg) var(--color-border) var(--color-bg) var(--color-bg);
   }
   &.secondary {
     border-color: var(--color-border-accent);
     .card-info-label {
       border-color: transparent var(--color-border-accent) transparent transparent;
-      border-color: var(--color-border-transp) var(--color-border-accent) var(--color-border-transp) var(--color-border-transp);
+      border-color: var(--color-bg) var(--color-border-accent) var(--color-bg) var(--color-bg);
     }
   }
   .card-info-label {
@@ -338,3 +338,68 @@ select, [type="number"] {
     transform: rotate(30deg);
   }
 }
+
+//Palette Styling
+.palette {
+  .palette-field {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    button.jscolor {
+      border-style: solid;
+      border-width: medium;
+      border-color: var(--color-border);
+      box-shadow: 5px 5px 5px var(--color-drop-shadow);
+      padding-left: 5px;
+      padding-right: 5px;
+      padding-top: 5px;
+      padding-bottom: 5px;
+
+      &:hover {
+        background: var(--color-tertiary) !important;
+        color: var(--color-text-invert) !important;
+      }
+
+      @each $color in bg, text, text-invert, text-highlight, base, accent,
+      tertiary, border, border-accent, drop-shadow {
+        #color-#{$color}{
+          background: var(--color-accent);
+          color: var(--color-text-invert);
+          border-color: var(--color-border-accent);
+          border-width: medium;
+        }
+      }
+    }
+  }
+  .palette-name {
+    display: inline-flex;
+    border-style: solid;
+    border-width: medium;
+    border-color: var(--color-border);
+    box-shadow: 5px 5px 5px var(--color-drop-shadow);
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .palette-container{
+    display: inline-flex;
+    color: white;
+    text-shadow: 1px 1px black;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    text-align: center;
+    box-shadow: 5px 5px 5px #00000099;
+    .palette-box {
+      border-style: solid;
+      border-color: #00000099;
+      border-spacing: 5px;
+      vertical-align: middle;
+      height: 100px;
+      width: 100px;
+    }
+  }
+}
+

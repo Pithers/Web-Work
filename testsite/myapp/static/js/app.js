@@ -10,7 +10,6 @@ function light_mode() {
     document.documentElement.style.setProperty("--color-tertiary", "#666666");
     document.documentElement.style.setProperty("--color-border", "#838378");
     document.documentElement.style.setProperty("--color-border-accent", "#727267");
-    document.documentElement.style.setProperty("--color-border-transp", "#e5e4d399");
     document.documentElement.style.setProperty("--color-drop-shadow", "#00000033");
 }
 
@@ -24,7 +23,6 @@ function dark_mode() {
     document.documentElement.style.setProperty("--color-tertiary", "#666666");
     document.documentElement.style.setProperty("--color-border", "#826c73");
     document.documentElement.style.setProperty("--color-border-accent", "#715d62");
-    document.documentElement.style.setProperty("--color-border-transp", "#24252f99");
     document.documentElement.style.setProperty("--color-drop-shadow", "#ffffff33");
 }
 

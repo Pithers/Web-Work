@@ -10,7 +10,6 @@ var color_accent = document.getElementById("color-accent");
 var color_tertiary = document.getElementById("color-tertiary");
 var color_border = document.getElementById("color-border");
 var color_border_accent = document.getElementById("color-border-accent");
-var color_border_transp = document.getElementById("color-border-transp");
 var color_drop_shadow = document.getElementById("color-drop-shadow");
 
 color_bg.onchange = function() {
@@ -39,9 +38,6 @@ color_border.onchange = function() {
 };
 color_border_accent.onchange = function() {
   document.documentElement.style.setProperty("--color-border-accent", "#" + color_border_accent.value);
-};
-color_border_transp.onchange = function() {
-  document.documentElement.style.setProperty("--color-border-transp", "#" + color_border_transp.value);
 };
 color_drop_shadow.onchange = function() {
   document.documentElement.style.setProperty("--color-drop-shadow", "#" + color_drop_shadow.value);

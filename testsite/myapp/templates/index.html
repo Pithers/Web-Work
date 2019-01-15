@@ -5,9 +5,31 @@
 {% block page_name %}Color Palette Picker{% endblock %}
 
 {% block content %}
-<div class="grid-container">
-  <!--Only allow user to save color scheme if they are logged in-->
-  {% if user.is_authenticated %}
+<div class="grid-container palette">
+
+  <!--Color Palette Display-->
+  <div class="palette-container">
+    <!--Base Colors-->
+    <div class="palette-box" style="background-color: var(--color-bg);">Elements</div>
+    <div class="palette-box" style="background-color: var(--color-base);"></div>
+    <div class="palette-box" style="background-color: var(--color-accent);"></div>
+    <div class="palette-box" style="background-color: var(--color-tertiary);"></div>
+  </div>
+
+    <!--Text Colors-->
+  <div class="palette-container">
+    <div class="palette-box" style="background-color: var(--color-text);">Text</div>
+    <div class="palette-box" style="background-color: var(--color-text-invert);"></div>
+    <div class="palette-box" style="background-color: var(--color-text-highlight);"></div>
+  </div>
+
+    <!--Border/Box Colors-->
+  <div class="palette-container">
+    <div class="palette-box" style="background-color: var(--color-border);">Borders</div>
+    <div class="palette-box" style="background-color: var(--color-border-accent);"></div>
+    <div class="palette-box" style="background-color: var(--color-drop-shadow);"></div>
+  </div>
+
   <form action="/" method="POST">
     {% csrf_token %}
 
@@ -18,21 +40,14 @@
         {% endfor %}
       </div>
 
-      <!--Naming Field for ColorScheme-->
-      <div class="cell">
-        {{ color_scheme_form.color_scheme_name.label_tag }}
-        {{ color_scheme_form.visible_fields.0 }}
-      </div>
-
       <!--Color Fields-->
       <div class="grid-x grid-padding-x">
         {% for field in color_scheme_form.visible_fields %}
         <!--Ignore other logic for the name field of the form-->
         {% if not forloop.first %}
-        <div class="form-group cell small-4">
-          {{ field.label_tag }}
+        <div class="palette-field cell small-4">
           <button class="jscolor {valueElement: {{ field.name }}}">
-
+            {{ field.label_tag }}
             <!--Display the form and use the correct template variable-->
             {% if field.name == 'color_bg' %}
             {% render_field field id='color-bg' %}
@@ -52,30 +67,29 @@
             {% render_field field id='color-border' %}
             {% elif field.name == 'color_border_accent' %}
             {% render_field field id='color-border-accent' %}
-            {% elif field.name == 'color_border_transp' %}
-            {% render_field field id='color-border-transp' %}
             {% elif field.name == 'color_drop_shadow' %}
             {% render_field field id='color-drop-shadow' %}
             {% endif %}
-
           </button>
-          {% endif %}
-
-          {% if field.help_text %}
-          <!--small class="form-text text-muted">{{ field.help_text }}</small-->
           {% endif %}
         </div>
         {% endfor %}
-        <div class="cell"><br></div>
-        <div class="cell">
-          <input type="Submit" class="button" value="Save Color Scheme">
-        </div>
+      </div>
+      <!--Naming Field for ColorScheme-->
+      <div class="grid-x grid-padding-x palette-name">
+        {{ color_scheme_form.color_scheme_name.label_tag }}
+        {{ color_scheme_form.visible_fields.0 }}
+      </div>
+      <div class="cell">
+        <!--Only allow user to save color scheme if they are logged in-->
+        {% if user.is_authenticated %}
+        <input type="Submit" class="button" value="Save Color Scheme">
+        {% else %}
+        <div class="button">Please login to save color scheme to profile.</div>
+        {% endif %}
       </div>
     </div>
   </form>
-  {% else %}
-  <div>Please login to save color scheme to profile.</div>
-  {% endif %}
 </div>
 {% endblock %}
 
