@@ -9,10 +9,9 @@ from .models import ColorScheme
 class ColorSchemeForm(forms.ModelForm):
     class Meta:
         model = ColorScheme
-        fields = ["color_scheme_name", "color_bg", "color_text", "color_text_invert",
-                  "color_text_highlight", "color_base", "color_accent", "color_tertiary",
-                  "color_border", "color_border_accent", "color_border_transp",
-                  "color_drop_shadow"]
+        fields = ["color_scheme_name", "color_bg", "color_text", "color_border", "color_base",
+                  "color_text_invert", "color_border_accent", "color_accent",
+                  "color_text_highlight", "color_drop_shadow", "color_tertiary",]
 
 class PostForm(forms.Form):
     error_css_class = "post-css-class-error"
