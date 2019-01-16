@@ -46,7 +46,7 @@
         <!--Ignore other logic for the name field of the form-->
         {% if not forloop.first %}
         <div class="palette-field cell small-4">
-          <button class="jscolor {valueElement: {{ field.name }}}">
+          <button class="jscolor {valueElement: {{ field.name }}}" onchange="updateStorage('{{ field.label }}','save')">
             {{ field.label_tag }}
             <!--Display the form and use the correct template variable-->
             {% if field.name == 'color_bg' %}
