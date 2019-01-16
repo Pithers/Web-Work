@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import RegistrationForm, CustomUserChangeForm
-from .models import CustomUser, PostModel, CommentModel
+from .models import CustomUser, PostModel, CommentModel, ColorScheme
 
 class CustomUserAdmin(UserAdmin):
     add_form = RegistrationForm
@@ -14,5 +14,6 @@ class CustomUserAdmin(UserAdmin):
 
 # Register your models here
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(ColorScheme)
 admin.site.register(PostModel)
 admin.site.register(CommentModel)

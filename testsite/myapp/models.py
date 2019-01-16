@@ -10,7 +10,7 @@ import re
 
 # Need to check validator to see if the '#' is needed or not
 def validate_color(value):
-  if (re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$',value) == False):
+  if (re.search(r'^(?:[0-9a-fA-F]{3}){1,2}$',value) == False):
     raise ValidationError(
         _('%(value)s is not valid hex color code'),
         params={'value':value},
@@ -46,9 +46,7 @@ class ColorScheme(models.Model):
                                        help_text="Please submit valid hexcode, ex: #666666")
 
   def __str__(self):
-    return self.color_scheme_name + ":\n" + self.color_bg + "\n" + self.color_text + "\n" + self.color_text_invert + "\n" + \
-           self.color_text_highlight + "\n" + self.color_base + "\n" + self.color_tertiary + "\n" + self.color_border + "\n" + \
-           self.color_border_accent + "\n" + "\n" + self.color_drop_shadow
+    return self.color_scheme_name
 
 # Model that contains something like a Post
 class PostModel(models.Model):
