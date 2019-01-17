@@ -5,6 +5,8 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
 from django.contrib.auth import logout
+from django.core.exceptions import ObjectDoesNotExist, EmptyResultSet
+from django.core.exceptions import FieldDoesNotExist, MultipleObjectsReturned
 #from django.contrib.auth.decorators import login_required
 
 from . import models
@@ -91,9 +93,6 @@ def register(request):
 
 #RESTful post view ex: site/rest_post/
 def rest_post(request):
-   #if not request.user.is_authenticated:
-        #return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-        #return JsonResponse({"posts":[]})
     if request.method == 'GET':
         #Get all posts
         posts = models.PostModel.objects.all()
@@ -122,6 +121,44 @@ def rest_post(request):
 
         return JsonResponse({"posts":post_list})
     return HttpResponse('Invalid HTTP Method')
+
+#RESTful get color schemes
+def rest_color_scheme(request):
+    if request.method == 'GET' and request.user.is_authenticated:
+        try:
+            color_schemes = models.ColorScheme.objects.filter(creator__exact=request.user)
+        except ObjectDoesNotExist:
+            print("Object searched for does not exist.")
+            return HttpResponse("Invalid Query: ObjectDoesNotExist")
+        except EmptyResultSet:
+            print("No results match name and user.")
+            return HttpResponse("Invalid Query: No results.")
+        except FieldDoesNotExist:
+            print("Searched field does not exist.")
+            return HttpResponse("Invalid Query: Field/s do not exist.")
+        except MultipleObjectsReturned:
+            print("Multiple schemes with same name from user.")
+            return HttpResponse("Invalid Query: Multiple Objects fit search.")
+
+        color_scheme_list = []
+        for item in color_schemes:
+            add_to_list = {
+                'color_scheme_name':item.color_scheme_name,
+                'color_bg':item.color_bg,
+                'color_base':item.color_base,
+                'color_accent':item.color_accent,
+                'color_tertiary':item.color_tertiary,
+                'color_text':item.color_text,
+                'color_text_invert':item.color_text_invert,
+                'color_text_highlight':item.color_text_highlight,
+                'color_border':item.color_border,
+                'color_border_accent':item.color_border_accent,
+                'color_drop_shadow':item.color_drop_shadow
+            }
+            color_scheme_list += [add_to_list]
+
+        return JsonResponse({"color_scheme":color_scheme_list})
+    return redirect('/login/')
 
 def webgl_view(request, name):
     context = {

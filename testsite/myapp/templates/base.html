@@ -18,8 +18,7 @@
   </head>
 
   <!--Use onload to load a javascript module to change the CSS coloscheme-->
-  <!--body class="light-mode" onload="loadSession()"-->
-  <body onload="loadSession()">
+  <body onload="loadSession();">
     <div class="main-wrapper">
       <div class="off-canvas-content" data-off-canvas-content>
         <div class="nav-bar">
@@ -91,11 +90,17 @@
         </ul>
         <ul class="vertical menu">
           <div class="switch">
-            <input class="switch-input" id="light-switch" type="checkbox" onchange="themeUpdate(this)">
+            <input class="switch-input" id="light-switch" type="checkbox" onchange="themeUpdate(this);">
             <label class="switch-paddle" for="light-switch"> 
               <i class="switch-active fas fa-moon fa-lg" style="color:#fefcd7"></i>
               <i class="switch-inactive fas fa-sun fa-lg" style="color:#fcd440"></i>
             </label>
+          </div>
+          <div id="fetch_color_scheme">
+            <!--Correctly displays color scheme names, but need to turn this into a button that loads the scheme in-->
+            <div v-for="(item, index) in color_scheme">
+              [[ item.color_scheme_name ]]
+            </div>
           </div>
         </ul>
         <ul class="menu simple social-links">
@@ -121,7 +126,9 @@
     <script src="{% static "js/vendor/jquery.js" %}"></script>
     <script src="{% static "js/vendor/what-input.js" %}"></script>
     <script src="{% static "js/vendor/foundation.min.js" %}"></script>
-    <script src="{% static "js/app.js" %}"></script>
+    <script src="https://unpkg.com/axios/dist/axios.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="{% static "js/base_app.js" %}"></script>
     {% block scripts %}
     {% endblock %}
   </body>
