@@ -7,6 +7,14 @@
 {% block content %}
 <div class="grid-container palette">
 
+  <!--Script overwrite loadSession for this page -->
+  <script type="text/javascript">
+    function init() {
+      loadSession()
+      updateJscolor()
+    }window.onload = init;
+  </script>
+
   <!--Color Palette Display-->
   <div class="palette-container">
     <!--Base Colors-->
@@ -16,21 +24,21 @@
     <div class="palette-box" style="background-color: var(--color-tertiary);"></div>
   </div>
 
-    <!--Text Colors-->
+  <!--Text Colors-->
   <div class="palette-container">
     <div class="palette-box" style="background-color: var(--color-text);">Text</div>
     <div class="palette-box" style="background-color: var(--color-text-invert);"></div>
     <div class="palette-box" style="background-color: var(--color-text-highlight);"></div>
   </div>
 
-    <!--Border/Box Colors-->
+  <!--Border/Box Colors-->
   <div class="palette-container">
     <div class="palette-box" style="background-color: var(--color-border);">Borders</div>
     <div class="palette-box" style="background-color: var(--color-border-accent);"></div>
     <div class="palette-box" style="background-color: var(--color-drop-shadow);"></div>
   </div>
 
-  <form action="/" method="POST">
+  <form action="/" method="POST" onsubmit="colorListUpdate();">
     {% csrf_token %}
 
     <div class="grid-x grid-padding-x">
@@ -46,7 +54,7 @@
         <!--Ignore other logic for the name field of the form-->
         {% if not forloop.first %}
         <div class="palette-field cell small-4">
-          <button class="jscolor {valueElement: {{ field.name }}}" onchange="updateStorage('{{ field.label }}','save')">
+          <button class="jscolor {valueElement: {{ field.name }}}" onchange="updateStorage('{{ field.label }}','save');">
             {{ field.label_tag }}
             <!--Display the form and use the correct template variable-->
             {% if field.name == 'color_bg' %}

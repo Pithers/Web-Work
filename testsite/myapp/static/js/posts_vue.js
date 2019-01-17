@@ -1,5 +1,4 @@
 //myapp/static/js/my_vue.js
-
 //Note: Consider adding delimiters: ['[[',']]'] to the configs.
 
 //Custom vue direction for use with Foundation
@@ -7,14 +6,10 @@ Vue.directive('foundation', {
   bind(el) {
     $(el).foundation()
   },
-  //Unbind was having problems with mixing foundation and vue.js
-  /*unbind(el) {
-    $(el).foundation.destroy()
-  }*/
 })
 
 //Vue object that fetches our post/comment model from the database
-var fetch_app = new Vue({
+var fetch_post = new Vue({
   delimiters: ['[[',']]'],
   el: '#fetch_post',
   data () {
@@ -65,9 +60,9 @@ var fetch_app = new Vue({
 
     getPostsList: function() {
       axios
-      //Access our own API to get a json object
+        //Access our own API to get a json object
         .get('/rest_posts/')
-      //Make sure to grab the response data, not the response itself
+        //Make sure to grab the response data, not the response itself
         .then(response => (this.posts_list = response.data.posts))
     },
 
