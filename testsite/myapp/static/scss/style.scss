@@ -17,7 +17,7 @@
   --color-bg: #e5e4d3;
   --color-text: #241a22;
   --color-text-invert: #e5e4d3;
-  --color-text-highlight: #e5e4d3;
+  --color-text-highlight: #20436f;
   --color-base: #817b7b;
   --color-accent: #667075;
   --color-tertiary: #666666;
@@ -169,8 +169,13 @@ select, [type="number"] {
   }
 }
 
-.menu a:hover {
-  color: var(--color-text-highlight);
+.menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  a:hover {
+    color: var(--color-text-highlight);
+  }
 }
 
 @media screen and (max-width: 39.9375em) {
@@ -219,24 +224,24 @@ select, [type="number"] {
   > .menu {
     margin-bottom: 1rem;
   }
-  .menu a {
-    color: var(--color-text);
-    opacity: 0.6;
-    padding-top: 34px;
-    padding-bottom: 7px;
-    transition: color 0.2s ease-in;
-  }
-}
-
-.menu {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.multilevel-offcanvas {
-  .menu a:hover, .fa {
-    color: var(--color-accent);
+  .menu {
+    a {
+      color: var(--color-text);
+      opacity: 0.6;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      transition: color 0.2s ease-in;
+      &:hover {
+        color: var(--color-text-highlight);
+      }
+    }
+    .nested {
+      padding-bottom:20px;
+      a {
+        padding-top: 5px;
+        padding-bottom: 5px;
+      }
+    }
   }
   .is-accordion-submenu-parent > a::after {
     border-color: var(--color-bg) transparent transparent;

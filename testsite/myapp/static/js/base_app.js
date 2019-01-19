@@ -4,12 +4,12 @@ var root_style = document.documentElement.style
 
 function light_mode() {
   root_style.setProperty("--color-bg", "#e5e4d3");
-  root_style.setProperty("--color-text", "#241a22");
-  root_style.setProperty("--color-text-invert", "#e5e4d3");
-  root_style.setProperty("--color-text-highlight", "#e5e4d3");
   root_style.setProperty("--color-base", "#817b7b");
   root_style.setProperty("--color-accent", "#667075");
   root_style.setProperty("--color-tertiary", "#666666");
+  root_style.setProperty("--color-text", "#241a22");
+  root_style.setProperty("--color-text-invert", "#e5e4d3");
+  root_style.setProperty("--color-text-highlight", "#20436f");
   root_style.setProperty("--color-border", "#838378");
   root_style.setProperty("--color-border-accent", "#727267");
   root_style.setProperty("--color-drop-shadow", "#00000033");
@@ -17,12 +17,12 @@ function light_mode() {
 
 function dark_mode() {
   root_style.setProperty("--color-bg", "#24252f");
-  root_style.setProperty("--color-text", "#eaeced");
-  root_style.setProperty("--color-text-invert", "#24252f");
-  root_style.setProperty("--color-text-highlight", "#24252f");
   root_style.setProperty("--color-base", "#7f838e");
   root_style.setProperty("--color-accent", "#7dacc4");
   root_style.setProperty("--color-tertiary", "#666666");
+  root_style.setProperty("--color-text", "#eaeced");
+  root_style.setProperty("--color-text-invert", "#24252f");
+  root_style.setProperty("--color-text-highlight", "#1f6f90");
   root_style.setProperty("--color-border", "#826c73");
   root_style.setProperty("--color-border-accent", "#715d62");
   root_style.setProperty("--color-drop-shadow", "#ffffff33");
@@ -127,7 +127,7 @@ function updateStorage(name, method) {
         break;
     case "Color drop shadow":
       if(method == "save")
-        sessionStorage.setItem("color_drop_shadow", root_style.getPropertyValue("--color-drop_shadow"));
+        sessionStorage.setItem("color_drop_shadow", root_style.getPropertyValue("--color-drop-shadow"));
       else if(method == "load" && sessionStorage.getItem("color_drop_shadow") !== null)
         root_style.setProperty("--color-drop-shadow", sessionStorage.getItem("color_drop_shadow"));
       if(all == false)
