@@ -58,6 +58,7 @@
       </div>
       <!--Offcanvas sidebar-->
       <div class="multilevel-offcanvas off-canvas position-right" id="offCanvasRight" data-off-canvas>
+        <br></br>
         <ul class="vertical menu" data-accordion-menu>
           <li><a href="#">WegGL</a>
             <ul class="menu vertical nested">
@@ -74,7 +75,7 @@
           <li><a href="#">Art</a></li>
           <li><a href="#">Visual Novel</a></li>
         </ul>
-        </br>
+        <br></br>
         <ul class="vertical menu" data-accordion-menu>
           <li><a href="#">Account</a>
             <ul class="menu vertical nested">
@@ -88,6 +89,7 @@
           </li>
           <li><a href="/about/">About</a></li>
         </ul>
+        <br></br>
         <ul class="vertical menu">
           <div class="switch">
             <input class="switch-input" id="light-switch" type="checkbox" onchange="themeUpdate(this);">
@@ -96,13 +98,23 @@
               <i class="switch-inactive fas fa-sun fa-lg" style="color:#fcd440"></i>
             </label>
           </div>
-          <div id="fetch_color_scheme">
-            <!--Correctly displays color scheme names, but need to turn this into a button that loads the scheme in-->
-            <div v-for="(item, index) in color_scheme">
-              [[ item.color_scheme_name ]]
-            </div>
-          </div>
         </ul>
+        <ul class="vertical menu" data-accordion-menu>
+          <!--Correctly displays color scheme names, but need to turn this into a button that loads the scheme in-->
+          <li><a href="#">My Color Schemes</a>
+            <ul class="menu vertical nested">
+              <div id="fetch_color_scheme">
+                <div v-if="color_scheme.length == 0">
+                  <li><a href="#">None available</a></li>
+                </div>
+                <div v-for="(item, index) in color_scheme">
+                  <li><a href="#">[[ item.color_scheme_name ]]</a></li>
+                </div>
+              </div>
+            </ul>
+          </li>
+        </ul>
+        <br></br>
         <ul class="menu simple social-links">
           <li><a href="https://github.com/pithers/Web-Work" target="_blank"><i class="fab fa-github-square fa-2x"></i></a></li>
           <li><a href="https://gitlab.com/pithers/Web-Work" target="_blank"><i class="fab fa-gitlab fa-2x"></i></a></li>

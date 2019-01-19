@@ -7,31 +7,28 @@ would also be nicer to declare each theme rather than make global variables for 
 
 .light-mode {
   --color-bg: #e5e4d3;
-  --color-text: #241a22;
-  --color-text-ui: #241a22;
-  --color-text-invert: #e5e4d3;
-  --color-text-highlight: #e5e4d3;
   --color-base: #817b7b;
   --color-accent: #667075;
   --color-tertiary: #666666;
+  --color-text: #241a22;
+  --color-text-invert: #e5e4d3;
+  --color-text-highlight: #20436f;
   --color-border: #838378;
   --color-border-accent: #727267;
-  --color-border-transparent: #e5e4d399;
-  --color-drop-shadow: #00000033; /*rgba(0, 0, 0, 0.2);*/
+  --color-drop-shadow: #00000033;
 }
 
 .dark-mode {
   --color-bg: #24252f;
-  --color-text: #eaeced;
-  --color-text-ui: #eaeced;
-  --color-text-invert: #24252f;
   --color-base: #7f838e;
   --color-accent: #7dacc4;
   --color-tertiary: #666666;
+  --color-text: #eaeced;
+  --color-text-invert: #24252f;
+  --color-text-highlight: #1f6f90;
   --color-border: #826c73;
   --color-border-accent: #715d62;
-  --color-border-transparent: #24252f99;
-  --color-drop-shadow: #ffffff33; /*rgba(0, 0, 0, 0.2);*/
+  --color-drop-shadow: #ffffff33;
 }
 
 .main-wrapper {
