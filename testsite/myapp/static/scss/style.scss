@@ -346,12 +346,27 @@ select, [type="number"] {
 
 //Palette Styling
 .palette {
+
+  .auto-generate, .palette-submit {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-style: solid;
+    border-width: medium;
+    border-color: var(--color-border);
+    box-shadow: 5px 5px 5px var(--color-drop-shadow);
+  }
+
+  .auto-generate {
+    margin-top: 50px;
+  }
+
   .palette-field {
     text-align: center;
     margin-top: 10px;
     margin-bottom: 10px;
 
-    button.jscolor {
+    button {
       border-style: solid;
       border-width: medium;
       border-color: var(--color-border);
@@ -360,6 +375,7 @@ select, [type="number"] {
       padding-right: 5px;
       padding-top: 5px;
       padding-bottom: 5px;
+      height: 130px;
 
       &:hover {
         background: var(--color-tertiary) !important;

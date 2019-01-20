@@ -2,6 +2,7 @@
 $(document).foundation();
 var root_style = document.documentElement.style
 
+//Functions to define light and dark modes
 function light_mode() {
   root_style.setProperty("--color-bg", "#e5e4d3");
   root_style.setProperty("--color-base", "#817b7b");
@@ -43,24 +44,50 @@ var fetch_color_scheme = new Vue({
   },
 
   methods: {
+    //Method retrieves color scheme models from database
     getColorScheme: function() {
       axios
         //Access our own API to get a json object
         .get('/rest_color_scheme/')
         //Make sure to grab the response data, not the response itself
         .then(response => (this.color_scheme = response.data.color_scheme))
+    },
+    //Method loads colorscheme into website when clicked. Index locates specific color scheme
+    loadColorScheme: function(index) {
+      //We need to access the object here and set all of the parts
+      //Objects save without hashtag so add it back in before loading
+      root_style.setProperty("--color-bg", "#" + this.color_scheme[index].color_bg);
+      root_style.setProperty("--color-base", "#" + this.color_scheme[index].color_base);
+      root_style.setProperty("--color-accent", "#" + this.color_scheme[index].color_accent);
+      root_style.setProperty("--color-tertiary", "#" + this.color_scheme[index].color_tertiary);
+      root_style.setProperty("--color-text", "#" + this.color_scheme[index].color_text);
+      root_style.setProperty("--color-text-invert", "#" + this.color_scheme[index].color_text_invert);
+      root_style.setProperty("--color-text-highlight", "#" + this.color_scheme[index].color_text_highlight);
+      root_style.setProperty("--color-border", "#" + this.color_scheme[index].color_border);
+      root_style.setProperty("--color-border-accent", "#" + this.color_scheme[index].color_border_accent);
+      root_style.setProperty("--color-drop-shadow", "#" + this.color_scheme[index].color_drop_shadow);
+      //Then save name of color scheme into session Storage
+      sessionStorage.setItem("color-mode", this.color_scheme[index].color_scheme_name);
+
+      //Then save into session storage and update Jscolor boxes
+      updateStorage("all", "save");
+
+      //We need to only update js color when we are on the index page
+      if(window.location.pathname == "/")
+        updateJscolor();
     }
   }
 })
 
+//Function to get color scheme from vue object
 function colorListUpdate() {
   fetch_color_scheme.getColorScheme();
 }
 
 //Upon changing colors, save them to browser session storage so colorscheme can be held across pages
+//If name == "all" then every element will be saved/loaded
 //If method == "save" then the css color property will be saved into session storage
 //If method == "load" then the css color property will be loaded from session storage
-//If name == "all" then every element will be saved/loaded
 function updateStorage(name, method) {
   var all = false;
   if(name == "all") {

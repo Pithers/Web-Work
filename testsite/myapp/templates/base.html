@@ -58,7 +58,9 @@
       </div>
       <!--Offcanvas sidebar-->
       <div class="multilevel-offcanvas off-canvas position-right" id="offCanvasRight" data-off-canvas>
-        <br></br>
+        <br>
+        Content
+        <hr>
         <ul class="vertical menu" data-accordion-menu>
           <li><a href="#">WegGL</a>
             <ul class="menu vertical nested">
@@ -75,30 +77,25 @@
           <li><a href="#">Art</a></li>
           <li><a href="#">Visual Novel</a></li>
         </ul>
-        <br></br>
+        <br>
+        {% if user.is_authenticated %}
+        User: {{ user.username }}
+        {% else %}
+        Account
+        {% endif %}
+        <hr>
         <ul class="vertical menu" data-accordion-menu>
-          <li><a href="#">Account</a>
-            <ul class="menu vertical nested">
-              <li><a href="#">Preferences</a></li>
-              {% if user.is_authenticated %}
-              <li><a href="/logout/">Logout</a></li>
-              {% else %}
-              <li><a href="/login/">Login</a></li>
-              {% endif %}
-            </ul>
-          </li>
-          <li><a href="/about/">About</a></li>
+          {% if user.is_authenticated %}
+          <li><a href="#">-Preferences-</a></li>
+          <li><a href="/logout/">Logout</a></li>
+          {% else %}
+          <li><a href="/login/">Login</a></li>
+          {% endif %}
+              </li>
         </ul>
-        <br></br>
-        <ul class="vertical menu">
-          <div class="switch">
-            <input class="switch-input" id="light-switch" type="checkbox" onchange="themeUpdate(this);">
-            <label class="switch-paddle" for="light-switch"> 
-              <i class="switch-active fas fa-moon fa-lg" style="color:#fefcd7"></i>
-              <i class="switch-inactive fas fa-sun fa-lg" style="color:#fcd440"></i>
-            </label>
-          </div>
-        </ul>
+        <br>
+        Styling
+        <hr>
         <ul class="vertical menu" data-accordion-menu>
           <!--Correctly displays color scheme names, but need to turn this into a button that loads the scheme in-->
           <li><a href="#">My Color Schemes</a>
@@ -108,14 +105,26 @@
                   <li><a href="#">None available</a></li>
                 </div>
                 <div v-for="(item, index) in color_scheme">
-                  <li><a href="#">[[ item.color_scheme_name ]]</a></li>
+                  <li><a v-on:click="loadColorScheme(index);">[[ item.color_scheme_name ]]</a></li>
                 </div>
               </div>
             </ul>
           </li>
         </ul>
-        <br></br>
+        <ul class="vertical menu">
+          <div class="switch">
+            <input class="switch-input" id="light-switch" type="checkbox" onchange="themeUpdate(this);">
+            <label class="switch-paddle" for="light-switch"> 
+              <i class="switch-active fas fa-moon fa-lg" style="color:#fefcd7"></i>
+              <i class="switch-inactive fas fa-sun fa-lg" style="color:#fcd440"></i>
+            </label>
+          </div>
+        </ul>
+        <br>
+        Website
+        <hr>
         <ul class="menu simple social-links">
+          <li><a href="/about/">About</a></li>
           <li><a href="https://github.com/pithers/Web-Work" target="_blank"><i class="fab fa-github-square fa-2x"></i></a></li>
           <li><a href="https://gitlab.com/pithers/Web-Work" target="_blank"><i class="fab fa-gitlab fa-2x"></i></a></li>
         </ul>
