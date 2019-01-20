@@ -82,6 +82,23 @@
           {% endif %}
         </div>
         {% endfor %}
+        <div class="cell auto">
+            <div class="button auto-generate">
+              Generate Color Scheme
+            </div>
+            <div class="button auto-generate">
+              Upload Picture
+            </div>
+            <div class="button auto-generate">
+              Upload Picture
+            </div>
+            <div class="button auto-generate">
+              Upload Picture
+            </div>
+            <div class="button auto-generate">
+              Upload Picture
+            </div>
+        </div>
       </div>
       <!--Naming Field for ColorScheme-->
       <div class="grid-x grid-padding-x palette-name">
@@ -91,9 +108,9 @@
       <div class="cell">
         <!--Only allow user to save color scheme if they are logged in-->
         {% if user.is_authenticated %}
-        <input type="Submit" class="button" value="Save Color Scheme">
+        <input type="Submit" class="button palette-submit" value="Save Color Scheme">
         {% else %}
-        <div class="button">Please login to save color scheme to profile.</div>
+        <div class="button palette-submit">Please login to save color scheme to profile.</div>
         {% endif %}
       </div>
     </div>
