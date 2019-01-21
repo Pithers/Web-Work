@@ -66,6 +66,7 @@ var fetch_color_scheme = new Vue({
       root_style.setProperty("--color-border", "#" + this.color_scheme[index].color_border);
       root_style.setProperty("--color-border-accent", "#" + this.color_scheme[index].color_border_accent);
       root_style.setProperty("--color-drop-shadow", "#" + this.color_scheme[index].color_drop_shadow);
+
       //Then save name of color scheme into session Storage
       sessionStorage.setItem("color-mode", this.color_scheme[index].color_scheme_name);
 
@@ -75,6 +76,7 @@ var fetch_color_scheme = new Vue({
       //We need to only update js color when we are on the index page
       if(window.location.pathname == "/")
         updateJscolor();
+        document.getElementById("id_color_scheme_name").value = this.color_scheme[index].color_scheme_name;
     }
   }
 })
@@ -195,38 +197,44 @@ function updateJscolor() {
     "background-color:" + root_style.getPropertyValue("--color-drop-shadow") + ";";
 
   //Update jscolor text fields
-  document.getElementById("color-bg").value = root_style.getPropertyValue("--color-bg");
-  document.getElementById("color-base").value = root_style.getPropertyValue("--color-base");
-  document.getElementById("color-accent").value = root_style.getPropertyValue("--color-accent");
-  document.getElementById("color-tertiary").value = root_style.getPropertyValue("--color-tertiary");
-  document.getElementById("color-text").value = root_style.getPropertyValue("--color-text");
-  document.getElementById("color-text-invert").value = root_style.getPropertyValue("--color-text-invert");
-  document.getElementById("color-text-highlight").value = root_style.getPropertyValue("--color-text-highlight");
-  document.getElementById("color-border").value = root_style.getPropertyValue("--color-border");
-  document.getElementById("color-border-accent").value = root_style.getPropertyValue("--color-border-accent");
-  document.getElementById("color-drop-shadow").value = root_style.getPropertyValue("--color-drop-shadow");
+  //If there are hashtags, be sure to strip them off
+  document.getElementById("color-bg").value = (root_style.getPropertyValue("--color-bg")).replace('#','');
+  document.getElementById("color-base").value = (root_style.getPropertyValue("--color-base")).replace('#','');
+  document.getElementById("color-accent").value = (root_style.getPropertyValue("--color-accent")).replace('#','');
+  document.getElementById("color-tertiary").value = (root_style.getPropertyValue("--color-tertiary")).replace('#','');
+  document.getElementById("color-text").value = (root_style.getPropertyValue("--color-text")).replace('#','');
+  document.getElementById("color-text-invert").value = (root_style.getPropertyValue("--color-text-invert")).replace('#','');
+  document.getElementById("color-text-highlight").value = (root_style.getPropertyValue("--color-text-highlight")).replace('#','');
+  document.getElementById("color-border").value = (root_style.getPropertyValue("--color-border")).replace('#','');
+  document.getElementById("color-border-accent").value = (root_style.getPropertyValue("--color-border-accent")).replace('#','');
+  document.getElementById("color-drop-shadow").value = (root_style.getPropertyValue("--color-drop-shadow")).replace('#','');
 }
 
 //Grab session data and set color-mode and checkbox accordingly
 //Can consider adding another field to sessionStorage which are additonal color modes
 function loadSession() {
-  updateStorage("all", "load");
+  updateStorage("all", "load"); //Load from session storage
 
   var color_mode = sessionStorage.getItem("color-mode");
-  if(color_mode == "dark-mode")
+  if(color_mode == "default-dark-mode")
     document.getElementById("light-switch").checked = true;
-  else if (color_mode == "light-mode")
+  else if (color_mode == "default-light-mode")
     document.getElementById("light-switch").checked = false;
+
+  document.getElementById("id_color_scheme_name").value = color_mode;
 }
 
 //Site theme darkmode toggle, set root css variables accordingly
 function themeUpdate(element) {
+
   if(element.checked) {
     dark_mode();
-    sessionStorage.setItem("color-mode", "dark-mode");
+    sessionStorage.setItem("color-mode", "default-dark-mode");
+    document.getElementById("id_color_scheme_name").value = "default-dark-mode";
   } else {
     light_mode();
-    sessionStorage.setItem("color-mode", "light-mode");
+    sessionStorage.setItem("color-mode", "default-light-mode");
+    document.getElementById("id_color_scheme_name").value = "default-light-mode";
   }
   updateStorage("all", "save");
   updateJscolor();

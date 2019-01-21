@@ -101,12 +101,17 @@
           <li><a href="#">My Color Schemes</a>
             <ul class="menu vertical nested">
               <div id="fetch_color_scheme">
+              {% if user.is_authenticated %}
+              <div id="fetch_color_scheme">
                 <div v-if="color_scheme.length == 0">
                   <li><a href="#">None available</a></li>
                 </div>
                 <div v-for="(item, index) in color_scheme">
                   <li><a v-on:click="loadColorScheme(index);">[[ item.color_scheme_name ]]</a></li>
                 </div>
+              {% else %}
+              <li><a href="#">Login to access color schemes</a></li>
+              {% endif %}
               </div>
             </ul>
           </li>
