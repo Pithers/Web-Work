@@ -13,6 +13,9 @@ class ColorSchemeForm(forms.ModelForm):
                   "color_text_invert", "color_border_accent", "color_accent",
                   "color_text_highlight", "color_drop_shadow", "color_tertiary",]
 
+    #Start work here on getting objects to be editable
+    # def form_valid(self, form):
+
 class PostForm(forms.Form):
     error_css_class = "post-css-class-error"
     required_css_class = "post-css-class"

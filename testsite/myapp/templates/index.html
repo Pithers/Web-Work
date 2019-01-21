@@ -82,21 +82,17 @@
           {% endif %}
         </div>
         {% endfor %}
-        <div class="cell auto">
-            <div class="button auto-generate">
+        <div class="palette-field cell small-4">
+            <div class="palette-button button colormind" data-colormind-start>
               Generate Color Scheme
             </div>
-            <div class="button auto-generate">
-              Upload Picture
+            <div class="palette-button button colormind hide" data-colormind-end>
+              Generating...
             </div>
-            <div class="button auto-generate">
-              Upload Picture
-            </div>
-            <div class="button auto-generate">
-              Upload Picture
-            </div>
-            <div class="button auto-generate">
-              Upload Picture
+        </div>
+        <div class="palette-field cell small-4">
+            <div class="palette-button button colormind" onclick="colorRandomizer()">
+              Randomize
             </div>
         </div>
       </div>
@@ -121,4 +117,5 @@
 {% block scripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.0.4/jscolor.min.js"></script>
 <script src="{% static "js/color_mode.js" %}"></script>
+<script src="{% static "js/colormind.js" %}"></script>
 {% endblock %}
