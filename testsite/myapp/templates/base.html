@@ -34,7 +34,7 @@
             <ul class="menu title-icon">
               {% if user.is_authenticated %}
               <li class="hide-for-small-only"><a href="/logout/">Logout</a></li>
-              <a href="/login/"><i class="fas fa-cog fa-lg"></i></a>
+              <a href="/preferences/"><i class="fas fa-cog fa-lg"></i></a>
               <a href="/login/" class="hide-for-small-only"><i class="fas fa-user fa-lg"> {{ user.username }}</i></a>
               <a href="/login/" class="show-for-small-only"><i class="fas fa-user fa-lg"></i></a>
               {% else %}
@@ -86,7 +86,7 @@
         <hr>
         <ul class="vertical menu" data-accordion-menu>
           {% if user.is_authenticated %}
-          <li><a href="#">-Preferences-</a></li>
+          <li><a href="/preferences/">Preferences</a></li>
           <li><a href="/logout/">Logout</a></li>
           {% else %}
           <li><a href="/login/">Login</a></li>
@@ -102,7 +102,6 @@
             <ul class="menu vertical nested">
               <div id="fetch_color_scheme">
               {% if user.is_authenticated %}
-              <div id="fetch_color_scheme">
                 <div v-if="color_scheme.length == 0">
                   <li><a href="#">None available</a></li>
                 </div>

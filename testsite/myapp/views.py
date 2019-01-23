@@ -5,16 +5,20 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist, EmptyResultSet
 from django.core.exceptions import FieldDoesNotExist, MultipleObjectsReturned
-#from django.contrib.auth.decorators import login_required
 
 from . import models
 from . import forms
 
+#User Preferences/Account view
+@login_required
+def preferences_view(request):
+        return render(request, 'preferences.html')
+
 #Post view
-#login required function decorator
-#@login_required
 def post_view(request):
     comm_form = forms.CommentForm()
     if request.method == 'POST':
@@ -174,8 +178,18 @@ def music_view(request):
 
 def index_view(request):
     if request.method == "POST" and request.user.is_authenticated:
-        #Search for model instance right here?
-        color_scheme_form = forms.ColorSchemeForm(request.POST)
+        #Search for current color_scheme_name in database
+        scheme_name = request.POST.get('color_scheme_name')
+        try:
+            current = models.ColorScheme.objects.get(color_scheme_name=scheme_name,
+                                                     creator=request.user)
+        except MultipleObjectsReturned:
+            return HttpResponse("Invalid Query: Multiple Objects fit search.")
+        except ObjectDoesNotExist:
+            current = None
+
+        #If the object already exists, overwrite it, if not create a new one
+        color_scheme_form = forms.ColorSchemeForm(request.POST, instance=current)
         if color_scheme_form.is_valid():
             temp_form = color_scheme_form.save(commit=False)
             temp_form.creator = request.user
