@@ -174,13 +174,12 @@ def music_view(request):
 
 def index_view(request):
     if request.method == "POST" and request.user.is_authenticated:
-            #Search for model instance right here?
-            color_scheme_form = forms.ColorSchemeForm(request.POST)
-            if color_scheme_form.is_valid():
-                temp_form = color_scheme_form.save(commit=False)
-                temp_form.creator = request.user
-                temp_form.save()
-            return redirect('/')
-    else:
-        color_scheme_form = forms.ColorSchemeForm()
+        #Search for model instance right here?
+        color_scheme_form = forms.ColorSchemeForm(request.POST)
+        if color_scheme_form.is_valid():
+            temp_form = color_scheme_form.save(commit=False)
+            temp_form.creator = request.user
+            temp_form.save()
+        return redirect('/')
+    color_scheme_form = forms.ColorSchemeForm()
     return render(request, 'index.html', {'color_scheme_form': color_scheme_form})
