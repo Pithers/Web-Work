@@ -12,6 +12,7 @@
     function init() {
       loadSession()
       updateJscolor()
+      colorSchemeNameUpdate()
     }window.onload = init;
   </script>
 
@@ -51,7 +52,6 @@
       <!--Color Fields-->
       <div class="grid-x grid-padding-x">
         {% for field in color_scheme_form.visible_fields %}
-        <!--Ignore other logic for the name field of the form-->
         {% if not forloop.first %}
         <div class="palette-field cell small-4">
           <button class="jscolor {valueElement: {{ field.name }}}" onchange="updateStorage('{{ field.label }}','save');">
@@ -98,13 +98,16 @@
       </div>
       <!--Naming Field for ColorScheme-->
       <div class="grid-x grid-padding-x palette-name">
+        <div class="withShadow"></div>
+        <div class="withoutShadow">
         {{ color_scheme_form.color_scheme_name.label_tag }}
         {{ color_scheme_form.visible_fields.0 }}
+        </div>
       </div>
       <div class="cell">
         <!--Only allow user to save color scheme if they are logged in-->
         {% if user.is_authenticated %}
-        <input type="Submit" class="button palette-submit" value="Save Color Scheme">
+        <input type="Submit" id="palette-form-submit" class="button palette-submit" value="Save Color Scheme">
         {% else %}
         <div class="button palette-submit">Please login to save color scheme to profile.</div>
         {% endif %}
