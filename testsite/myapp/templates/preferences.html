@@ -4,7 +4,21 @@
 {% block page_name %}Preferences{% endblock %}
 
 {% block content %}
-<div class="grid-x grid-padding-x">
-  Need to add place to choose color palettes to load on login or page visit if logged in
+<div class="grid-container palette">
+  <form action="/preferences/" method="post">
+    {% csrf_token %}
+
+    {% if active_scheme_form.visible_fields.0.name == 'active_color_scheme' %}
+    field exists!
+    {% endif %}
+
+    <div id="user-color-schemes">
+      Set User Default Color Schemes:
+    </div>
+  </form>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/preferences.js" %}"></script>
 {% endblock %}

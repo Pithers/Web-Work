@@ -9,19 +9,23 @@ from django.utils.translation import gettext_lazy as _
 
 # Need to check validator to see if the '#' is needed or not
 def validate_color(value):
-    if not re.search(r'^(?:[0-9a-fA-F]{3}){1,2}$', value):
+    if not re.search(r"^(?:[0-9a-fA-F]{3}){1,2}$", value):
         raise ValidationError(
-            _('%(value)s is not valid hex color code'),
+            _("%(value)s is not valid hex color code"),
             params={'value':value},
         )
 
 # Custom User Model
 class CustomUser(AbstractUser):
+    #Active color_scheme, use the fully-qualified model string, since ColorScheme is defined below
+    active_color_scheme = models.ForeignKey("ColorScheme", on_delete=models.SET_NULL,
+                                            blank=True, null=True)
     def __str__(self):
         return self.email
 
 class ColorScheme(models.Model):
-    creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE,
+                                blank=True, null=True)
     color_scheme_name = models.CharField(max_length=20)
     color_bg = models.CharField(max_length=7, default="#666666",
                                 validators=[validate_color],

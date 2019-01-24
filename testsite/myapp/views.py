@@ -1,7 +1,5 @@
 #myapp/views.py
 
-#Look into google's nautral language api
-
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
 from django.contrib.auth import logout
@@ -16,7 +14,29 @@ from . import forms
 #User Preferences/Account view
 @login_required
 def preferences_view(request):
-        return render(request, 'preferences.html')
+    if request.method == 'POST':
+
+        #Verify that the colorscheme exists in the database
+        scheme_name = request.POST.get('scheme_name')
+        try:
+            color_scheme_model = models.ColorScheme.objects.get(color_scheme_name=scheme_name,
+                                                     creator=request.user)
+        except MultipleObjectsReturned:
+            return HttpResponse("Invalid Query: Multiple Objects fit search.")
+        except ObjectDoesNotExist:
+            color_scheme_model = None
+
+        #Currently there's nothing being passed to this form
+        #This will change in the future as more preference fields are given to the user
+        active_scheme_form = forms.ColorSchemeActiveForm(instance=request.user)
+        #if active_scheme_form.is_valid():
+        temp_form = active_scheme_form.save(commit=False)
+        temp_form.active_color_scheme = color_scheme_model
+        temp_form.save()
+        return redirect('/preferences/')
+
+    active_scheme_form = forms.ColorSchemeActiveForm()
+    return render(request, 'preferences.html', {'active_scheme_form': active_scheme_form})
 
 #Post view
 def post_view(request):
