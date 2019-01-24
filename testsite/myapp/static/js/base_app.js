@@ -29,10 +29,32 @@ function dark_mode() {
   root_style.setProperty("--color-drop-shadow", "#ffffff33");
 }
 
+//Function runs from preferences view and sets/loads a default color scheme
+//If light or dark mode is set, set the checkbox accordingly and let the
+//light/dark themeupdater handle it
+function setDefaultScheme(id) {
+  var light_switch;
+  var length = fetch_color_scheme.color_scheme.length;
+  if(id < length) {
+    fetch_color_scheme.loadColorScheme(id);
+    //Set id in model
+  }
+  else if (id == length) {
+    light_switch = document.getElementById("light-switch");
+    light_switch.checked = false;
+    themeUpdate(light_switch);
+  }
+  else {
+    light_switch = document.getElementById("light-switch");
+    light_switch.checked = true;
+    themeUpdate(light_switch);
+  }
+}
+
 //Vue app for fetching colorscheme from database
 var fetch_color_scheme = new Vue({
-  delimiters: ['[[',']]'],
   el: '#fetch_color_scheme',
+  delimiters: ['[[',']]'],
   data () {
     return {
       color_scheme: [],
@@ -46,6 +68,10 @@ var fetch_color_scheme = new Vue({
   updated: function() {
     if(window.location.pathname == "/")
       colorSchemeNameUpdate();
+      if(window.location.pathname == "/preferences/") {
+        //need to pass list of things available here
+        colorPreferences(this.color_scheme);
+      }
   },
 
   methods: {
@@ -79,15 +105,17 @@ var fetch_color_scheme = new Vue({
       updateStorage("all", "save");
 
       //We need to only update js color when we are on the index page
-      if(window.location.pathname == "/")
+      if(window.location.pathname == "/") {
         updateJscolor();
         document.getElementById("id_color_scheme_name").value = this.color_scheme[index].color_scheme_name;
         colorSchemeNameUpdate();
+      }
     }
   }
 })
 
-//Function to get color scheme from vue object
+
+//Function that gets color scheme from vue object
 function colorListUpdate() {
   fetch_color_scheme.getColorScheme();
 }
@@ -262,7 +290,6 @@ function loadSession() {
 
 //Site theme darkmode toggle, set root css variables accordingly
 function themeUpdate(element) {
-
   if(element.checked) {
     dark_mode();
     sessionStorage.setItem("color-mode", "default-dark-mode");

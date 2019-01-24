@@ -74,8 +74,7 @@
           </li>
           <li><a href="/posts/">Post System</a></li>
           <li><a href="/music/">Music</a></li>
-          <li><a href="#">Art</a></li>
-          <li><a href="#">Visual Novel</a></li>
+          <li><a href="#">-Visual Novel-</a></li>
         </ul>
         <br>
         {% if user.is_authenticated %}
@@ -99,7 +98,7 @@
         <ul class="vertical menu" data-accordion-menu>
           <!--Correctly displays color scheme names, but need to turn this into a button that loads the scheme in-->
           <li><a href="#">My Color Schemes</a>
-            <ul class="menu vertical nested">
+            <ul class="menu vertical nested" name="vue-color-list">
               <div id="fetch_color_scheme">
               {% if user.is_authenticated %}
                 <div v-if="color_scheme.length == 0">
