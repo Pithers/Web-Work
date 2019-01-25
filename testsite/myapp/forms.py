@@ -4,8 +4,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser
 from .models import ColorScheme
-#from django.contrib.auth.models import User
 
+#Need to find a way around this when there's nothing to really pass
 class ColorSchemeActiveForm(forms.ModelForm):
     class Meta:
         model = CustomUser

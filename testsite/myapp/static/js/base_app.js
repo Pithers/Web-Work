@@ -26,7 +26,7 @@ function dark_mode() {
   root_style.setProperty("--color-text-highlight", "#1f6f90");
   root_style.setProperty("--color-border", "#826c73");
   root_style.setProperty("--color-border-accent", "#715d62");
-  root_style.setProperty("--color-drop-shadow", "#ffffff");
+  root_style.setProperty("--color-drop-shadow", "#aaaaaa");
 }
 
 //Vue app for fetching colorscheme from database
@@ -36,6 +36,7 @@ var fetch_color_scheme = new Vue({
   data () {
     return {
       color_scheme: [],
+      default_scheme: [],
     }
   },
 
@@ -43,11 +44,30 @@ var fetch_color_scheme = new Vue({
     this.getColorScheme();
   },
 
+  //Messing with this created very strange bug with it looks like JScolor loading on page refresh
   updated: function() {
-    if(window.location.pathname == "/")
+    //This checks to see if user is logged in
+    if(this.default_scheme != null) {
+      //Checks to see if this has been done before
+      if(sessionStorage.getItem("preferences") != "loaded") {
+        console.log('preferences loaded once');
+
+        //Note here: Need to change this off of loaded on logout
+        sessionStorage.setItem("preferences", "loaded");
+        this.loadColorScheme(this.default_scheme);
+      }
+      else {
+        console.log('preferences already loaded');
+      }
+    }
+    else {
+      console.log('no default scheme')
+    }
+
+    if(window.location.pathname == "/") {
       colorSchemeNameUpdate();
-    if(window.location.pathname == "/preferences/") {
-      //need to pass list of things available here
+    }
+    else if(window.location.pathname == "/preferences/") {
       colorPreferences(this.color_scheme);
     }
   },
@@ -59,7 +79,7 @@ var fetch_color_scheme = new Vue({
       //Access our own API to get a json object
         .get('/rest_color_scheme/')
       //Make sure to grab the response data, not the response itself
-        .then(response => (this.color_scheme = response.data.color_scheme))
+        .then(response => (this.color_scheme = response.data.color_scheme, this.default_scheme = response.data.default_scheme))
     },
     //Method loads colorscheme into website when clicked. Index locates specific color scheme
     loadColorScheme: function(index) {
@@ -265,21 +285,23 @@ function updateJscolor() {
 //When the user is logged in, always check to see if preferences need to be loaded
 //Then proceed to load the session
 function userLoadSession() {
-  console.log('logged in');
-  loadPreferences();
+  //requestPreferences();
   loadSession();
 }
 
-//This function loads preferences on first login or visit to site after session storage expires
-function loadPreferences() {
-  preferences_loaded = sessionStorage.getItem("visited");
-  if(preferences_loaded === null) {
-    sessionStorage.setItem("visited", "true");
-    console.log('loading preferences');
-    //do stuff here
-    preferences_loaded = true;
+//This function requests to load preferences by setting a session storage variable
+//The vue object fetch_color_scheme will then launch the loadPreferences function
+//When the data has been loaded
+/*function requestPreferences() {
+  if(sessionStorage.getItem("preferences") === null) {
+    sessionStorage.setItem("preferences", "pending");
   }
 }
+
+function loadPreferences() {
+  console.log(fetch_color_scheme.default_scheme);
+  //sessionStorage.setItem("color-mode", "");
+}*/
 
 //Set onload functions for each page
 if(window.location.pathname == "/") {
