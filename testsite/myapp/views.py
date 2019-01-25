@@ -29,7 +29,6 @@ def preferences_view(request):
         #Currently there's nothing being passed to this form
         #This will change in the future as more preference fields are given to the user
         active_scheme_form = forms.ColorSchemeActiveForm(instance=request.user)
-        #if active_scheme_form.is_valid():
         temp_form = active_scheme_form.save(commit=False)
         temp_form.active_color_scheme = color_scheme_model
         temp_form.save()
@@ -68,7 +67,6 @@ def post_view(request):
     }
     return render(request, 'posts.html', context=context)
 
-#@login_required
 def comment_view(request, post_id):
     if request.method == 'POST':
         form_instance = forms.CommentForm(request.POST)
