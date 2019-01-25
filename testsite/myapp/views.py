@@ -4,7 +4,6 @@ from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist, EmptyResultSet
 from django.core.exceptions import FieldDoesNotExist, MultipleObjectsReturned
 
@@ -20,7 +19,7 @@ def preferences_view(request):
         scheme_name = request.POST.get('scheme_name')
         try:
             color_scheme_model = models.ColorScheme.objects.get(color_scheme_name=scheme_name,
-                                                     creator=request.user)
+                                                                creator=request.user)
         except MultipleObjectsReturned:
             return HttpResponse("Invalid Query: Multiple Objects fit search.")
         except ObjectDoesNotExist:
@@ -179,7 +178,11 @@ def rest_color_scheme(request):
             }
             color_scheme_list += [add_to_list]
 
-        return JsonResponse({"color_scheme":color_scheme_list})
+        if request.user.active_color_scheme is not None:
+            #Find that color scheme and pass it the index to color_scheme list that matches
+            return JsonResponse({"color_scheme":color_scheme_list, "default_scheme":0})
+        else:
+            return JsonResponse({"color_scheme":color_scheme_list})
     return redirect('/login/')
 
 def webgl_view(request, name):

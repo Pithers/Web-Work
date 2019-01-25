@@ -15,11 +15,13 @@ class CustomUserAdmin(UserAdmin):
     list_display = ['email', 'username', 'default_color_scheme',]
 
     #Display active color scheme to user
+    @classmethod
     def default_color_scheme(self, obj):
-        if obj.active_color_scheme != None:
-            link=reverse("admin:myapp_colorscheme_change", args=[obj.active_color_scheme.id])
-            return format_html('<a href="{}">{}</a>', link, obj.active_color_scheme.color_scheme_name)
-        return
+        if obj.active_color_scheme is not None:
+            link = reverse("admin:myapp_colorscheme_change", args=[obj.active_color_scheme.id])
+            return format_html('<a href="{}">{}</a>', link,
+                               obj.active_color_scheme.color_scheme_name)
+        return format_html('<hr>')
 
 # Register your models here
 admin.site.register(CustomUser, CustomUserAdmin)
