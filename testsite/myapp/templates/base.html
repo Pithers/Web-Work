@@ -17,8 +17,11 @@
     <link rel="stylesheet" href="{% sass_src "scss/style.scss" %}">
   </head>
 
-  <!--Use onload to load a javascript module to change the CSS coloscheme-->
+  {% if user.is_authenticated %}
+  <body onload="userLoadSession();">
+  {% else %}
   <body onload="loadSession();">
+  {% endif %}
     <div class="main-wrapper">
       <div class="off-canvas-content" data-off-canvas-content>
         <div class="nav-bar">

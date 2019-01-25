@@ -13,7 +13,7 @@ function light_mode() {
   root_style.setProperty("--color-text-highlight", "#20436f");
   root_style.setProperty("--color-border", "#838378");
   root_style.setProperty("--color-border-accent", "#727267");
-  root_style.setProperty("--color-drop-shadow", "#00000033");
+  root_style.setProperty("--color-drop-shadow", "#000000");
 }
 
 function dark_mode() {
@@ -26,29 +26,7 @@ function dark_mode() {
   root_style.setProperty("--color-text-highlight", "#1f6f90");
   root_style.setProperty("--color-border", "#826c73");
   root_style.setProperty("--color-border-accent", "#715d62");
-  root_style.setProperty("--color-drop-shadow", "#ffffff33");
-}
-
-//Function runs from preferences view and sets/loads a default color scheme
-//If light or dark mode is set, set the checkbox accordingly and let the
-//light/dark themeupdater handle it
-function setDefaultScheme(id) {
-  var light_switch;
-  var length = fetch_color_scheme.color_scheme.length;
-  if(id < length) {
-    fetch_color_scheme.loadColorScheme(id);
-    //Set id in model
-  }
-  else if (id == length) {
-    light_switch = document.getElementById("light-switch");
-    light_switch.checked = false;
-    themeUpdate(light_switch);
-  }
-  else {
-    light_switch = document.getElementById("light-switch");
-    light_switch.checked = true;
-    themeUpdate(light_switch);
-  }
+  root_style.setProperty("--color-drop-shadow", "#ffffff");
 }
 
 //Vue app for fetching colorscheme from database
@@ -68,19 +46,19 @@ var fetch_color_scheme = new Vue({
   updated: function() {
     if(window.location.pathname == "/")
       colorSchemeNameUpdate();
-      if(window.location.pathname == "/preferences/") {
-        //need to pass list of things available here
-        colorPreferences(this.color_scheme);
-      }
+    if(window.location.pathname == "/preferences/") {
+      //need to pass list of things available here
+      colorPreferences(this.color_scheme);
+    }
   },
 
   methods: {
     //Method retrieves color scheme models from database
     getColorScheme: function() {
       axios
-        //Access our own API to get a json object
+      //Access our own API to get a json object
         .get('/rest_color_scheme/')
-        //Make sure to grab the response data, not the response itself
+      //Make sure to grab the response data, not the response itself
         .then(response => (this.color_scheme = response.data.color_scheme))
     },
     //Method loads colorscheme into website when clicked. Index locates specific color scheme
@@ -114,6 +92,26 @@ var fetch_color_scheme = new Vue({
   }
 })
 
+//Function runs from preferences view and sets/loads a default color scheme
+//If light or dark mode is set, set the checkbox accordingly and let the
+//light/dark themeupdater handle it
+function setDefaultScheme(id) {
+  var light_switch;
+  var length = fetch_color_scheme.color_scheme.length;
+  if(id < length) {
+    fetch_color_scheme.loadColorScheme(id);
+  }
+  else if (id == length) {
+    light_switch = document.getElementById("light-switch");
+    light_switch.checked = false;
+    themeUpdate(light_switch);
+  }
+  else {
+    light_switch = document.getElementById("light-switch");
+    light_switch.checked = true;
+    themeUpdate(light_switch);
+  }
+}
 
 //Function that gets color scheme from vue object
 function colorListUpdate() {
@@ -210,7 +208,7 @@ function updateStorage(name, method) {
       else if(method == "load" && sessionStorage.getItem("color_drop_shadow") !== null)
         root_style.setProperty("--color-drop-shadow", sessionStorage.getItem("color_drop_shadow"));
       else
-        root_style.setProperty("--color-drop-shadow", "#00000033");
+        root_style.setProperty("--color-drop-shadow", "#000000");
       if(all == false)
         break;
     case "Color tertiary":
@@ -264,8 +262,43 @@ function updateJscolor() {
   document.getElementById("color-drop-shadow").value = (root_style.getPropertyValue("--color-drop-shadow")).replace('#','');
 }
 
+//When the user is logged in, always check to see if preferences need to be loaded
+//Then proceed to load the session
+function userLoadSession() {
+  console.log('logged in');
+  loadPreferences();
+  loadSession();
+}
+
+//This function loads preferences on first login or visit to site after session storage expires
+function loadPreferences() {
+  preferences_loaded = sessionStorage.getItem("visited");
+  if(preferences_loaded === null) {
+    sessionStorage.setItem("visited", "true");
+    console.log('loading preferences');
+    //do stuff here
+    preferences_loaded = true;
+  }
+}
+
+//Set onload functions for each page
+if(window.location.pathname == "/") {
+  $(window).ready(function() {
+    updateJscolor();
+  });
+  $(window).ready(function() {
+    colorSchemeNameUpdate();
+  });
+}
+else if(window.location.href.indexOf("/webgl/") !== -1) {
+  $(window).ready(function() {
+    main();
+  });
+}
+
 //Grab session data and set color-mode and checkbox accordingly
 //Can consider adding another field to sessionStorage which are additonal color modes
+//If preferences haven't been loaded once, it will load them
 function loadSession() {
   var color_mode = sessionStorage.getItem("color-mode");
 
