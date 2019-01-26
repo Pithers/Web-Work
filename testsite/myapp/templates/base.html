@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="{% sass_src "scss/style.scss" %}">
   </head>
 
-  <body onload="loadSession();">
+  <body>
     <div class="main-wrapper">
       <div class="off-canvas-content" data-off-canvas-content>
         <div class="nav-bar">
@@ -152,6 +152,13 @@
     <script src="https://unpkg.com/axios/dist/axios.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="{% static "js/base_app.js" %}"></script>
+    {% if messages %}
+    {% for message in messages %}
+    {% if "LOGOUT" in message.extra_tags %}
+    <script>loggedOut();</script>
+    {% endif%}
+    {% endfor %}
+    {% endif %}
     {% block scripts %}
     {% endblock %}
   </body>

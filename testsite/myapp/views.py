@@ -2,6 +2,7 @@
 
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
+from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist, EmptyResultSet
@@ -95,6 +96,7 @@ def comment_view(request, post_id):
 #Consider redirecting to whatever page the user logged out from
 def logout_view(request):
     logout(request)
+    messages.success(request, 'Logged out.', extra_tags='LOGOUT')
     return redirect("/login/")
 
 #RESTful user registration ex: site/register/

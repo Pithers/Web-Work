@@ -29,6 +29,11 @@ function dark_mode() {
   root_style.setProperty("--color-drop-shadow", "#aaaaaa");
 }
 
+//Upon logout erases preference loaded variable in session storage
+function loggedOut() {
+  sessionStorage.setItem("preferences", "unloaded");
+}
+
 //Vue app for fetching colorscheme from database
 var fetch_color_scheme = new Vue({
   el: '#fetch_color_scheme',
@@ -47,21 +52,9 @@ var fetch_color_scheme = new Vue({
   //Messing with this created very strange bug with it looks like JScolor loading on page refresh
   updated: function() {
     //This checks to see if user is logged in
-    if(this.default_scheme != null) {
-      //Checks to see if this has been done before
-      if(sessionStorage.getItem("preferences") != "loaded") {
-        console.log('preferences loaded once');
-
-        //Note here: Need to change this off of loaded on logout
-        sessionStorage.setItem("preferences", "loaded");
-        this.loadColorScheme(this.default_scheme);
-      }
-      else {
-        console.log('preferences already loaded');
-      }
-    }
-    else {
-      console.log('no default scheme')
+    if(this.default_scheme != null && sessionStorage.getItem("preferences") != "loaded") {
+      sessionStorage.setItem("preferences", "loaded");
+      this.loadColorScheme(this.default_scheme);
     }
 
     if(window.location.pathname == "/") {
@@ -81,6 +74,7 @@ var fetch_color_scheme = new Vue({
       //Make sure to grab the response data, not the response itself
         .then(response => (this.color_scheme = response.data.color_scheme, this.default_scheme = response.data.default_scheme))
     },
+
     //Method loads colorscheme into website when clicked. Index locates specific color scheme
     loadColorScheme: function(index) {
       //We need to access the object here and set all of the parts
@@ -282,41 +276,17 @@ function updateJscolor() {
   document.getElementById("color-drop-shadow").value = (root_style.getPropertyValue("--color-drop-shadow")).replace('#','');
 }
 
-//When the user is logged in, always check to see if preferences need to be loaded
-//Then proceed to load the session
-function userLoadSession() {
-  //requestPreferences();
-  loadSession();
-}
-
-//This function requests to load preferences by setting a session storage variable
-//The vue object fetch_color_scheme will then launch the loadPreferences function
-//When the data has been loaded
-/*function requestPreferences() {
-  if(sessionStorage.getItem("preferences") === null) {
-    sessionStorage.setItem("preferences", "pending");
-  }
-}
-
-function loadPreferences() {
-  console.log(fetch_color_scheme.default_scheme);
-  //sessionStorage.setItem("color-mode", "");
-}*/
-
 //Set onload functions for each page
-if(window.location.pathname == "/") {
-  $(window).ready(function() {
+$(window).ready(function() {
+  loadSession();
+  if(window.location.pathname == "/") {
     updateJscolor();
-  });
-  $(window).ready(function() {
     colorSchemeNameUpdate();
-  });
-}
-else if(window.location.href.indexOf("/webgl/") !== -1) {
-  $(window).ready(function() {
+  }
+  else if(window.location.href.indexOf("/webgl/") !== -1) {
     main();
-  });
-}
+  }
+});
 
 //Grab session data and set color-mode and checkbox accordingly
 //Can consider adding another field to sessionStorage which are additonal color modes
@@ -329,8 +299,7 @@ function loadSession() {
     sessionStorage.setItem("color-mode", "default-light-mode");
     color_mode = "default-light-mode";
   }
-  else
-    updateStorage("all", "load"); //Load from session storage
+  updateStorage("all", "load"); //Load from session storage
 
   if(color_mode == "default-dark-mode")
     document.getElementById("light-switch").checked = true;

@@ -99,7 +99,7 @@
         {% if user.is_authenticated %}
         <input type="Submit" id="palette-form-submit" class="button palette-submit" value="Save Color Scheme">
         {% else %}
-        <div class="button palette-submit">Please login to save color scheme to profile.</div>
+        <a href="/login/" class="button palette-submit">Please login to save color scheme to profile.</a>
         {% endif %}
       </div>
     </div>
