@@ -61,7 +61,7 @@ var fetch_color_scheme = new Vue({
       colorSchemeNameUpdate();
     }
     else if(window.location.pathname == "/preferences/") {
-      colorPreferences(this.color_scheme);
+      colorPreferences(this.color_scheme, this.default_scheme);
     }
   },
 

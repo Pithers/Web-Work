@@ -7,10 +7,12 @@
 //## Nav Bar Overlay
 //## Card Content (post and comment boxes)
 //## Palette Styling
+//## List Group Styling
 
 //Code Reference/Credit:
 //Laurel Beyers: https://foundation.zurb.com/building-blocks/blocks/multilevel-offcanvas-menu.html
 //Rafi: https://foundation.zurb.com/building-blocks/blocks/card-info.html
+//Harry Manchanda: https://foundation.zurb.com/building-blocks/blocks/list-group.html
 
 //Color references
 :root {
@@ -449,3 +451,86 @@ select, [type="number"] {
   }
 }
 
+//List Group
+$list-group-background: var(--color-base);
+$list-group-active-background: var(--color-accent);
+$list-group-hover-background: var(--color-tertiary);
+$list-group-disabled-background: var(--color-background);
+$list-group-font-color: var(--color-text);
+$list-group-font-disabled-color: var(--color-invert);
+$list-group-font-active-color: var(--color-text-highlight);
+$list-group-border: 1px solid var(--color-border);
+$list-group-active-border: 1px solid var(--color-border-accent);
+$list-group-shadow: 0 10px 20px var(--color-drop-shadow);
+$list-group-border-radius: 10px;
+$list-group-padding: 15px;
+$list-group-margin: 0;
+
+.user-color-schemes {
+  text-align: center;
+  .list-group {
+    margin-left: 0;
+    margin-bottom: 0;
+    border: $list-group-border;
+    border-radius: $list-group-border-radius;
+    box-shadow: $list-group-shadow;
+    background: $list-group-background;
+    color: $list-group-font-color;
+
+    & > :last-child {
+      margin-bottom: 0;
+    }
+
+    .user-list-palette {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+
+      .user-list-patches {
+        text-align: center;
+        margin: 10px;
+        height: 20px;
+        width: 20px;
+        border-style: solid;
+        border-width: 2px;
+        border-color: #111111;
+      }
+    }
+
+    .list-group-item {
+      margin-left: 0;
+      padding: $list-group-padding;
+      border-bottom: $list-group-border;
+      border-radius: $list-group-border-radius;
+
+      & > :last-child {
+        margin-bottom: 0;
+        border-bottom: none;
+      }
+
+      &.active {
+        color: $list-group-font-active-color;
+        background-color: $list-group-active-background;
+        border-color: $list-group-active-border;
+      }
+
+      &:hover, &:focus {
+        background-color: $list-group-hover-background;
+        border-radius: $list-group-border-radius;
+        &.active {
+          background-color: $list-group-active-background;
+        }
+      }
+
+      &.disabled,
+      &[disabled] {
+        &,
+        &:hover, &:focus {
+          color: $list-group-font-disabled-color;
+          cursor: not-allowed;
+          background-color: $list-group-disabled-background;
+        }
+      }
+    }
+  }
+}

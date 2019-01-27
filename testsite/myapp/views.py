@@ -82,7 +82,7 @@ def comment_view(request, post_id):
                 post=post_instance
                 )
             temp_model.save()
-            return redirect("/")
+            return redirect("/posts/")
     else:
         form_instance = forms.CommentForm()
 
