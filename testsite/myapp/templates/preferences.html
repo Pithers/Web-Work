@@ -8,13 +8,10 @@
   <form action="/preferences/" method="post">
     {% csrf_token %}
 
-    {% if active_scheme_form.visible_fields.0.name == 'active_color_scheme' %}
-    field exists!
-    {% endif %}
-
-    <div id="user-color-schemes">
+    <div class="user-color-schemes" id="user-color-schemes">
       Set User Default Color Schemes:
     </div>
+
   </form>
 </div>
 {% endblock %}
