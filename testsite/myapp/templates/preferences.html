@@ -5,13 +5,13 @@
 
 {% block content %}
 <div class="grid-container palette">
-  <form action="/preferences/" method="post">
+  <form name="preferences_form" id="preferences_form" action="/preferences/" method="post">
     {% csrf_token %}
 
     <div class="user-color-schemes" id="user-color-schemes">
       Set User Default Color Schemes:
     </div>
-
+    <input id="preference_form_input" type="hidden">
   </form>
 </div>
 {% endblock %}

@@ -181,8 +181,10 @@ def rest_color_scheme(request):
             color_scheme_list += [add_to_list]
 
         if request.user.active_color_scheme is not None:
-            #Find that color scheme and pass it the index to color_scheme list that matches
-            return JsonResponse({"color_scheme":color_scheme_list, "default_scheme":0})
+            #Find that color scheme and pass it the name of the color_scheme that it matches
+            default_scheme = request.user.active_color_scheme.color_scheme_name
+            return JsonResponse({"color_scheme":color_scheme_list,
+                                 "default_scheme":default_scheme})
         else:
             return JsonResponse({"color_scheme":color_scheme_list})
     return redirect('/login/')
