@@ -27,6 +27,7 @@ function colorSchemeNameUpdate() {
     else {
       palette_form_submit.value = "Overwrite Color Scheme";
     }
+    console.log('save, ' + array);
   }
 }
 color_scheme_name.oninput = colorSchemeNameUpdate;

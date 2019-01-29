@@ -53,6 +53,7 @@ var fetch_color_scheme = new Vue({
   updated: function() {
     //This checks to see if user is logged in
     if(this.default_scheme != null && sessionStorage.getItem("preferences") != "loaded") {
+      console.log(this.default_scheme);
       sessionStorage.setItem("preferences", "loaded");
       this.loadColorScheme(this.default_scheme);
     }
@@ -76,9 +77,12 @@ var fetch_color_scheme = new Vue({
     },
 
     //Method loads colorscheme into website when clicked. Index locates specific color scheme
-    loadColorScheme: function(index) {
+    loadColorScheme: function(default_scheme) {
       //We need to access the object here and set all of the parts
       //Objects save without hashtag so add it back in before loading
+      //Get index of default scheme in color scheme list
+      var index = this.color_scheme.findIndex(x => x.color_scheme_name==default_scheme);
+
       root_style.setProperty("--color-bg", "#" + this.color_scheme[index].color_bg);
       root_style.setProperty("--color-base", "#" + this.color_scheme[index].color_base);
       root_style.setProperty("--color-accent", "#" + this.color_scheme[index].color_accent);
@@ -106,26 +110,6 @@ var fetch_color_scheme = new Vue({
   }
 })
 
-//Function runs from preferences view and sets/loads a default color scheme
-//If light or dark mode is set, set the checkbox accordingly and let the
-//light/dark themeupdater handle it
-function setDefaultScheme(id) {
-  var light_switch;
-  var length = fetch_color_scheme.color_scheme.length;
-  if(id < length) {
-    fetch_color_scheme.loadColorScheme(id);
-  }
-  else if (id == length) {
-    light_switch = document.getElementById("light-switch");
-    light_switch.checked = false;
-    themeUpdate(light_switch);
-  }
-  else {
-    light_switch = document.getElementById("light-switch");
-    light_switch.checked = true;
-    themeUpdate(light_switch);
-  }
-}
 
 //Function that gets color scheme from vue object
 function colorListUpdate() {

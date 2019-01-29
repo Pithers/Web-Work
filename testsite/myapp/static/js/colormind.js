@@ -22,6 +22,7 @@ function colorRandomizer() {
       updateStorage("all", "save");
       updateJscolor();
       document.getElementById("id_color_scheme_name").value = "";
+      colorSchemeNameUpdate();
       sessionStorage.setItem("color-mode", "");
 }
 
@@ -67,6 +68,7 @@ function getColormindPalette() {
       updateStorage("all", "save");
       updateJscolor();
       document.getElementById("id_color_scheme_name").value = "";
+      colorSchemeNameUpdate();
       sessionStorage.setItem("color-mode", "");
 
       $('[data-colormind-start]').removeClass('hide');
