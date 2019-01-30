@@ -14,6 +14,24 @@ var color_border_accent = document.getElementById("color-border-accent");
 var color_drop_shadow = document.getElementById("color-drop-shadow");
 var palette_form_submit = document.getElementById("palette-form-submit");
 
+//Give user a prompt to save the color scheme to their profile
+function colorFormSubmit() {
+  //Check to see if form is saving or overwriting
+  if(palette_form_submit.value == "Overwrite Color Scheme") {
+    msg = "Overwrite color scheme: " + color_scheme_name.value + "?"
+  } else {
+    msg = "Save: " + color_scheme_name.value + " to user color schemes?"
+  }
+
+  if (!confirm(msg)) {
+    return false;
+  } else {
+    //Get color scheme from vue object
+    fetch_color_scheme.getColorScheme();
+    return true;
+  }
+}
+
 //The vue object fetch_color_scheme has a list of color schemes that
 //the user has access to. We need to alter the save button of the
 //color scheme form submission to read as 'edit color scheme' when
@@ -62,3 +80,43 @@ color_border_accent.onchange = function() {
 color_drop_shadow.onchange = function() {
   document.documentElement.style.setProperty("--color-drop-shadow", "#" + color_drop_shadow.value);
 };
+
+//Each line in this function locates the specific jscolor element and updates the field
+//Sadly the code lines in this function are really long. There isn't really a good way
+//to split them up besides do something less efficient.
+function updateJscolor() {
+  //Update jscolor boxes
+  document.getElementsByClassName("jscolor {valueElement: color_bg}")[0].style =
+    "background-color:" + root_style.getPropertyValue("--color-bg") + ";";
+  document.getElementsByClassName("jscolor {valueElement: color_base}")[0].style =
+    "background-color:" + root_style.getPropertyValue("--color-base") + ";";
+  document.getElementsByClassName("jscolor {valueElement: color_accent}")[0].style =
+    "background-color:" + root_style.getPropertyValue("--color-accent") + ";";
+  document.getElementsByClassName("jscolor {valueElement: color_tertiary}")[0].style =
+    "background-color:" + root_style.getPropertyValue("--color-tertiary") + ";";
+  document.getElementsByClassName("jscolor {valueElement: color_text}")[0].style =
+    "background-color:" + root_style.getPropertyValue("--color-text") + ";";
+  document.getElementsByClassName("jscolor {valueElement: color_text_invert}")[0].style =
+    "background-color:" + root_style.getPropertyValue("--color-text-invert") + ";";
+  document.getElementsByClassName("jscolor {valueElement: color_text_highlight}")[0].style =
+    "background-color:" + root_style.getPropertyValue("--color-text-highlight") + ";";
+  document.getElementsByClassName("jscolor {valueElement: color_border}")[0].style =
+    "background-color:" + root_style.getPropertyValue("--color-border") + ";";
+  document.getElementsByClassName("jscolor {valueElement: color_border_accent}")[0].style =
+    "background-color:" + root_style.getPropertyValue("--color-border-accent") + ";";
+  document.getElementsByClassName("jscolor {valueElement: color_drop_shadow}")[0].style =
+    "background-color:" + root_style.getPropertyValue("--color-drop-shadow") + ";";
+
+  //Update jscolor text fields
+  //If there are hashtags, be sure to strip them off
+  document.getElementById("color-bg").value = (root_style.getPropertyValue("--color-bg")).replace('#','');
+  document.getElementById("color-base").value = (root_style.getPropertyValue("--color-base")).replace('#','');
+  document.getElementById("color-accent").value = (root_style.getPropertyValue("--color-accent")).replace('#','');
+  document.getElementById("color-tertiary").value = (root_style.getPropertyValue("--color-tertiary")).replace('#','');
+  document.getElementById("color-text").value = (root_style.getPropertyValue("--color-text")).replace('#','');
+  document.getElementById("color-text-invert").value = (root_style.getPropertyValue("--color-text-invert")).replace('#','');
+  document.getElementById("color-text-highlight").value = (root_style.getPropertyValue("--color-text-highlight")).replace('#','');
+  document.getElementById("color-border").value = (root_style.getPropertyValue("--color-border")).replace('#','');
+  document.getElementById("color-border-accent").value = (root_style.getPropertyValue("--color-border-accent")).replace('#','');
+  document.getElementById("color-drop-shadow").value = (root_style.getPropertyValue("--color-drop-shadow")).replace('#','');
+}

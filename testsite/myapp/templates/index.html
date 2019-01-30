@@ -29,7 +29,7 @@
     <div class="palette-box" style="background-color: var(--color-drop-shadow);"></div>
   </div>
 
-  <form action="/" method="POST" onsubmit="colorListUpdate();">
+  <form action="/" method="POST" onsubmit="return colorFormSubmit();">
     {% csrf_token %}
 
     <div class="grid-x grid-padding-x">

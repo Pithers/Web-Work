@@ -109,12 +109,6 @@ var fetch_color_scheme = new Vue({
   }
 })
 
-
-//Function that gets color scheme from vue object
-function colorListUpdate() {
-  fetch_color_scheme.getColorScheme();
-}
-
 //Upon changing colors, save them to browser session storage so colorscheme can be held across pages
 //If name == "all" then every element will be saved/loaded
 //If method == "save" then the css color property will be saved into session storage
@@ -219,45 +213,6 @@ function updateStorage(name, method) {
   }
 }
 
-//Each line in this function locates the specific jscolor element and updates the field
-//Sadly the code lines in this function are really long. There isn't really a good way
-//to split them up besides do something less efficient.
-function updateJscolor() {
-  //Update jscolor boxes
-  document.getElementsByClassName("jscolor {valueElement: color_bg}")[0].style =
-    "background-color:" + root_style.getPropertyValue("--color-bg") + ";";
-  document.getElementsByClassName("jscolor {valueElement: color_base}")[0].style =
-    "background-color:" + root_style.getPropertyValue("--color-base") + ";";
-  document.getElementsByClassName("jscolor {valueElement: color_accent}")[0].style =
-    "background-color:" + root_style.getPropertyValue("--color-accent") + ";";
-  document.getElementsByClassName("jscolor {valueElement: color_tertiary}")[0].style =
-    "background-color:" + root_style.getPropertyValue("--color-tertiary") + ";";
-  document.getElementsByClassName("jscolor {valueElement: color_text}")[0].style =
-    "background-color:" + root_style.getPropertyValue("--color-text") + ";";
-  document.getElementsByClassName("jscolor {valueElement: color_text_invert}")[0].style =
-    "background-color:" + root_style.getPropertyValue("--color-text-invert") + ";";
-  document.getElementsByClassName("jscolor {valueElement: color_text_highlight}")[0].style =
-    "background-color:" + root_style.getPropertyValue("--color-text-highlight") + ";";
-  document.getElementsByClassName("jscolor {valueElement: color_border}")[0].style =
-    "background-color:" + root_style.getPropertyValue("--color-border") + ";";
-  document.getElementsByClassName("jscolor {valueElement: color_border_accent}")[0].style =
-    "background-color:" + root_style.getPropertyValue("--color-border-accent") + ";";
-  document.getElementsByClassName("jscolor {valueElement: color_drop_shadow}")[0].style =
-    "background-color:" + root_style.getPropertyValue("--color-drop-shadow") + ";";
-
-  //Update jscolor text fields
-  //If there are hashtags, be sure to strip them off
-  document.getElementById("color-bg").value = (root_style.getPropertyValue("--color-bg")).replace('#','');
-  document.getElementById("color-base").value = (root_style.getPropertyValue("--color-base")).replace('#','');
-  document.getElementById("color-accent").value = (root_style.getPropertyValue("--color-accent")).replace('#','');
-  document.getElementById("color-tertiary").value = (root_style.getPropertyValue("--color-tertiary")).replace('#','');
-  document.getElementById("color-text").value = (root_style.getPropertyValue("--color-text")).replace('#','');
-  document.getElementById("color-text-invert").value = (root_style.getPropertyValue("--color-text-invert")).replace('#','');
-  document.getElementById("color-text-highlight").value = (root_style.getPropertyValue("--color-text-highlight")).replace('#','');
-  document.getElementById("color-border").value = (root_style.getPropertyValue("--color-border")).replace('#','');
-  document.getElementById("color-border-accent").value = (root_style.getPropertyValue("--color-border-accent")).replace('#','');
-  document.getElementById("color-drop-shadow").value = (root_style.getPropertyValue("--color-drop-shadow")).replace('#','');
-}
 
 //Set onload functions for each page
 $(window).ready(function() {
