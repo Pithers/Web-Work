@@ -16,7 +16,7 @@ class CustomUserAdmin(UserAdmin):
 
     #Display active color scheme to user
     @classmethod
-    def default_color_scheme(self, obj):
+    def default_color_scheme(cls, obj):
         if obj.active_color_scheme is not None:
             link = reverse("admin:myapp_colorscheme_change", args=[obj.active_color_scheme.id])
             return format_html('<a href="{}">{}</a>', link,

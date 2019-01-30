@@ -150,18 +150,9 @@ def rest_color_scheme(request):
     if request.method == 'GET' and request.user.is_authenticated:
         try:
             color_schemes = models.ColorScheme.objects.filter(creator__exact=request.user)
-        except ObjectDoesNotExist:
-            print("Object searched for does not exist.")
-            return HttpResponse("Invalid Query: ObjectDoesNotExist")
-        except EmptyResultSet:
-            print("No results match name and user.")
-            return HttpResponse("Invalid Query: No results.")
-        except FieldDoesNotExist:
-            print("Searched field does not exist.")
-            return HttpResponse("Invalid Query: Field/s do not exist.")
-        except MultipleObjectsReturned:
-            print("Multiple schemes with same name from user.")
-            return HttpResponse("Invalid Query: Multiple Objects fit search.")
+        except (ObjectDoesNotExist, EmptyResultSet, FieldDoesNotExist,
+                MultipleObjectsReturned) as e:
+            return HttpResponse(e)
 
         color_scheme_list = []
         for item in color_schemes:
@@ -183,10 +174,12 @@ def rest_color_scheme(request):
         if request.user.active_color_scheme is not None:
             #Find that color scheme and pass it the name of the color_scheme that it matches
             default_scheme = request.user.active_color_scheme.color_scheme_name
-            return JsonResponse({"color_scheme":color_scheme_list,
+            response = JsonResponse({"color_scheme":color_scheme_list,
                                  "default_scheme":default_scheme})
         else:
-            return JsonResponse({"color_scheme":color_scheme_list})
+            response = JsonResponse({"color_scheme":color_scheme_list})
+
+        return response
     return redirect('/login/')
 
 def webgl_view(request, name):
