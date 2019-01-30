@@ -151,8 +151,8 @@ def rest_color_scheme(request):
         try:
             color_schemes = models.ColorScheme.objects.filter(creator__exact=request.user)
         except (ObjectDoesNotExist, EmptyResultSet, FieldDoesNotExist,
-                MultipleObjectsReturned) as e:
-            return HttpResponse(e)
+                MultipleObjectsReturned) as error_value:
+            return HttpResponse(error_value)
 
         color_scheme_list = []
         for item in color_schemes:
@@ -175,7 +175,7 @@ def rest_color_scheme(request):
             #Find that color scheme and pass it the name of the color_scheme that it matches
             default_scheme = request.user.active_color_scheme.color_scheme_name
             response = JsonResponse({"color_scheme":color_scheme_list,
-                                 "default_scheme":default_scheme})
+                                     "default_scheme":default_scheme})
         else:
             response = JsonResponse({"color_scheme":color_scheme_list})
 

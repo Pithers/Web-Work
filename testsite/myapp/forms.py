@@ -9,7 +9,7 @@ from .models import ColorScheme
 class ColorSchemeActiveForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        exclude = ("active_color_scheme",)
+        fields = ["active_color_scheme"]
 
 class ColorSchemeForm(forms.ModelForm):
     class Meta:

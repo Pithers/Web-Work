@@ -53,7 +53,6 @@ var fetch_color_scheme = new Vue({
   updated: function() {
     //This checks to see if user is logged in
     if(this.default_scheme != null && sessionStorage.getItem("preferences") != "loaded") {
-      console.log(this.default_scheme);
       sessionStorage.setItem("preferences", "loaded");
       this.loadColorScheme(this.default_scheme);
     }
