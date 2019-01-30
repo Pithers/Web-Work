@@ -12,12 +12,22 @@ from . import models
 from . import forms
 
 #User Preferences/Account view
+#Currently there's nothing being passed to this form
+#This will change in the future as more preference fields are given to the user
 @login_required
 def preferences_view(request):
     if request.method == 'POST':
+        #Check to see if we're setting the default scheme, or deleting one
+        if request.POST.get('scheme_name') is not None:
+            scheme_name = request.POST.get('scheme_name')
+            save = True
+        elif request.POST.get('delete_name') is not None:
+            scheme_name = request.POST.get('delete_name')
+            save = False
+        else:
+            return HttpResponse("Invalid POST: No scheme_name provided")
 
         #Verify that the colorscheme exists in the database
-        scheme_name = request.POST.get('scheme_name')
         try:
             color_scheme_model = models.ColorScheme.objects.get(color_scheme_name=scheme_name,
                                                                 creator=request.user)
@@ -26,12 +36,16 @@ def preferences_view(request):
         except ObjectDoesNotExist:
             color_scheme_model = None
 
-        #Currently there's nothing being passed to this form
-        #This will change in the future as more preference fields are given to the user
-        active_scheme_form = forms.ColorSchemeActiveForm(instance=request.user)
-        temp_form = active_scheme_form.save(commit=False)
-        temp_form.active_color_scheme = color_scheme_model
-        temp_form.save()
+        #Save default scheme to user
+        if save:
+            active_scheme_form = forms.ColorSchemeActiveForm(instance=request.user)
+            temp_form = active_scheme_form.save(commit=False)
+            temp_form.active_color_scheme = color_scheme_model
+            temp_form.save()
+        #Delete color scheme from database
+        else:
+            color_scheme_model.delete()
+
         return redirect('/preferences/')
 
     active_scheme_form = forms.ColorSchemeActiveForm()

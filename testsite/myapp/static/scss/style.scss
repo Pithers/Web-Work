@@ -488,7 +488,6 @@ $list-group-margin: 0;
       justify-content: center;
 
       .user-list-patches {
-        text-align: center;
         margin: 10px;
         height: 20px;
         width: 20px;
@@ -499,12 +498,25 @@ $list-group-margin: 0;
     }
 
     .list-group-item {
-      //display:block;
+      position: relative;
       margin-left: 0;
       margin-right: 0;
       padding: $list-group-padding;
       border-bottom: $list-group-border;
       border-radius: $list-group-border-radius;
+
+      .delete-button {
+        position: absolute;
+        right: 0;
+        top: 0;
+        margin: 10px;
+        padding: 15px;
+
+        &:hover, &:focus {
+          background-color: $list-group-background;
+          border-radius: $list-group-border-radius;
+        }
+      }
 
       & > :last-child {
         margin-bottom: 0;

@@ -30,6 +30,23 @@ function setDefaultScheme(id, scheme_name) {
   }
 }
 
+function deleteScheme(scheme_name) {
+  //Check to make sure user really wants to delete the scheme
+  //Return immediately if user cancels
+  if (!confirm("Delete " + scheme_name + " from your color schemes?")) {
+    return;
+  }
+
+  //Submit the form with the scheme_name to be deleted
+  var form = document.getElementById("preferences_form");
+  var form_input = document.getElementById("preference_form_input");
+  form_input.name = "delete_name";
+  form_input.value = scheme_name;
+  form.submit();
+
+  console.log("deleting... " + scheme_name);
+}
+
 function colorPreferences(list, default_scheme) {
   //Fields for each color preference
   var fields = ["color_bg","color_base","color_accent","color_tertiary","color_text",
@@ -44,11 +61,16 @@ function colorPreferences(list, default_scheme) {
   for(i = 0; i < list.length + 2; i++) {
     var html_button = document.createElement("ul");
     var html_palette = document.createElement("div");
+    var delete_button = document.createElement("div");
 
     html_button.setAttribute("name", "scheme_name");
     html_button.setAttribute("id", "scheme-" + i);
 
+    //Style class for palette
     html_palette.setAttribute("class", "user-list-palette");
+
+    //Style class for trash-icon
+    delete_button.setAttribute("class", "delete-button fas fa-trash");
 
     //Generate list-group for selecting color schemes
     if(i < list.length) {
@@ -59,7 +81,8 @@ function colorPreferences(list, default_scheme) {
       }
 
       //Have button launch the setDefaultScheme on the respective color scheme
-      html_button.setAttribute("onclick", "setDefaultScheme(" + i + ", '" + list[i].color_scheme_name  + "')");
+      html_button.setAttribute("onclick", "setDefaultScheme(" + i +
+                               ", '" + list[i].color_scheme_name  + "')");
 
       //Color patches
       html_button.innerText = list[i].color_scheme_name;
@@ -71,6 +94,11 @@ function colorPreferences(list, default_scheme) {
         html_color.setAttribute("style", "background: #" + list[i][fields[j]]);
         html_palette.appendChild(html_color);
       }
+
+      //Add in delete button, deletes colorscheme upon click
+      delete_button.setAttribute("onclick", "deleteScheme('" +
+                                 list[i].color_scheme_name + "'); event.stopPropagation();");
+      html_button.appendChild(delete_button);
     }
     else if(i == list.length) {
       html_button.setAttribute("class", "list-group-item");
@@ -84,7 +112,6 @@ function colorPreferences(list, default_scheme) {
     }
     html_list.appendChild(html_button);
     html_button.appendChild(html_palette);
-    html_list.appendChild(html_button);
   }
 
   document.getElementById("user-color-schemes").appendChild(html_list);
