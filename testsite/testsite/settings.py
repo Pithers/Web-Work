@@ -24,7 +24,8 @@ SECRET_KEY = 'l@mrk-)+j-1t33!)dszy0r0t-5%4h*de3yqn4yllmn0c&ysbmz'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+#ALLOWED_HOSTS = ["35.236.17.97", pither.org, etc]
+ALLOWED_HOSTS = ["35.236.17.97"]
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 
