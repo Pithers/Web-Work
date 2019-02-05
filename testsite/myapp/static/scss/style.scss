@@ -8,6 +8,7 @@
 //## Card Content (post and comment boxes)
 //## Palette Styling
 //## List Group Styling
+//## About Me Styling
 
 //Code Reference/Credit:
 //Laurel Beyers: https://foundation.zurb.com/building-blocks/blocks/multilevel-offcanvas-menu.html
@@ -548,4 +549,14 @@ $list-group-margin: 0;
       }
     }
   }
+}
+
+//About Me Styling
+.about-me-item {
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  box-shadow: 0 10px 20px var(--color-drop-shadow);
+  background: var(--color-base);
+  color: var(--color-text);
 }
