@@ -4,6 +4,7 @@ version: '3'
 
 services:
   web:
+    restart: always
     build: .
     stdin_open: true
     tty: true
@@ -12,3 +13,16 @@ services:
     ports:
       - 8000:8000
     command: python /code/testsite/manage.py runserver 0.0.0.0:8000
+
+  nginx:
+    restart: always
+    build: ./nginx/
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+#      - "443:443"
+#      volumes:
+#        - ./code/static:/static
+    links:
+      - web:web
