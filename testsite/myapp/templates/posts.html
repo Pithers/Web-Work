@@ -10,7 +10,7 @@
     <!--This div is attached to Vue object for dealing with posts-->
     <div id="fetch_post" class="cell large-10 large-offset-1">
       {% if user.is_authenticated %}
-      <form action="/" method="post">
+      <form action="/posts/" method="post">
         {% csrf_token %}
         {{ form_instance }}
         <input type="submit" class="button expanded" value="Submit">
