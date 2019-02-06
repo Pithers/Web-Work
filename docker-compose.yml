@@ -5,12 +5,11 @@ version: '3'
 services:
   web:
     restart: always
-    #image: registry.gitlab.com/pithers/web-work:latest
-    build: .
-    stdin_open: true
-    tty: true
-    volumes:
-      - .:/code
+    hostname: pithersite-1
+    image: registry.gitlab.com/pithers/web-work:latest
+    #build: .
+    #volumes:
+    #  - .:/code
     ports:
       - 8000:8000
     command: python /code/testsite/manage.py runserver 0.0.0.0:8000
@@ -18,11 +17,14 @@ services:
   nginx:
     restart: always
     build: ./nginx/
+    volumes:
+        - certs: /etc/letsencrypt
+        - certs-data: /data/letsencrypt
     depends_on:
       - web
     ports:
       - "80:80"
-#      - "443:443"
+      - "443:443"
 #      volumes:
 #        - ./code/static:/static
     links:
