@@ -25,7 +25,7 @@ SECRET_KEY = 'l@mrk-)+j-1t33!)dszy0r0t-5%4h*de3yqn4yllmn0c&ysbmz'
 DEBUG = True
 
 #ALLOWED_HOSTS = ["35.236.17.97", pither.org, etc]
-ALLOWED_HOSTS = ["35.236.17.97", ".pithers.org"]
+ALLOWED_HOSTS = ["35.236.17.97", ".pithers.org", "localhost"]
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 
