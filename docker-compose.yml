@@ -1,6 +1,6 @@
 # Docker compose file
 ---
-version: '3'
+version: '3.2'
 
 services:
   web:
@@ -18,9 +18,9 @@ services:
     restart: always
     build: ./nginx/
     container_name: nginx
-    volumes:
-      - "certs": /etc/letsencrypt
-      - "certs-data": /data/letsencrypt
+    #volumes:
+    #  - certs: /etc/letsencrypt
+    #  - certs-data: /data/letsencrypt
     depends_on:
       - web
     ports:
