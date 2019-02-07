@@ -18,9 +18,13 @@ services:
     restart: always
     build: ./nginx/
     container_name: nginx
-    #volumes:
-    #  - certs: /etc/letsencrypt
-    #  - certs-data: /data/letsencrypt
+    volumes:
+      - type: volume
+        source: certs
+        target: /etc/letsencrypt
+      - type: volume
+        source: certs-data
+        target: /data/letsencrypt
     depends_on:
       - web
     ports:
@@ -30,3 +34,7 @@ services:
 #        - ./code/static:/static
     links:
       - web:web
+
+volumes:
+  certs:
+  certs-data:
