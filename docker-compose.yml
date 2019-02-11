@@ -14,7 +14,8 @@ services:
         #- 8000:8000
     expose:
       - "8000"
-    command: python /code/testsite/manage.py runserver 0.0.0.0:8000
+        #command: python /code/testsite/manage.py runserver 0.0.0.0:8000
+    command: uwsgi /code/deployment.ini
 
   nginx:
     restart: always
