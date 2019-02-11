@@ -6,12 +6,14 @@ services:
   web:
     restart: always
     hostname: pithersite-1
-    image: registry.gitlab.com/pithers/web-work:latest
-    #build: .
-    #volumes:
-    #  - .:/code
-    ports:
-      - 8000:8000
+    #image: registry.gitlab.com/pithers/web-work:latest
+    build: .
+    volumes:
+      - .:/code
+        #ports:
+        #- 8000:8000
+    expose:
+      - "8000"
     command: python /code/testsite/manage.py runserver 0.0.0.0:8000
 
   nginx:
@@ -19,12 +21,8 @@ services:
     build: ./nginx/
     container_name: nginx
     volumes:
-      - type: volume
-        source: certs
-        target: /etc/letsencrypt
-      - type: volume
-        source: certs-data
-        target: /data/letsencrypt
+      - ~/certs-data/:/data/letsencrypt/
+      - /etc/letsencrypt/:/etc/letsencrypt/
     depends_on:
       - web
     ports:
@@ -34,7 +32,3 @@ services:
 #        - ./code/static:/static
     links:
       - web:web
-
-volumes:
-  certs:
-  certs-data:
