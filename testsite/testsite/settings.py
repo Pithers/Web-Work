@@ -20,22 +20,24 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'l@mrk-)+j-1t33!)dszy0r0t-5%4h*de3yqn4yllmn0c&ysbmz'
+#SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
+#DEBUG = True
 DEBUG = False
 
-#ALLOWED_HOSTS = ["35.236.17.97", pither.org, etc]
-ALLOWED_HOSTS = ["35.236.17.97", ".pithers.org", "localhost"]
+#ALLOWED_HOSTS = ["35.236.17.97", ".pithers.org", "localhost"]
+ALLOWED_HOSTS = ["35.236.17.97", ".pithers.org", "localhost", "web"]
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # Network settings
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+#SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+#SECURE_SSL_REDIRECT = True
+#SESSION_COOKIE_SECURE = True
+#CSRF_COOKIE_SECURE = True
 
 # Application definition
 
@@ -140,6 +142,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, "/deploy_static/")
+#STATIC_ROOT = os.path.join(BASE_DIR, "/deploy_static/")
+STATIC_ROOT = BASE_DIR + "/static/"
 STATIC_URL = '/static/'
-SASS_PROCESSOR_ROOT = STATIC_URL
+SASS_PROCESSOR_ROOT = STATIC_ROOT
