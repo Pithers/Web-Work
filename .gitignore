@@ -107,6 +107,7 @@ venv.bak/
 
 # project specific ignores
 testsite/foundation-6.5.1-complete/
+testsite/static/
 cleanup_docker.sh
 
 #Exceptions
