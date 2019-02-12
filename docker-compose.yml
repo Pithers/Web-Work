@@ -31,6 +31,7 @@ services:
     build: ./nginx/
     container_name: nginx
     volumes:
+      - ./testsite/:/testsite/
       - ./testsite/static/:/static/
       - ~/certs-data/:/data/letsencrypt/
       - /etc/letsencrypt/:/etc/letsencrypt/
