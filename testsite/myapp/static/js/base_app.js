@@ -29,11 +29,6 @@ function dark_mode() {
   root_style.setProperty("--color-drop-shadow", "#aaaaaa");
 }
 
-//Upon logout erases preference loaded variable in session storage
-function loggedOut() {
-  sessionStorage.setItem("preferences", "unloaded");
-}
-
 //Vue app for fetching colorscheme from database
 var fetch_color_scheme = new Vue({
   el: '#fetch_color_scheme',
@@ -214,8 +209,18 @@ function updateStorage(name, method) {
 }
 
 
+/*function loggedOut() {
+  sessionStorage.setItem("preferences", "unloaded");
+}*/
+
 //Set onload functions for each page
 $(window).ready(function() {
+
+  //Upon logout erases preference loaded variable in session storage
+  if(document.getElementById("logout-msg")) {
+    sessionStorage.setItem("preferences", "unloaded");
+  }
+
   loadSession();
   if(window.location.pathname == "/") {
     updateJscolor();
