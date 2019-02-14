@@ -26,7 +26,7 @@ function dark_mode() {
   root_style.setProperty("--color-text-highlight", "#1f6f90");
   root_style.setProperty("--color-border", "#826c73");
   root_style.setProperty("--color-border-accent", "#715d62");
-  root_style.setProperty("--color-drop-shadow", "#aaaaaa");
+  root_style.setProperty("--color-drop-shadow", "#000000");
 }
 
 //Vue app for fetching colorscheme from database
