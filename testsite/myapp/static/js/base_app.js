@@ -208,11 +208,6 @@ function updateStorage(name, method) {
   }
 }
 
-
-/*function loggedOut() {
-  sessionStorage.setItem("preferences", "unloaded");
-}*/
-
 //Set onload functions for each page
 $(window).ready(function() {
 
