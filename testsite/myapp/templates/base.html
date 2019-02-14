@@ -99,16 +99,16 @@
           <li><a href="#">My Color Schemes</a>
             <ul class="menu vertical nested" name="vue-color-list">
               <div id="fetch_color_scheme">
-              {% if user.is_authenticated %}
+                {% if user.is_authenticated %}
                 <div v-if="color_scheme.length == 0">
                   <li><a href="#">None available</a></li>
                 </div>
                 <div v-for="(item, index) in color_scheme">
                   <li><a v-on:click="loadColorScheme(item.color_scheme_name);">[[ item.color_scheme_name ]]</a></li>
                 </div>
-              {% else %}
-              <li><a href="/login/">Login to access color schemes</a></li>
-              {% endif %}
+                {% else %}
+                <li><a href="/login/">Login to access color schemes</a></li>
+                {% endif %}
               </div>
             </ul>
           </li>
@@ -144,6 +144,14 @@
     <footer>
       <p>Created by <a href="/about/">Brandon Smith</a></p>
       <p>brandonsmithsemail@gmail.com</p>
+      {% if messages %}
+      {% for message in messages %}
+      {% if "LOGOUT" in message.extra_tags %}
+      <div id="logout-msg"></div>
+      <!--script>loggedOut();</script-->
+      {% endif%}
+      {% endfor %}
+      {% endif %}
     </footer>
 
     <script src="{% static "js/vendor/jquery.js" %}"></script>
@@ -152,13 +160,6 @@
     <script src="https://unpkg.com/axios/dist/axios.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="{% static "js/base_app.js" %}"></script>
-    {% if messages %}
-    {% for message in messages %}
-    {% if "LOGOUT" in message.extra_tags %}
-    <script>loggedOut();</script>
-    {% endif%}
-    {% endfor %}
-    {% endif %}
     {% block scripts %}
     {% endblock %}
   </body>
