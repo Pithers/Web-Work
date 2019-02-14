@@ -148,7 +148,6 @@
       {% for message in messages %}
       {% if "LOGOUT" in message.extra_tags %}
       <div id="logout-msg"></div>
-      <!--script>loggedOut();</script-->
       {% endif%}
       {% endfor %}
       {% endif %}
@@ -158,7 +157,7 @@
     <script src="{% static "js/vendor/what-input.js" %}"></script>
     <script src="{% static "js/vendor/foundation.min.js" %}"></script>
     <script src="https://unpkg.com/axios/dist/axios.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.6/dist/vue.min.js"></script>
     <script src="{% static "js/base_app.js" %}"></script>
     {% block scripts %}
     {% endblock %}
