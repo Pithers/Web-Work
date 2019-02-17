@@ -53,7 +53,7 @@ test:
 # Minify code before deployment
 minify:
   stage: minify
-  image: "$CI_REGISTRY_IMAGE:testing"
+  #image: "$CI_REGISTRY_IMAGE:testing"
   script:
     - css-html-js-minify /code/testsite/static
     #- css-html-js-minify /code/testsite/myapp/static
