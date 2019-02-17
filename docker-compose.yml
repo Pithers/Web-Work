@@ -6,25 +6,24 @@ services:
   web:
     restart: always
     hostname: pithersite-1
-    #image: registry.gitlab.com/pithers/web-work:latest
-    build: .
     volumes:
       - .:/code
-        #ports:
-        #- 8000:8000
     expose:
       - "8000"
+
     #Development Version
+    #build: .
     #command: >
     #  bash -c "python /code/testsite/manage.py compilescss
     #  && python /code/testsite/manage.py collectstatic --ignore=*.scss --noinput
     #  && python /code/testsite/manage.py runserver 0.0.0.0:8000 --insecure"
+
     #Production Version
+    image: registry.gitlab.com/pithers/web-work:latest
     command: >
       bash -c "python /code/testsite/manage.py compilescss
       && python /code/testsite/manage.py collectstatic --ignore=*.scss --noinput
       && uwsgi /code/deployment.ini"
-    #command: uwsgi /code/deployment.ini
 
   nginx:
     restart: always
