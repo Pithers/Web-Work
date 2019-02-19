@@ -67,5 +67,6 @@ deploy:
     - docker info
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker build -t $CI_REGISTRY_IMAGE:latest .
-    - docker exec css-html-js-minify /code/testsite/static
+    - docker run web
+    - docker exec web css-html-js-minify /code/testsite/static
     - docker push $CI_REGISTRY_IMAGE:latest
