@@ -23,6 +23,7 @@ services:
     command: >
       bash -c "python /code/testsite/manage.py compilescss
       && python /code/testsite/manage.py collectstatic --ignore=*.scss --noinput
+      && css-html-js-minify /code/testsite/static
       && uwsgi /code/deployment.ini"
 
   nginx:
