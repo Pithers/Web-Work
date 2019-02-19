@@ -1,5 +1,5 @@
 # Docker compose file
-# Development Version
+# Production Version
 ---
 version: '3.2'
 
@@ -13,11 +13,12 @@ services:
     expose:
       - "8000"
 
-    build: .
+    image: registry.gitlab.com/pithers/web-work:latest
     command: >
       bash -c "python /code/testsite/manage.py compilescss
+      && rm -rf /code/testsite/static/
       && python /code/testsite/manage.py collectstatic --ignore=*.scss --noinput
-      && python /code/testsite/manage.py runserver 0.0.0.0:8000 --insecure"
+      && uwsgi /code/deployment.ini"
 
   nginx:
     restart: always
