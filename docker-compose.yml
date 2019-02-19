@@ -3,7 +3,9 @@
 version: '3.2'
 
 services:
-  web:
+
+  #Development Version
+  web-development:
     restart: always
     hostname: pithersite-1
     volumes:
@@ -11,22 +13,13 @@ services:
     expose:
       - "8000"
 
-    #Development Version
-    #build: .
-    #command: >
-    #  bash -c "python /code/testsite/manage.py compilescss
-    #  && python /code/testsite/manage.py collectstatic --ignore=*.scss --noinput
-    #  && python /code/testsite/manage.py runserver 0.0.0.0:8000 --insecure"
-
-    #Production Version
-    image: registry.gitlab.com/pithers/web-work:latest
+    build: .
     command: >
       bash -c "python /code/testsite/manage.py compilescss
       && python /code/testsite/manage.py collectstatic --ignore=*.scss --noinput
-      && css-html-js-minify /code/testsite/static
-      && uwsgi /code/deployment.ini"
+      && python /code/testsite/manage.py runserver 0.0.0.0:8000 --insecure"
 
-  nginx:
+  nginx-production:
     restart: always
     build: ./nginx/
     container_name: nginx
@@ -36,9 +29,42 @@ services:
       - ~/certs-data/:/data/letsencrypt/
       - /etc/letsencrypt/:/etc/letsencrypt/
     depends_on:
-      - web
+      - web-development
     ports:
       - "80:80"
       - "443:443"
     links:
-      - web:web
+      - web-development:web-development
+
+  #Production Version
+  web-production:
+    restart: always
+    hostname: pithersite-1
+    volumes:
+      - .:/code
+    expose:
+      - "8000"
+
+    image: registry.gitlab.com/pithers/web-work:latest
+    command: >
+      bash -c "python /code/testsite/manage.py compilescss
+      && python /code/testsite/manage.py collectstatic --ignore=*.scss --noinput
+      && css-html-js-minify /code/testsite/static
+      && uwsgi /code/deployment.ini"
+
+  nginx-production:
+    restart: always
+    build: ./nginx/
+    container_name: nginx
+    volumes:
+      - ./testsite/:/testsite/
+      - ./testsite/static/:/static/
+      - ~/certs-data/:/data/letsencrypt/
+      - /etc/letsencrypt/:/etc/letsencrypt/
+    depends_on:
+      - web-production
+    ports:
+      - "80:80"
+      - "443:443"
+    links:
+      - web-production:web-production
