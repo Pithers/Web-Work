@@ -12,7 +12,30 @@ var color_tertiary = document.getElementById("color-tertiary");
 var color_border = document.getElementById("color-border");
 var color_border_accent = document.getElementById("color-border-accent");
 var color_drop_shadow = document.getElementById("color-drop-shadow");
+
+//Form specific elements
+var palette_form = document.getElementById("palette-form");
 var palette_form_submit = document.getElementById("palette-form-submit");
+var palette_form_button = document.getElementsByClassName("palette-form-button");
+var palette_form_randomize = document.getElementById("palette-button-randomize");
+
+//Html buttons
+//When user submits the palette form
+palette_form.onsubmit = function() {
+    return colorFormSubmit();
+};
+
+//Set onchange for every palette_form_button
+[].forEach.call(palette_form_button, function(element) {
+  element.onchange = function() {
+    updateStorage(element.id,'save');
+  };
+});
+
+//Set click for randomize color pallete button
+palette_form_randomize.onclick = function() {
+    colorRandomizer();
+};
 
 //Give user a prompt to save the color scheme to their profile
 function colorFormSubmit() {

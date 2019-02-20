@@ -104,7 +104,7 @@
                   <li><a href="#">None available</a></li>
                 </div>
                 <div v-for="(item, index) in color_scheme">
-                  <li><a v-on:click="loadColorScheme(item.color_scheme_name);" {{ script_nonce }}>[[ item.color_scheme_name ]]</a></li>
+                  <li><a v-on:click="loadColorScheme(item.color_scheme_name);">[[ item.color_scheme_name ]]</a></li>
                 </div>
                 {% else %}
                 <li><a href="/login/">Login to access color schemes</a></li>

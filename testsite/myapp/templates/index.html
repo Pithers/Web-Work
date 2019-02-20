@@ -30,7 +30,7 @@
     <div class="palette-box" style="background-color: var(--color-drop-shadow);"></div>
   </div>
 
-  <form action="/" method="POST" onsubmit="return colorFormSubmit();">
+  <form action="/" method="POST" id="palette-form">
     {% csrf_token %}
 
     <div class="grid-x grid-padding-x">
@@ -45,7 +45,7 @@
         {% for field in color_scheme_form.visible_fields %}
         {% if not forloop.first %}
         <div class="palette-field cell small-4">
-          <button class="jscolor {valueElement: {{ field.name }}}" onchange="updateStorage('{{ field.label }}','save');">
+          <button class="palette-form-button jscolor {valueElement: {{ field.name }}}" id="{{ field.label }}">
             {{ field.label_tag }}
             <!--Display the form and use the correct template variable-->
             {% if field.name == 'color_bg' %}
@@ -82,9 +82,9 @@
             </div>
         </div>
         <div class="palette-field cell small-4">
-            <div class="palette-button button colormind" onclick="colorRandomizer()">
-              Randomize
-            </div>
+          <div class="palette-button button colormind" id="palette-button-randomize">
+            Randomize
+          </div>
         </div>
       </div>
       <!--Naming Field for ColorScheme-->
