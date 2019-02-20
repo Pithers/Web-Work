@@ -39,8 +39,12 @@ SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
-# Application definition
+# Django nonces application
+CSP_NONCE_SCRIPT = True
+CSP_NONCE_STYLE = False
+CSP_FLAG_STRICT = False #For strict-dynamic in CSP
 
+# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -63,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp_nonce.middleware.CSPNonceMiddleware',
 ]
 
 ROOT_URLCONF = 'testsite.urls'
@@ -78,6 +83,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'csp_nonce.middleware.CSPNonceMiddleware',
             ],
         },
     },
