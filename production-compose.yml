@@ -16,8 +16,8 @@ services:
     image: registry.gitlab.com/pithers/web-work:latest
     command: >
       bash -c "python /code/testsite/manage.py compilescss
-      && rm -rf /code/testsite/static/
       && python /code/testsite/manage.py collectstatic --ignore=*.scss --noinput
+      && crass /code/testsite/static/scss/style.css --optimize
       && uwsgi /code/deployment.ini"
 
   nginx:

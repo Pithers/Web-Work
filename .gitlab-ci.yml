@@ -1,6 +1,7 @@
 # gitlab yml file for ci
 ---
 image: docker:latest
+
 # When using dind, it's wise to use the overlayfs driver for
 # improved performance.
 variables:
@@ -12,7 +13,6 @@ stages:
   - build
   - lint
   - test
-#  - minify
   - deploy
 
 # Build test container
@@ -49,14 +49,6 @@ test:
     - coverage --version
     - coverage run --source='.' ./manage.py test
     - coverage report --skip-covered
-
-# Minify code before deployment
-#minify:
-#  stage: minify
-#  image: "$CI_REGISTRY_IMAGE:latest"
-#  script:
-#    - css-html-js-minify /code/testsite/static
-    #- css-html-js-minify /code/testsite/myapp/static
 
 # Create latest docker container if all the tests/lint passes on master
 deploy:
