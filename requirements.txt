@@ -6,6 +6,6 @@ coverage
 libsass
 django-compressor
 django-sass-processor
-css-html-js-minify
 django-widget-tweaks
+django-csp-nonce
 uwsgi

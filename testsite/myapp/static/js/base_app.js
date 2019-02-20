@@ -251,6 +251,9 @@ function loadSession() {
 }
 
 //Site theme darkmode toggle, set root css variables accordingly
+var day_night_switch = document.getElementById("light-switch");
+day_night_switch.onchange = themeUpdate(day_night_switch);
+
 function themeUpdate(element) {
   if(element.checked) {
     dark_mode();
