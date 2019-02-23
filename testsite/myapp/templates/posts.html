@@ -43,7 +43,7 @@
               <div class="cell small-6">
                 [[ item.created_on ]]
               </div>
-              <div class="cell auto" style="text-align:right">
+              <div class="cell auto" class="post-buttons">
                 {% if user.is_authenticated %}
                 <div class="button" v-bind:data-toggle="'add_comments' + index">Comment</div>
                 {% else %}
@@ -56,13 +56,13 @@
         </div>
 
         <!--Comment submission form-->
-        <div style="display:none" class="large-10 large-offset-2" v-bind:id="'add_comments' + index" v-foundation data-toggler data-animate="fade-in fade-out" data-options="showDelay:50;hideDelay:50">
+        <div class="large-10 large-offset-2 comment-submission-form" v-bind:id="'add_comments' + index" v-foundation data-toggler data-animate="fade-in fade-out" data-options="showDelay:50;hideDelay:50">
           <div class="card-info secondary">
             <div class="card-info-content">
               <form v-bind:action="'/comment/' + item.id + '/'" method="post">
                 {% csrf_token %}
                 {{ comm_form }}
-                <div style = "text-align:right">
+                <div class="comment-submit-button">
                   <input type="submit" class="button" value = "Submit">
                 </div>
               </form>

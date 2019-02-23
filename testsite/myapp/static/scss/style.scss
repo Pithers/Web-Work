@@ -347,6 +347,14 @@ select, [type="number"] {
   }
 }
 
+.comment-submission-form {
+  display: none;
+}
+
+.post-buttons, .comment-submit-button {
+  text-align: right;
+}
+
 //Palette Styling
 .palette {
   .palette-button, .palette-submit {
