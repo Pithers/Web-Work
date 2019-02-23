@@ -100,6 +100,14 @@ select, [type="number"] {
   width: auto;
 }
 
+.moon-button {
+  color: #fefcd7;
+}
+
+.sun-button {
+  color: #fcd440;
+}
+
 .switch input:checked ~ .switch-paddle {
   background: var(--color-base);
 }
