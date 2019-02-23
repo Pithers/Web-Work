@@ -457,6 +457,38 @@ select, [type="number"] {
       height: 100px;
       width: 100px;
     }
+
+    //Palette boxes shown on index page
+    .pb-bg {
+      background-color: var(--color-bg);
+    }
+    .pb-base {
+      background-color: var(--color-base);
+    }
+    .pb-accent {
+      background-color: var(--color-accent);
+    }
+    .pb-tertiary {
+      background-color: var(--color-tertiary);
+    }
+    .pb-text {
+      background-color: var(--color-text);
+    }
+    .pb-text-invert {
+      background-color: var(--color-text-invert);
+    }
+    .pb-text-highlight {
+      background-color: var(--color-text-highlight);
+    }
+    .pb-border {
+      background-color: var(--color-border);
+    }
+    .pb-border-accent {
+      background-color: var(--color-border-accent);
+    }
+    .pb-drop-shadow {
+      background-color: var(--color-drop-shadow);
+    }
   }
 }
 
