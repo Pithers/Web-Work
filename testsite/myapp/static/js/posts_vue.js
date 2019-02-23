@@ -1,12 +1,22 @@
 //myapp/static/js/my_vue.js
 //Note: Consider adding delimiters: ['[[',']]'] to the configs.
 
-//Custom vue direction for use with Foundation
-Vue.directive('foundation', {
-  bind(el) {
-    $(el).foundation()
-  },
-})
+//Directive for element that will be the toggler
+Vue.directive('toggler', {
+  bind(el, b, vnode) {
+    el.addEventListener('click', (event) => vnode.context.$emit(b.value, event));
+  }
+});
+
+Vue.directive('togglee', {
+  bind(el, b, vnode, oldVnode) {
+    vnode.context.$on(b.value, function() {
+      let attribute = el.getAttribute('content-transition-class');
+      if(attribute) attribute.split(' ').forEach((c) => el.classList.toggle(c));
+      else el.classList.toggle('content-transition');
+    });
+  }
+});
 
 //Vue object that fetches our post/comment model from the database
 var fetch_post = new Vue({
