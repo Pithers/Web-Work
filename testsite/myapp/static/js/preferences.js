@@ -53,7 +53,8 @@ function colorPreferences(list, default_scheme) {
 
   //Create HTML main list group
   var html_list = document.createElement("ul");
-  html_list.setAttribute("class", "list-group");
+  //html_list.setAttribute("class", "list-group");
+  html_list.classList.add("list-group");
 
   //Generate color scheme preference list and the two defaults: dark and light
   for(i = 0; i < list.length + 2; i++) {
@@ -61,67 +62,58 @@ function colorPreferences(list, default_scheme) {
     var html_palette = document.createElement("div");
     var delete_button = document.createElement("div");
 
-    html_button.setAttribute("name", "scheme_name");
-    html_button.setAttribute("id", "scheme-" + i);
+    //html_button.setAttribute("name", "scheme_name");
+    //html_button.setAttribute("id", "scheme-" + i);
+
+    html_button.name = "scheme_name";
+    html_button.id = "scheme-" + i;
+    html_button.classList.add("list-group-item")
 
     //Style class for palette
-    html_palette.setAttribute("class", "user-list-palette");
+    //html_palette.setAttribute("class", "user-list-palette");
+    html_palette.classList.add("user-list-palette");
 
     //Style class for trash-icon
-    delete_button.setAttribute("class", "delete-button fas fa-trash");
+    //delete_button.setAttribute("class", "delete-button fas fa-trash");
+    delete_button.classList.add("delete-button");
+    delete_button.classList.add("fas");
+    delete_button.classList.add("fa-trash");
 
     //Generate list-group for selecting color schemes
     if(i < list.length) {
       if(list[i].color_scheme_name == default_scheme) {
-        html_button.setAttribute("class", "list-group-item active");
-      } else {
-        html_button.setAttribute("class", "list-group-item");
+        //html_button.setAttribute("class", "list-group-item active");
+        html_button.classList.add("active");
       }
 
       //Have button launch the setDefaultScheme on the respective color scheme
-      html_button.onclick = function() {
-        setDefaultScheme(i, "'" + list[i].color_scheme_name + "'");
-      };
+      html_button.onclick = new Function("setDefaultScheme(" + i + ",'" + list[i].color_scheme_name + "');");
 
       //Color patches
       html_button.innerText = list[i].color_scheme_name;
 
+      //This searches the list for any of the fields and writes it to the DOM
       for(j = 0; j < 10; j++) {
-        //This searches the list for any of the fields and writes it to the DOM
         var html_color = document.createElement("div");
-        html_color.setAttribute("class", "user-list-patches");
-
-        //html_color.setAttribute("style", "background: #" + list[i][fields[j]]);
+        //html_color.setAttribute("class", "user-list-patches");
+        html_color.classList.add("user-list-patches");
         html_color.style.background = "#" + list[i][fields[j]];
-
         html_palette.appendChild(html_color);
       }
 
       //Add in delete button, deletes colorscheme upon click
-      //delete_button.setAttribute("onclick", "deleteScheme('" + list[i].color_scheme_name + "'); event.stopPropagation();");
-      delete_button.onclick = function(event) {
-        deleteScheme("'" + list[i].color_scheme_name + "'");
-        event.stopPropagation();
-      };
-
+      delete_button.onclick = new Function("deleteScheme('" + list[i].color_scheme_name + "');");
       html_button.appendChild(delete_button);
     }
     else if(i == list.length) {
-      html_button.setAttribute("class", "list-group-item");
       html_button.innerText = "default-light-mode";
-
-      html_button.onclick = function() {
-        setDefaultScheme(i, 'default-light-mode');
-      };
+      html_button.onclick = new Function("setDefaultScheme(" + i + ",'default-light-mode');");
     }
     else {
-      html_button.setAttribute("class", "list-group-item");
       html_button.innerText = "default-dark-mode";
-
-      html_button.onclick = function() {
-        setDefaultScheme(i, 'default-dark-mode');
-      };
+      html_button.onclick = new Function("setDefaultScheme(" + i + ",'default-dark-mode');");
     }
+
     html_list.appendChild(html_button);
     html_button.appendChild(html_palette);
   }
