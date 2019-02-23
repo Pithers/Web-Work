@@ -124,6 +124,10 @@ select, [type="number"] {
   color: var(--color-text);
 }
 
+.content-transition {
+  display: none;
+}
+
 //Icons
 .title-icon {
   .fa:hover, .fas:hover {
@@ -353,10 +357,6 @@ select, [type="number"] {
     -ms-transform: rotate(30deg);
     transform: rotate(30deg);
   }
-}
-
-.comment-submission-form {
-  display: none;
 }
 
 .post-buttons, .comment-submit-button {
