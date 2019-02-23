@@ -250,6 +250,10 @@ function loadSession() {
   }
 }
 
+//Styling of Day/Night button
+document.getElementById("moon-button").color = "#fefcd7";
+document.getElementById("sun-button").color = "#fcd440";
+
 //Day/Night toggle button
 document.getElementById("light-switch").onclick = function() {
   themeUpdate(document.getElementById("light-switch"));

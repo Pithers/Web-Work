@@ -53,7 +53,6 @@ function colorPreferences(list, default_scheme) {
 
   //Create HTML main list group
   var html_list = document.createElement("ul");
-  //html_list.setAttribute("class", "list-group");
   html_list.classList.add("list-group");
 
   //Generate color scheme preference list and the two defaults: dark and light
@@ -62,19 +61,14 @@ function colorPreferences(list, default_scheme) {
     var html_palette = document.createElement("div");
     var delete_button = document.createElement("div");
 
-    //html_button.setAttribute("name", "scheme_name");
-    //html_button.setAttribute("id", "scheme-" + i);
-
     html_button.name = "scheme_name";
     html_button.id = "scheme-" + i;
     html_button.classList.add("list-group-item")
 
     //Style class for palette
-    //html_palette.setAttribute("class", "user-list-palette");
     html_palette.classList.add("user-list-palette");
 
     //Style class for trash-icon
-    //delete_button.setAttribute("class", "delete-button fas fa-trash");
     delete_button.classList.add("delete-button");
     delete_button.classList.add("fas");
     delete_button.classList.add("fa-trash");
@@ -82,7 +76,6 @@ function colorPreferences(list, default_scheme) {
     //Generate list-group for selecting color schemes
     if(i < list.length) {
       if(list[i].color_scheme_name == default_scheme) {
-        //html_button.setAttribute("class", "list-group-item active");
         html_button.classList.add("active");
       }
 
@@ -95,7 +88,6 @@ function colorPreferences(list, default_scheme) {
       //This searches the list for any of the fields and writes it to the DOM
       for(j = 0; j < 10; j++) {
         var html_color = document.createElement("div");
-        //html_color.setAttribute("class", "user-list-patches");
         html_color.classList.add("user-list-patches");
         html_color.style.background = "#" + list[i][fields[j]];
         html_palette.appendChild(html_color);
