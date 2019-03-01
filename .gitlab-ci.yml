@@ -31,7 +31,7 @@ pylint:
   script:
     - python -V
     - pylint --load-plugins pylint_django --disable=missing-docstring ./testsite/testsite
-    - pylint --load-plugins pylint_django --disable=missing-docstring ./testsite/myapp
+    - pylint --ignore=./testsite/myapp/migrations --load-plugins pylint_django --disable=missing-docstring ./testsite/myapp
 
 scsslint:
   image: "$CI_REGISTRY_IMAGE:testing"
