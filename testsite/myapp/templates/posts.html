@@ -56,7 +56,7 @@
         </div>
 
         <!--Comment submission form-->
-        <div class="large-10 large-offset-2 hide" v-togglee="'add_comments' + index">
+        <div class="large-10 large-offset-2 content-transition" v-togglee="'add_comments' + index">
           <div class="card-info secondary">
             <div class="card-info-content">
               <form v-bind:action="'/comment/' + item.id + '/'" method="post">
@@ -71,7 +71,7 @@
         </div>
 
         <!--If each particular post has comments to show, show those comment boxes-->
-        <div v-if="item.comments.length > 0" v-toglee="'show_comments' + index">
+        <div v-if="item.comments.length > 0" v-togglee="'show_comments' + index">
           <div class="grid-container">
             <div class="grid-x grid-padding-x">
               <div v-for="comment_item in item.comments" class="large-10 large-offset-2 cell">
