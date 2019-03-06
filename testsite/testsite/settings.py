@@ -18,26 +18,26 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'l@mrk-)+j-1t33!)dszy0r0t-5%4h*de3yqn4yllmn0c&ysbmz'
-#SECRET_KEY = os.environ['SECRET_KEY']
-
-# SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
-DEBUG = False
-
-#ALLOWED_HOSTS = ["35.236.17.97", ".pithers.org", "localhost"]
 ALLOWED_HOSTS = ["35.236.17.97", ".pithers.org", "localhost", "web"]
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
-# Network settings
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+#Develoment vs Production settings
+if os.environ.get('SERVER_MODE') == 'development':
+    # SECURITY WARNING: don't run with debug turned on in production!
+    DEBUG = True
+    # SECURITY WARNING: keep the secret key used in production secret!
+    SECRET_KEY = 'l@mrk-)+j-1t33!)dszy0r0t-5%4h*de3yqn4yllmn0c&ysbmz'
+else:
+    DEBUG = False
+    # Network settings
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECRET_KEY = os.environ['SECRET_KEY']
 
 # Application definition
 INSTALLED_APPS = [
