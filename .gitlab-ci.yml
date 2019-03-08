@@ -44,6 +44,7 @@ test:
   stage: test
   image: "$CI_REGISTRY_IMAGE:testing"
   script:
+    - export SECRET_KEY = 'a@mrs3422343hzy0r01-5%3h*de333n431lmn1c&ysbmz'
     - cd /code/testsite
     - python manage.py migrate
     - coverage --version
