@@ -1,3 +1,4 @@
+#!/bin/bash
 #Deploy_init.sh
 #This shell script installs all the needed programs to run the server.
 #The script then builds the server from pither's gitlab image,
@@ -44,5 +45,6 @@ sudo apt-get install certbot
 #Build server, run server db_init script, run server, and create certificates
 #certbot will create a system level cron job at /etc/cron.d/certbot which auto renews the certificate
 docker-compose -f production-compose.yml run web ./db_init.sh
-docker-compose -f production-compose.yml up 
-sudo certbot certonly --webroot -w ./certs-data/ -d pithers.org -d www.pithers.org
+docker-compose -f production-compose.yml up
+sudo mkdir /home/certs-data/
+sudo certbot certonly --webroot -w /home/certs-data/ -d pithers.org -d www.pithers.org
