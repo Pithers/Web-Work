@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cd testsite
 python manage.py makemigrations
 python manage.py migrate

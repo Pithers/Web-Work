@@ -21,6 +21,7 @@ services:
       bash -c "python /code/testsite/manage.py compilescss
       && python /code/testsite/manage.py collectstatic --ignore=*.scss --noinput
       && crass /code/testsite/static/scss/style.css --optimize
+      && chmod 0777 /code/testsite
       && uwsgi /code/deployment.ini"
 
   nginx:
@@ -30,7 +31,7 @@ services:
     volumes:
       - ./testsite/:/testsite/
       - ./testsite/static/:/static/
-      - ./certs-data/:/data/letsencrypt/
+      - /home/certs-data/:/data/letsencrypt/
       - /etc/letsencrypt/:/etc/letsencrypt/
     depends_on:
       - web
