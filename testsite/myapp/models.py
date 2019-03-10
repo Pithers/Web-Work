@@ -27,36 +27,36 @@ class ColorScheme(models.Model):
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE,
                                 blank=True, null=True)
     color_scheme_name = models.CharField(max_length=20)
-    color_bg = models.CharField(max_length=7, default="#666666",
+    color_bg = models.CharField(max_length=7, default="666666",
                                 validators=[validate_color],
-                                help_text="Valid hexcode, ex: #666666")
-    color_text = models.CharField(max_length=7, default="#666666",
+                                help_text="Valid hexcode, ex: 666666")
+    color_text = models.CharField(max_length=7, default="666666",
                                   validators=[validate_color],
-                                  help_text="Valid hexcode, ex: #666666")
-    color_text_invert = models.CharField(max_length=7, default="#666666",
+                                  help_text="Valid hexcode, ex: 666666")
+    color_text_invert = models.CharField(max_length=7, default="666666",
                                          validators=[validate_color],
-                                         help_text="Valid hexcode, ex: #666666")
-    color_text_highlight = models.CharField(max_length=7, default="#666666",
+                                         help_text="Valid hexcode, ex: 666666")
+    color_text_highlight = models.CharField(max_length=7, default="666666",
                                             validators=[validate_color],
-                                            help_text="Valid hexcode, ex: #666666")
-    color_base = models.CharField(max_length=7, default="#666666",
+                                            help_text="Valid hexcode, ex: 666666")
+    color_base = models.CharField(max_length=7, default="666666",
                                   validators=[validate_color],
-                                  help_text="Valid hexcode, ex: #666666")
-    color_accent = models.CharField(max_length=7, default="#666666",
+                                  help_text="Valid hexcode, ex: 666666")
+    color_accent = models.CharField(max_length=7, default="666666",
                                     validators=[validate_color],
-                                    help_text="Valid hexcode, ex: #666666")
-    color_tertiary = models.CharField(max_length=7, default="#666666",
+                                    help_text="Valid hexcode, ex: 666666")
+    color_tertiary = models.CharField(max_length=7, default="666666",
                                       validators=[validate_color],
-                                      help_text="Valid hexcode, ex: #666666")
-    color_border = models.CharField(max_length=7, default="#666666",
+                                      help_text="Valid hexcode, ex: 666666")
+    color_border = models.CharField(max_length=7, default="666666",
                                     validators=[validate_color],
-                                    help_text="Valid hexcode, ex: #666666")
-    color_border_accent = models.CharField(max_length=7, default="#666666",
+                                    help_text="Valid hexcode, ex: 666666")
+    color_border_accent = models.CharField(max_length=7, default="666666",
                                            validators=[validate_color],
-                                           help_text="ease submit valid hexcode, ex: #666666")
-    color_drop_shadow = models.CharField(max_length=7, default="#666666",
+                                           help_text="ease submit valid hexcode, ex: 666666")
+    color_drop_shadow = models.CharField(max_length=7, default="666666",
                                          validators=[validate_color],
-                                         help_text="Please submit valid hexcode, ex: #666666")
+                                         help_text="Please submit valid hexcode, ex: 666666")
 
     def __str__(self):
         return self.color_scheme_name

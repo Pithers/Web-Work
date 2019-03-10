@@ -55,8 +55,8 @@ function colorPreferences(list, default_scheme) {
   var html_list = document.createElement("ul");
   html_list.classList.add("list-group");
 
-  //Generate color scheme preference list and the two defaults: dark and light
-  for(i = 0; i < list.length + 2; i++) {
+  //Generate color scheme preference list
+  for(i = 0; i < list.length; i++) {
     var html_button = document.createElement("ul");
     var html_palette = document.createElement("div");
     var delete_button = document.createElement("div");
@@ -96,14 +96,6 @@ function colorPreferences(list, default_scheme) {
       //Add in delete button, deletes colorscheme upon click
       delete_button.onclick = new Function("deleteScheme('" + list[i].color_scheme_name + "');");
       html_button.appendChild(delete_button);
-    }
-    else if(i == list.length) {
-      html_button.innerText = "default-light-mode";
-      html_button.onclick = new Function("setDefaultScheme(" + i + ",'default-light-mode');");
-    }
-    else {
-      html_button.innerText = "default-dark-mode";
-      html_button.onclick = new Function("setDefaultScheme(" + i + ",'default-dark-mode');");
     }
 
     html_list.appendChild(html_button);
