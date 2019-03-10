@@ -46,6 +46,7 @@ test:
   script:
     - export SECRET_KEY='a@mrs3422343hzy0r01-5%3h*de333n431lmn1c&ysbmz'
     - cd /code/testsite
+    - python manage.py makemigrations
     - python manage.py migrate
     - coverage --version
     - coverage run --source='.' ./manage.py test
