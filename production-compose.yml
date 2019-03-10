@@ -10,7 +10,7 @@ services:
     hostname: pithersite-1
     environment:
       #SECURITY WARNING: Use your own key here
-      SECRET_KEY = 'a@mrs3402348hzy0r0t-5%4h*de3y3n4y1lmn1c&ysbmz'
+      SECRET_KEY: 'a@mrs3402348hzy0r0t-5%4h*de3y3n4y1lmn1c&ysbmz'
     volumes:
       - .:/code
     expose:
