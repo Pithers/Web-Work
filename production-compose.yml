@@ -30,7 +30,7 @@ services:
     volumes:
       - ./testsite/:/testsite/
       - ./testsite/static/:/static/
-      - ~/certs-data/:/data/letsencrypt/
+      - ./certs-data/:/data/letsencrypt/
       - /etc/letsencrypt/:/etc/letsencrypt/
     depends_on:
       - web
