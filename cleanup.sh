@@ -1,4 +1,5 @@
 #!/bin/bash
+
 echo "Docker cleanup..."
 echo "Stopping docker processes..."
 docker stop $(docker ps -aq) 2>/dev/null
