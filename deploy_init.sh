@@ -42,9 +42,7 @@ sudo add-apt-repository ppa:certbot/certbot
 sudo apt-get update
 sudo apt-get install certbot
 
-#Build server, run server db_init script, run server, and create certificates
-#certbot will create a system level cron job at /etc/cron.d/certbot which auto renews the certificate
+#Build server, run server db_init script, and run server
 docker-compose -f production-compose.yml run web ./db_init.sh
+sudo fuser -k 443/tcp #Kill anything using port 443
 docker-compose -f production-compose.yml up
-sudo mkdir /home/certs-data/
-sudo certbot certonly --webroot -w /home/certs-data/ -d pithers.org -d www.pithers.org
