@@ -42,7 +42,14 @@ sudo add-apt-repository ppa:certbot/certbot
 sudo apt-get update
 sudo apt-get install certbot
 
-#Build server, run server db_init script, and run server
+#Build server, run server db_init script
 docker-compose -f production-compose.yml run web ./db_init.sh
-sudo fuser -k 443/tcp #Kill anything using port 443
-docker-compose -f production-compose.yml up
+
+#Kill anything using port 443
+sudo fuser -k 443/tcp
+
+#Allow website access to the sqlite database
+chown www-data testsite/db.sqlite3
+
+#Run server
+docker-compose -f production-compose.yml up -d
