@@ -49,7 +49,7 @@ docker-compose -f production-compose.yml run web ./db_init.sh
 sudo fuser -k 443/tcp
 
 #Allow website access to the sqlite database
-chown www-data testsite/db.sqlite3
+sudo chown www-data testsite/db.sqlite3
 
 #Run server
 docker-compose -f production-compose.yml up -d
