@@ -1,13 +1,24 @@
-//myapp/static/js/my_vue.js
-//Note: Consider adding delimiters: ['[[',']]'] to the configs.
+//Filename: posts_vue.js
+//Author: Brandon Smith
 
+//File Description:
+//This file contains all the logic needed for the posting and commenting system.
+//This system is located in posts.html
+//Logic includes, submitting, sorting, and querying the database of posts and comments.
+
+//Contents:
+//## Vue toggle button
+//## Vue fetch_post
+
+//Vue toggle button
+//This allows the toggler element to switch a class on the togglee
 //Directive for element that will be the toggler
 Vue.directive('toggler', {
   bind(el, b, vnode) {
     el.addEventListener('click', (event) => vnode.context.$emit(b.value, event));
   }
 });
-
+//Directive for element that will get toggled
 Vue.directive('togglee', {
   bind(el, b, vnode, oldVnode) {
     vnode.context.$on(b.value, function() {
@@ -18,7 +29,8 @@ Vue.directive('togglee', {
   }
 });
 
-//Vue object that fetches our post/comment model from the database
+//Vue fetch_post
+//Vue object that fetches our post/comment models from the database
 var fetch_post = new Vue({
   delimiters: ['[[',']]'],
   el: '#fetch_post',
@@ -29,6 +41,7 @@ var fetch_post = new Vue({
     }
   },
 
+  //Runs when loaded
   mounted: function() {
     //Grab posts list and then periodically update every 10 seconds
     this.getPostsList();
@@ -68,6 +81,7 @@ var fetch_post = new Vue({
       }
     },
 
+    //Uses axios to grab comment/post models from the database
     getPostsList: function() {
       axios
         //Access our own API to get a json object
@@ -81,6 +95,7 @@ var fetch_post = new Vue({
     }
   },
 
+  //Removes timer before
   beforeDestroy() {
     clearInterval(this.timer)
   }

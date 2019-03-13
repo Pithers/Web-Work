@@ -1,6 +1,22 @@
-//myapp/static/js/color_mode.js
+//Filename: color_mode.js
+//Author: Brandon Smith
 
-//Color elements
+//File Description:
+//This js file runs on index.html and is responsible for dealing with
+//all of the different buttons and elements there in relation to color
+
+//References:
+//http://jscolor.com/
+
+//Contents:
+//## Color elements definitions
+//## Html buttons
+//## colorFormSubmit()
+//## colorSchemeNameUpdate()
+//## Color buttons
+//## updateJscolor()
+
+//Color element definitions
 var color_scheme_name = document.getElementById("id_color_scheme_name");
 var color_bg = document.getElementById("color-bg");
 var color_text = document.getElementById("color-text");
@@ -24,20 +40,20 @@ var palette_form_randomize = document.getElementById("palette-button-randomize")
 palette_form.onsubmit = function() {
     return colorFormSubmit();
 };
-
 //Set onchange for every palette_form_button
 [].forEach.call(palette_form_button, function(element) {
   element.onchange = function() {
     updateStorage(element.id,'save');
   };
 });
-
 //Set click for randomize color pallete button
 palette_form_randomize.onclick = function() {
     colorRandomizer();
 };
 
+//colorFormSubmit()
 //Give user a prompt to save the color scheme to their profile
+//The form submits the color scheme to the Django database
 function colorFormSubmit() {
   //Check to see if form is saving or overwriting
   if(palette_form_submit.value == "Overwrite Color Scheme") {
@@ -55,6 +71,7 @@ function colorFormSubmit() {
   }
 }
 
+//colorSchemeNameUpdate()
 //The vue object fetch_color_scheme has a list of color schemes that
 //the user has access to. We need to alter the save button of the
 //color scheme form submission to read as 'edit color scheme' when
@@ -72,6 +89,7 @@ function colorSchemeNameUpdate() {
 }
 color_scheme_name.oninput = colorSchemeNameUpdate;
 
+//Color buttons
 //Set root css variables properly on changing any of the color elements
 color_bg.onchange = function() {
   document.documentElement.style.setProperty("--color-bg", "#" + color_bg.value);
@@ -104,11 +122,9 @@ color_drop_shadow.onchange = function() {
   document.documentElement.style.setProperty("--color-drop-shadow", "#" + color_drop_shadow.value);
 };
 
+//updateJscolor()
 //Each line in this function locates the specific jscolor element and updates the field
-//Sadly the code lines in this function are really long. There isn't really a good way
-//to split them up besides do something less efficient.
 function updateJscolor() {
-  //Update jscolor boxes
   document.getElementsByClassName("jscolor {valueElement: color_bg}")[0].style =
     "background-color:" + root_style.getPropertyValue("--color-bg") + ";";
   document.getElementsByClassName("jscolor {valueElement: color_base}")[0].style =

@@ -1,8 +1,22 @@
-//myapp/static/js/preferences.js
+//Filename: preferences.js
+//Author: Brandon Smith
 
+//File Description:
+//This file builds most of the preferences.html page
+//The current functionality is that it displays the user's color palette preferences
+//and allows the user to choose a default one, or delete one.
+//Later on, more account preferences will be added
+
+//Contents:
+//## setDefaultScheme()
+//## deleteScheme()
+//## colorPreferences()
+
+//setDefaultScheme()
 //Function runs from preferences view and sets/loads a default color scheme
-//If light or dark mode is set, set the checkbox accordingly and let the
-//light/dark themeupdater handle it
+//If light or dark mode is set, set the checkbox accordingly and let the light/dark themeupdater handle it
+//id = the id (based on the Vue colorscheme object)
+//scheme_name = the color scheme name in the database
 function setDefaultScheme(id, scheme_name) {
   //Submit the form with the appropriate scheme_name
   var form = document.getElementById("preferences_form");
@@ -30,6 +44,8 @@ function setDefaultScheme(id, scheme_name) {
   }
 }
 
+//deleteScheme()
+//deletes the scheme specified by 'scheme_name'
 function deleteScheme(scheme_name) {
   //Check to make sure user really wants to delete the scheme
   //Return immediately if user cancels
@@ -45,6 +61,10 @@ function deleteScheme(scheme_name) {
   form.submit();
 }
 
+//colorPreferences()
+//This function builds the preferences html page (buttons, divs, etc)
+//default_scheme = current default scheme name
+//list = an array of color schemes (get this from the colorschemes Vue object)
 function colorPreferences(list, default_scheme) {
   //Fields for each color preference
   var fields = ["color_bg","color_base","color_accent","color_tertiary","color_text",

@@ -133,6 +133,8 @@ select, [type="number"] {
   align-items: center; }
   .menu a:hover {
     color: var(--color-text-highlight); }
+  .menu .offcanvas-trigger {
+    opacity: .4; }
 
 @media screen and (max-width: 39.9375em) {
   .nav-bar {

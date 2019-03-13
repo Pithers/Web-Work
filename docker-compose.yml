@@ -19,19 +19,3 @@ services:
       && python /code/testsite/manage.py collectstatic --ignore=*.scss --noinput
       && python /code/testsite/manage.py runserver 0.0.0.0:8000 --insecure"
 
-#  nginx:
-#    restart: always
-#    build: ./nginx/
-#    container_name: nginx
-#    volumes:
-#      - ./testsite/:/testsite/
-#      - ./testsite/static/:/static/
-#      - ~/certs-data/:/data/letsencrypt/
-#      - /etc/letsencrypt/:/etc/letsencrypt/
-#    depends_on:
-#      - web
-#    ports:
-#      - "80:80"
-#      - "443:443"
-#    links:
-#      - web:web

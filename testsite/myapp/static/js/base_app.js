@@ -1,8 +1,27 @@
-//myapp/static/js/app.js
+//Filename: base_app.js
+//Author: Brandon Smith
+
+//File Description:
+//This js file runs on every page of the website. It is responsible for everything
+//that stays the same, page to page, such as the header, footer, and menus
+//It also includes functionality that any pages would share
+
+//Contents:
+//## Launch foundation, define root style
+//## Light and Dark modes
+//## Vue app for colorschemes
+//## updateStorage()
+//## loadSession()
+//## themeUpdate(element)
+//## trianglifyBars()
+//## Onload functions
+
+//Launch foundation and define root style
 $(document).foundation();
 var root_style = document.documentElement.style
 
-//Functions to define light and dark modes
+//Light and Dark modes
+//These load default styles into the site's css color variables
 function light_mode() {
   root_style.setProperty("--color-bg", "#e5e4d3");
   root_style.setProperty("--color-base", "#817b7b");
@@ -15,7 +34,6 @@ function light_mode() {
   root_style.setProperty("--color-border-accent", "#727267");
   root_style.setProperty("--color-drop-shadow", "#000000");
 }
-
 function dark_mode() {
   root_style.setProperty("--color-bg", "#24252f");
   root_style.setProperty("--color-base", "#7f838e");
@@ -29,7 +47,7 @@ function dark_mode() {
   root_style.setProperty("--color-drop-shadow", "#000000");
 }
 
-//Vue app for fetching colorscheme from database
+//Vue app for fetching colorschemes from database
 var fetch_color_scheme = new Vue({
   el: '#fetch_color_scheme',
   delimiters: ['[[',']]'],
@@ -40,11 +58,12 @@ var fetch_color_scheme = new Vue({
     }
   },
 
+  //Grabs colorscheme when first loaded
   mounted: function() {
     this.getColorScheme();
   },
 
-  //Messing with this created very strange bug with it looks like JScolor loading on page refresh
+  //Upon data change, causes virtual DOM to be re-rendered
   updated: function() {
     //This checks to see if user is logged in
     if(this.default_scheme != null && sessionStorage.getItem("preferences") != "loaded") {
@@ -61,22 +80,21 @@ var fetch_color_scheme = new Vue({
   },
 
   methods: {
-    //Method retrieves color scheme models from database
+    //Method retrieves color scheme models from database via axios
     getColorScheme: function() {
       axios
-      //Access our own API to get a json object
+        //Access our own API to get a json object
         .get('/rest_color_scheme/')
-      //Make sure to grab the response data, not the response itself
+        //Make sure to grab the response data, not the response itself
         .then(response => (this.color_scheme = response.data.color_scheme, this.default_scheme = response.data.default_scheme))
     },
 
     //Method loads colorscheme into website when clicked. Index locates specific color scheme
     loadColorScheme: function(default_scheme) {
-      //We need to access the object here and set all of the parts
-      //Objects save without hashtag so add it back in before loading
       //Get index of default scheme in color scheme list
       var index = this.color_scheme.findIndex(x => x.color_scheme_name==default_scheme);
 
+      //Objects save without hashtag so add it back in before loading
       root_style.setProperty("--color-bg", "#" + this.color_scheme[index].color_bg);
       root_style.setProperty("--color-base", "#" + this.color_scheme[index].color_base);
       root_style.setProperty("--color-accent", "#" + this.color_scheme[index].color_accent);
@@ -88,7 +106,7 @@ var fetch_color_scheme = new Vue({
       root_style.setProperty("--color-border-accent", "#" + this.color_scheme[index].color_border_accent);
       root_style.setProperty("--color-drop-shadow", "#" + this.color_scheme[index].color_drop_shadow);
 
-      //Then save name of color scheme into session Storage
+      //Save name of color scheme into session Storage
       sessionStorage.setItem("color-mode", this.color_scheme[index].color_scheme_name);
 
       //Then save into session storage and update Jscolor boxes
@@ -104,12 +122,14 @@ var fetch_color_scheme = new Vue({
   }
 })
 
+//updateStorage()
 //Upon changing colors, save them to browser session storage so colorscheme can be held across pages
 //If name == "all" then every element will be saved/loaded
 //If method == "save" then the css color property will be saved into session storage
 //If method == "load" then the css color property will be loaded from session storage
 function updateStorage(name, method) {
   var all = false;
+
   if(name == "all") {
     name = "Color bg"; //Trigger all of the switch statements starting from the top
     all = true;
@@ -206,28 +226,14 @@ function updateStorage(name, method) {
         root_style.setProperty("--color-tertiary", "#666666");
       break;
   }
+
+  //Trianglify header and footer when color base or color bg changes
+  if(name == "all" || name == "Color base" || name == "Color bg")
+    trianglifyBars();
 }
 
-//Set onload functions for each page
-$(window).ready(function() {
-
-  //Upon logout erases preference loaded variable in session storage
-  if(document.getElementById("logout-msg")) {
-    sessionStorage.setItem("preferences", "unloaded");
-  }
-
-  loadSession();
-  if(window.location.pathname == "/") {
-    updateJscolor();
-    colorSchemeNameUpdate();
-  }
-  else if(window.location.href.indexOf("/webgl/") !== -1) {
-    main();
-  }
-});
-
-//Grab session data and set color-mode and checkbox accordingly
-//Can consider adding another field to sessionStorage which are additonal color modes
+//loadSession()
+//Grab session data from browser and set color-mode and checkbox accordingly
 //If preferences haven't been loaded once, it will load them
 function loadSession() {
   var color_mode = sessionStorage.getItem("color-mode");
@@ -250,12 +256,12 @@ function loadSession() {
   }
 }
 
+//themeUpdate(element)
 //Day/Night toggle button
 document.getElementById("light-switch").onclick = function() {
   themeUpdate(document.getElementById("light-switch"));
 };
-
-//Site theme darkmode toggle, set root css variables accordingly
+//Site theme toggle, set root css variables accordingly and save into sessionStorage
 function themeUpdate(element) {
   if(element.checked) {
     dark_mode();
@@ -274,3 +280,49 @@ function themeUpdate(element) {
     colorSchemeNameUpdate();
   }
 }
+
+//trianglifyBars()
+//This function when called updates the header and footer with Trianglify
+function trianglifyBars() {
+  //Get locations of header and footer
+  var navbar = document.getElementById("nav-bar");
+  var footer = document.getElementById("footer");
+
+  //Create Trianglify svg
+  var pattern = Trianglify({
+    height: 200,
+    width: 1940,
+    variance: 0.75,
+    x_colors: ['' + root_style.getPropertyValue("--color-base"),
+               '' + root_style.getPropertyValue("--color-bg")],
+    cell_size: 120,
+    stroke_width: 1.51
+  });
+
+  // Serialize the SVG object to a String, get the base64 encoding and set property
+  var pattern_string = new XMLSerializer().serializeToString(pattern.svg());
+  var pattern_64 = window.btoa(pattern_string);
+  navbar.style.backgroundImage = 'url("data:image/svg+xml;base64,' + pattern_64 + '")';
+  footer.style.backgroundImage = 'url("data:image/svg+xml;base64,' + pattern_64 + '")';
+}
+
+//Onload functions for each page
+$(window).ready(function() {
+
+  //Upon logout erases preference loaded variable in session storage
+  if(document.getElementById("logout-msg")) {
+    sessionStorage.setItem("preferences", "unloaded");
+  }
+
+  //Set colorschemes correctly
+  loadSession();
+  if(window.location.pathname == "/") {
+    updateJscolor();
+    colorSchemeNameUpdate();
+  }
+  //If we're on a webgl page, launch main of the corresponding javascript
+  else if(window.location.href.indexOf("/webgl/") !== -1) {
+    main();
+  }
+});
+
