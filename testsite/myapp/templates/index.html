@@ -5,7 +5,6 @@
 {% block page_name %}Color Palette Picker{% endblock %}
 
 {% block content %}
-<p>Note: The 'Generate Palette' button uses the Colormind API, which is not currently available over https. To use it, you will need to temporarily disable insecure content blocking in your browser.</p>
 <div class="grid-container palette">
   <!--Color Palette Display-->
   <div class="palette-container">
@@ -74,12 +73,13 @@
         </div>
         {% endfor %}
         <div class="palette-field cell small-4">
-            <div class="palette-button button colormind" data-colormind-start>
-              Generate Color Scheme
-            </div>
-            <div class="palette-button button colormind hide" data-colormind-end>
-              Generating...
-            </div>
+          <div class="palette-button button colormind hovertip" data-colormind-start>
+            Generate Color Scheme
+            <span class="hovertiptext">This uses the Colormind API, which is not available over https. To use it, you will need to temporarily disable insecure content blocking in your browser</span>
+          </div>
+          <div class="palette-button button colormind hide" data-colormind-end>
+            Generating...
+          </div>
         </div>
         <div class="palette-field cell small-4">
           <div class="palette-button button colormind" id="palette-button-randomize">

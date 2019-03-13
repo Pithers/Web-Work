@@ -133,8 +133,6 @@ select, [type="number"] {
   align-items: center; }
   .menu a:hover {
     color: var(--color-text-highlight); }
-  .menu .offcanvas-trigger {
-    opacity: .4; }
 
 @media screen and (max-width: 39.9375em) {
   .nav-bar {
@@ -476,3 +474,22 @@ select, [type="number"] {
   box-shadow: 0 10px 20px var(--color-drop-shadow);
   background: var(--color-base);
   color: var(--color-text); }
+
+.hovertiptext {
+  position: absolute; }
+
+.hovertip .hovertiptext {
+  visibility: hidden;
+  width: 240px;
+  bottom: 120%;
+  left: 50%;
+  margin-left: -120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  z-index: 1; }
+
+.hovertip:hover .hovertiptext {
+  visibility: visible; }
