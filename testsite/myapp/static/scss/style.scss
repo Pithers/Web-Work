@@ -5,6 +5,7 @@
 //Laurel Beyers: https://foundation.zurb.com/building-blocks/blocks/multilevel-offcanvas-menu.html
 //Rafi: https://foundation.zurb.com/building-blocks/blocks/card-info.html
 //Harry Manchanda: https://foundation.zurb.com/building-blocks/blocks/list-group.html
+//Tooltips: https://www.w3schools.com/css/css_tooltip.asp
 
 //Contents:
 //## Color Classes (contain color variables that propagate to other classes)
@@ -17,6 +18,7 @@
 //## Palette Styling
 //## List Group Styling
 //## About Me Styling
+//## Tooltips
 
 //Color references
 :root {
@@ -610,4 +612,28 @@ $list-group-margin: 0;
   box-shadow: 0 10px 20px var(--color-drop-shadow);
   background: var(--color-base);
   color: var(--color-text);
+}
+
+//Tooltips Container
+.hovertiptext {
+  position: absolute;
+}
+
+.hovertip .hovertiptext {
+  visibility: hidden;
+  width: 240px;
+  bottom: 120%;
+  left: 50%;
+  margin-left: -120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  z-index: 1;
+}
+
+//Show the tooltip text when you mouse over the tooltip container
+.hovertip:hover .hovertiptext {
+  visibility: visible;
 }
