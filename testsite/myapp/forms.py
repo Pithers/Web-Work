@@ -2,7 +2,7 @@
 # Author: Brandon Smith
 
 # File Description:
-# All of the custom forms used for the website. 
+# All of the custom forms used for the website.
 
 # Contents:
 # ColorSchemeActiveForm
