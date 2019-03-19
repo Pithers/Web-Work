@@ -1,5 +1,10 @@
-#myapp/urls.py
+# Filename: myapp/urls.py
+# Author: Brandon Smith
 
+# File Description:
+# Site Url definitions.
+
+# Imports
 from django.urls import path
 from django.contrib.auth import views as adminviews
 from . import views

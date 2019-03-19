@@ -1,13 +1,26 @@
-# myapp/models.py
-# Consider making a profile model that inherits from User so each user can have a profile
+# Filename: myapp/models.py
+# Author: Brandon Smith
 
+# File Description:
+# All of the custom database models/objects used for the website.
+
+# Contents:
+# validate_color
+# CustomUser
+# ColorScheme
+# PostModel
+# CommentModel
+
+# Imports
 import re
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-# Need to check validator to see if the '#' is needed or not
+# validate_color
+# This is a validator that ensures the hex string is in the correct format for our database
+# Ex: 999 or 909090
 def validate_color(value):
     if not re.search(r"^(?:[0-9a-fA-F]{3}){1,2}$", value):
         raise ValidationError(
@@ -15,14 +28,22 @@ def validate_color(value):
             params={'value':value},
         )
 
-# Custom User Model
+# CustomUser
+# An override for the User class.
+# This adds in an active color scheme for each user (the one the user wants to see by default)
 class CustomUser(AbstractUser):
-    #Active color_scheme, use the fully-qualified model string, since ColorScheme is defined below
+    # Search the database for the colorscheme desired and associate it with the user
     active_color_scheme = models.ForeignKey("ColorScheme", on_delete=models.SET_NULL,
                                             blank=True, null=True)
     def __str__(self):
         return self.email
 
+# ColorScheme
+# A color scheme objects.
+# The object is defined as follows:
+# creator: the user that created it
+# color_scheme_name: a string defining the name
+# color_*: hexcode colors associated with different sections of the website
 class ColorScheme(models.Model):
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE,
                                 blank=True, null=True)
@@ -61,7 +82,12 @@ class ColorScheme(models.Model):
     def __str__(self):
         return self.color_scheme_name
 
-# Model that contains something like a Post
+# PostModel
+# An object that contains a user post in the post system.
+# The object is defined as follows:
+# post: a string of text (max 240 characters)
+# author: the user that created it
+# creation_date: when the object was created
 class PostModel(models.Model):
     post = models.CharField(max_length=240)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -70,7 +96,13 @@ class PostModel(models.Model):
     def __str__(self):
         return self.post
 
-# Model that contains a comment that is linked to a speific post
+# CommentModel
+# An object that contains a user comment in the post system.
+# The object is defined as follows:
+# comment: a string of text (max 240 characters)
+# author: the user that created it
+# post: the post that the comment is attached to
+# creation_date: when the object was created
 class CommentModel(models.Model):
     comment = models.CharField(max_length=240)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
