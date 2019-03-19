@@ -1,5 +1,23 @@
-#myapp/views.py
+# Filename: myapp/views.py
+# Author: Brandon Smith
 
+# File Description:
+# This file defines views for use by the website.
+
+# Contents:
+# preferences_view
+# post_view
+# comment_view
+# logout_view
+# register
+# rest_post
+# rest_color_scheme
+# webgl_view
+# about_view
+# music_view
+# index_view
+
+# Imports
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
 from django.contrib import messages
@@ -7,17 +25,17 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist, EmptyResultSet
 from django.core.exceptions import FieldDoesNotExist, MultipleObjectsReturned
-
 from . import models
 from . import forms
 
-#User Preferences/Account view
-#Currently there's nothing being passed to this form
-#This will change in the future as more preference fields are given to the user
+# preferences_view
+# Defines the functionality for the preferences page.
+# For any user that is logged in, they can access their preferences page.
+# As of now, users can set as default or delete their user's color schemes.
 @login_required
 def preferences_view(request):
     if request.method == 'POST':
-        #Check to see if we're setting the default scheme, or deleting one
+        # Check to see if we're setting the default scheme, or deleting one
         if request.POST.get('scheme_name') is not None:
             scheme_name = request.POST.get('scheme_name')
             save = True
@@ -27,7 +45,7 @@ def preferences_view(request):
         else:
             return HttpResponse("Invalid POST: No scheme_name provided")
 
-        #Verify that the colorscheme exists in the database
+        # Verify that the colorscheme exists in the database
         try:
             color_scheme_model = models.ColorScheme.objects.get(color_scheme_name=scheme_name,
                                                                 creator=request.user)
@@ -36,13 +54,13 @@ def preferences_view(request):
         except ObjectDoesNotExist:
             color_scheme_model = None
 
-        #Save default scheme to user
+        # Save default scheme to user
         if save:
             active_scheme_form = forms.ColorSchemeActiveForm(instance=request.user)
             temp_form = active_scheme_form.save(commit=False)
             temp_form.active_color_scheme = color_scheme_model
             temp_form.save()
-        #Delete color scheme from database
+        # Delete color scheme from database
         else:
             color_scheme_model.delete()
 
@@ -51,23 +69,22 @@ def preferences_view(request):
     active_scheme_form = forms.ColorSchemeActiveForm()
     return render(request, 'preferences.html', {'active_scheme_form': active_scheme_form})
 
-#Post view
+# post_view
+# This view allows submission of posts by the user.
 def post_view(request):
     comm_form = forms.CommentForm()
     if request.method == 'POST':
         form_instance = forms.PostForm(request.POST)
 
-        #Check to see if submitted form is valid
+        # Check to see if submitted form is valid
         if form_instance.is_valid():
-            #Give the valid form to t
-            #possibly need to add additional logic to deal with guest users
             temp_model = models.PostModel(
                 post=form_instance.cleaned_data['post'],
                 author=request.user
                 )
             temp_model.save()
 
-            #Refresh the form so a new form can be added
+            # Refresh the form so a new form can be added
             form_instance = forms.PostForm()
     else:
         form_instance = forms.PostForm()
@@ -81,6 +98,8 @@ def post_view(request):
     }
     return render(request, 'posts.html', context=context)
 
+# comment_view
+# This view allows submission of comments by the user.
 def comment_view(request, post_id):
     if request.method == 'POST':
         form_instance = forms.CommentForm(request.POST)
@@ -107,13 +126,15 @@ def comment_view(request, post_id):
     }
     return render(request, 'comment.html', context=context)
 
-#Consider redirecting to whatever page the user logged out from
+# logout_view
+# This view logus the user out and sets a logout message status.
 def logout_view(request):
     logout(request)
     messages.success(request, 'Logged out.', extra_tags='LOGOUT')
     return redirect("/login/")
 
-#RESTful user registration ex: site/register/
+# register
+# This view is a RESTful user registration
 def register(request):
     if request.method == 'POST':
         registration_form = forms.RegistrationForm(request.POST)
@@ -128,7 +149,9 @@ def register(request):
     }
     return render(request, 'registration/register.html', context=context)
 
-#RESTful post view ex: site/rest_post/
+# rest_post
+# This view is a RESTful post getter.
+# It queries the database for all of the posts and comments.
 def rest_post(request):
     if request.method == 'GET':
         #Get all posts
@@ -156,12 +179,17 @@ def rest_post(request):
 
             post_list += [add_to_list]
 
+        # Package up the posts/comments into a Json Response
         return JsonResponse({"posts":post_list})
     return HttpResponse('Invalid HTTP Method')
 
-#RESTful get color schemes
+# rest_color_scheme
+# This view is a RESTful color scheme getter.
+# It queries the database for all of the color schemes available to the user.
 def rest_color_scheme(request):
+    # This can only be accessed by site users.
     if request.method == 'GET' and request.user.is_authenticated:
+        # Attempt to find the color schemes in the database attributed to the user.
         try:
             color_schemes = models.ColorScheme.objects.filter(creator__exact=request.user)
         except (ObjectDoesNotExist, EmptyResultSet, FieldDoesNotExist,
@@ -185,8 +213,9 @@ def rest_color_scheme(request):
             }
             color_scheme_list += [add_to_list]
 
+        # Package up the color schemes into a Json Response
         if request.user.active_color_scheme is not None:
-            #Find that color scheme and pass it the name of the color_scheme that it matches
+            # Find that color scheme and pass it the name of the color_scheme that it matches
             default_scheme = request.user.active_color_scheme.color_scheme_name
             response = JsonResponse({"color_scheme":color_scheme_list,
                                      "default_scheme":default_scheme})
@@ -196,21 +225,29 @@ def rest_color_scheme(request):
         return response
     return redirect('/login/')
 
+# webgl_view
+# This view contains all of the views that use Webgl.
+# /name defines which webgl html runs.
 def webgl_view(request, name):
     context = {
         'name':name
     }
     return render(request, 'webgl.html', context=context)
 
+# about_view
 def about_view(request):
     return render(request, 'about.html')
 
+# music_view
 def music_view(request):
     return render(request, 'music.html')
 
+# index_view
+# Defines the functionality for the index page.
+# For any user that is logged in, they can save and edit color schemes.
 def index_view(request):
     if request.method == "POST" and request.user.is_authenticated:
-        #Search for current color_scheme_name in database
+        # Search for current color_scheme_name in database
         scheme_name = request.POST.get('color_scheme_name')
         try:
             current = models.ColorScheme.objects.get(color_scheme_name=scheme_name,
@@ -220,7 +257,7 @@ def index_view(request):
         except ObjectDoesNotExist:
             current = None
 
-        #If the object already exists, overwrite it, if not create a new one
+        # If the color scheme already exists, overwrite it, if not create a new one
         color_scheme_form = forms.ColorSchemeForm(request.POST, instance=current)
         if color_scheme_form.is_valid():
             temp_form = color_scheme_form.save(commit=False)

@@ -1,10 +1,18 @@
-#myapp/tests.py
+# Filename: myapp/tests.py
+# Author: Brandon Smith
 
+# File Description:
+# Custom tests for site functionality
+
+# Note: Database functionality is near-trivial at this point.
+#       Robust testing is not needed until the database becomes more complex.
+
+# Imports
 from django.test import TestCase
 from .models import CustomUser
 from .models import PostModel
 
-#This will all be handled in a fake database
+# Sanity test for our post system
 class PostTestCase(TestCase):
     def setUp(self):
         self.user = CustomUser.objects.create_user(
