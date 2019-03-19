@@ -106,9 +106,10 @@ venv.bak/
 .DS_Store
 
 # project specific ignores
-testsite/foundation-6.5.1-complete/
 testsite/static/
 cleanup_docker.sh
+testsite/myapp/migrations/
 
 #Exceptions
 !testsite/myapp/static/webgl/lib/
+!testsite/myapp/migrations/__init__.py
