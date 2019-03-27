@@ -142,7 +142,7 @@ function updateStorage(name, method) {
       else if(method == "load" && sessionStorage.getItem("color_bg") !== null)
         root_style.setProperty("--color-bg", sessionStorage.getItem("color_bg"));
       else
-        root_style.setProperty("--color-bg", "#e5e4d3");
+        root_style.setProperty("--color-bg", "#24252f");
       if(all == false)
         break;
     case "Color text":
@@ -151,7 +151,7 @@ function updateStorage(name, method) {
       else if(method == "load" && sessionStorage.getItem("color_text") !== null)
         root_style.setProperty("--color-text", sessionStorage.getItem("color_text"));
       else
-        root_style.setProperty("--color-text", "#241a22");
+        root_style.setProperty("--color-text", "#eaeced");
       if(all == false)
         break;
     case "Color border":
@@ -160,7 +160,7 @@ function updateStorage(name, method) {
       else if(method == "load" && sessionStorage.getItem("color_border") !== null)
         root_style.setProperty("--color-border", sessionStorage.getItem("color_border"));
       else
-        root_style.setProperty("--color-border", "#838378");
+        root_style.setProperty("--color-border", "#826c73");
       if(all == false)
         break;
     case "Color base":
@@ -169,7 +169,7 @@ function updateStorage(name, method) {
       else if(method == "load" && sessionStorage.getItem("color_base") !== null)
         root_style.setProperty("--color-base", sessionStorage.getItem("color_base"));
       else
-        root_style.setProperty("--color-base", "#817b7b");
+        root_style.setProperty("--color-base", "#7f838e");
       if(all == false)
         break;
     case "Color text invert":
@@ -178,7 +178,7 @@ function updateStorage(name, method) {
       else if(method == "load" && sessionStorage.getItem("color_text_invert") !== null)
         root_style.setProperty("--color-text-invert", sessionStorage.getItem("color_text_invert"));
       else
-        root_style.setProperty("--color-text-invert", "#e5e4d3");
+        root_style.setProperty("--color-text-invert", "#24252f");
       if(all == false)
         break;
     case "Color border accent":
@@ -187,7 +187,7 @@ function updateStorage(name, method) {
       else if(method == "load" && sessionStorage.getItem("color_border_accent") !== null)
         root_style.setProperty("--color-border-accent", sessionStorage.getItem("color_border_accent"));
       else
-        root_style.setProperty("--color-border-accent", "#727267");
+        root_style.setProperty("--color-border-accent", "#715d62");
       if(all == false)
         break;
     case "Color accent":
@@ -196,7 +196,7 @@ function updateStorage(name, method) {
       else if(method == "load" && sessionStorage.getItem("color_accent") !== null)
         root_style.setProperty("--color-accent", sessionStorage.getItem("color_accent"));
       else
-        root_style.setProperty("--color-accent", "#667075");
+        root_style.setProperty("--color-accent", "#7dacc4");
       if(all == false)
         break;
     case "Color text highlight":
@@ -205,7 +205,7 @@ function updateStorage(name, method) {
       else if(method == "load" && sessionStorage.getItem("color_text_highlight") !== null)
         root_style.setProperty("--color-text-highlight", sessionStorage.getItem("color_text_highlight"));
       else
-        root_style.setProperty("--color-text-highlight", "#20436f");
+        root_style.setProperty("--color-text-highlight", "#1f6f90");
       if(all == false)
         break;
     case "Color drop shadow":
@@ -240,15 +240,15 @@ function loadSession() {
 
   //If first time visiting website, set color mode to default
   if(color_mode === null){
-    sessionStorage.setItem("color-mode", "default-light-mode");
-    color_mode = "default-light-mode";
+    sessionStorage.setItem("color-mode", "default-dark-mode");
+    color_mode = "default-dark-mode";
   }
   updateStorage("all", "load"); //Load from session storage
 
   if(color_mode == "default-dark-mode")
-    document.getElementById("light-switch").checked = true;
-  else if (color_mode == "default-light-mode")
     document.getElementById("light-switch").checked = false;
+  else if (color_mode == "default-light-mode")
+    document.getElementById("light-switch").checked = true;
 
   if(window.location.pathname == "/") {
     document.getElementById("id_color_scheme_name").value = color_mode;
@@ -264,15 +264,15 @@ document.getElementById("light-switch").onclick = function() {
 //Site theme toggle, set root css variables accordingly and save into sessionStorage
 function themeUpdate(element) {
   if(element.checked) {
-    dark_mode();
-    sessionStorage.setItem("color-mode", "default-dark-mode");
-    if(window.location.pathname == "/")
-      document.getElementById("id_color_scheme_name").value = "default-dark-mode";
-  } else {
     light_mode();
     sessionStorage.setItem("color-mode", "default-light-mode");
     if(window.location.pathname == "/")
       document.getElementById("id_color_scheme_name").value = "default-light-mode";
+  } else {
+    dark_mode();
+    sessionStorage.setItem("color-mode", "default-dark-mode");
+    if(window.location.pathname == "/")
+      document.getElementById("id_color_scheme_name").value = "default-dark-mode";
   }
   updateStorage("all", "save");
   if(window.location.pathname == "/") {

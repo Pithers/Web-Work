@@ -35,10 +35,10 @@ function setDefaultScheme(id, scheme_name) {
   else {
     light_switch = document.getElementById("light-switch");
     if (id == length) {
-      light_switch.checked = false;
+      light_switch.checked = true;
     }
     else {
-      light_switch.checked = true;
+      light_switch.checked = false;
     }
     themeUpdate(light_switch);
   }
