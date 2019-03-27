@@ -1,4 +1,4 @@
-//Filename: style.scss/style.css
+//Filename: style.scss/style.css--color-text
 //Author: Brandon Smith
 
 //References:
@@ -391,8 +391,8 @@ select, [type="number"] {
     margin-bottom: 10px;
 
     label {
-      color: var(--color-text-invert);
-      text-shadow: 2px 2px 2px black;
+      color: #fff;
+      text-shadow: 2px 2px 2px #000;
     }
 
     button {

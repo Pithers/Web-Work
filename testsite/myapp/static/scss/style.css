@@ -285,8 +285,8 @@ select, [type="number"] {
   margin-top: 10px;
   margin-bottom: 10px; }
   .palette .palette-field label {
-    color: var(--color-text-invert);
-    text-shadow: 2px 2px 2px black; }
+    color: var(--color-text);
+    text-shadow: 2px 2px 2px var(--color-text-invert); }
   .palette .palette-field button {
     border-style: solid;
     border-width: medium;
