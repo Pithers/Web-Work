@@ -2,9 +2,30 @@
 {% load widget_tweaks %}
 {% load static %}
 
-{% block page_name %}Color Palette Picker{% endblock %}
-
 {% block content %}
+<div class="preloader">
+  <span class="dot dot-1"></span>
+  <span class="dot dot-2"></span>
+  <span class="dot dot-3"></span>
+  <span class="dot dot-4"></span>
+  <span class="dot dot-5"></span>
+  <span class="dot dot-6"></span>
+  <span class="dot dot-7"></span>
+  <span class="dot dot-8"></span>
+  <div>Loading</div>
+</div>
+
+<div id='palette-view-toggle' class='view-toggle'>
+  <div class='grid-container grid-x'>
+    <h1 id='palette-title' class='view-toggle'>Color Palette Picker</h1>
+    <hr>
+    <h2 class='palette-toggle-icon'>
+      <a><i id='palette-toggle-button' class="fas fa-cube"></i></a>
+    </h2>
+  </div>
+</div>
+
+<canvas id="webglCanvas"></canvas>
 <div class="grid-container palette">
   <!--Color Palette Display-->
   <div class="palette-container">
@@ -32,7 +53,7 @@
   <form action="/" method="POST" id="palette-form">
     {% csrf_token %}
 
-    <div class="grid-x grid-padding-x">
+    <div id="color-grid" class="grid-x grid-padding-x hide-grid">
       <div class="cell">
         {% for hidden_field in color_scheme_form.hidden_fields %}
         {{ hidden_field }}
@@ -73,35 +94,41 @@
         </div>
         {% endfor %}
         <div class="palette-field cell small-4">
-          <div class="palette-button button colormind hovertip" data-colormind-start>
-            Generate Color Scheme
-            <span class="hovertiptext">This uses the Colormind API, which is not available over https. To use it, you will need to temporarily disable insecure content blocking in your browser</span>
-          </div>
-          <div class="palette-button button colormind hide" data-colormind-end>
-            Generating...
+          <div id="palette-button-generate" class="palette-form-button">
+            <div class="palette-button button colormind hovertip" data-colormind-start>
+              Generate Color Scheme
+              <span class="hovertiptext">This uses the Colormind API, which is not available over https. To use it, you will need to temporarily disable insecure content blocking in your browser</span>
+            </div>
+            <div class="palette-button button colormind hide" data-colormind-end>
+              Generating...
+            </div>
           </div>
         </div>
         <div class="palette-field cell small-4">
-          <div class="palette-button button colormind" id="palette-button-randomize">
-            Randomize
+          <div id="palette-button-randomize" class="palette-form-button">
+            <div class="palette-button button colormind">
+              Randomize
+            </div>
           </div>
         </div>
       </div>
       <!--Naming Field for ColorScheme-->
-      <div class="grid-x grid-padding-x palette-name">
-        <div class="withShadow"></div>
-        <div class="withoutShadow">
-        {{ color_scheme_form.color_scheme_name.label_tag }}
-        {{ color_scheme_form.visible_fields.0 }}
+      <div id="palette-submission-field" class="palette-form-button">
+        <div class="grid-x grid-padding-x palette-name">
+          <div class="withShadow"></div>
+          <div class="withoutShadow">
+            {{ color_scheme_form.color_scheme_name.label_tag }}
+            {{ color_scheme_form.visible_fields.0 }}
+          </div>
         </div>
-      </div>
-      <div class="cell">
-        <!--Only allow user to save color scheme if they are logged in-->
-        {% if user.is_authenticated %}
-        <input type="Submit" id="palette-form-submit" class="button palette-submit" value="Save Color Scheme">
-        {% else %}
-        <a href="/login/" class="button palette-submit">Please login to save color scheme to profile.</a>
-        {% endif %}
+        <div class="cell">
+          <!--Only allow user to save color scheme if they are logged in-->
+          {% if user.is_authenticated %}
+          <input type="Submit" id="palette-form-submit" class="button palette-submit" value="Save Color Scheme">
+          {% else %}
+          <a href="/login/" class="button palette-submit">Please login to save color scheme to profile.</a>
+          {% endif %}
+        </div>
       </div>
     </div>
   </form>
@@ -110,6 +137,9 @@
 
 {% block scripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.0.4/jscolor.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/102/three.min.js"></script>
+<!--script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script-->
 <script src="{% static "js/color_mode.js" %}?v=1.0.1"></script>
 <script src="{% static "js/colormind.js" %}?v=1.0.1"></script>
+<script src="{% static "js/three_test.js" %}?v=1.0.0"></script>
 {% endblock %}

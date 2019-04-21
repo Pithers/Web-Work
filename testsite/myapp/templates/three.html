@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<canvas id="webglCanvas"></canvas>
+<div class="palette">
+  <form id = "palette-form">
+    <div class="palette-field">
+      <button id="Color drop shadow" class="tooltip palette-form-button jscolor {valueElement: color_drop_shadow}">
+        <label for="id_color_drop_shadow">hello:</label>
+        <input id="color_drop_shadow" type="text" name="color_drop_shadow" value="666666" maxlength="7">
+      </button>
+    </div>
+    <div class="palette-field">
+      <button id="Color base" class="tooltip palette-form-button jscolor {valueElement: color_base}">
+        <label for="id_color_border">hello:</label>
+        <input id="color_base" type="text" name="color_base" value="666666" maxlength="7">
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/102/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/17.3.0/Tween.min.js"></script>
+<script src="{% static "js/three_test.js" %}?v=1.0.0"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.0.4/jscolor.min.js"></script>
+{% endblock %}

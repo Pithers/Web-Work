@@ -349,7 +349,6 @@ function main()
             ((objVec[2].x + 0.3) * 100).toPrecision(2);
     if((objVec[2].x + 0.3).toPrecision(2) == 1)
     {
-      window.alert("You win!");
       window.location.reload(); //reload game on win
     }
 
@@ -450,8 +449,7 @@ function animate()
        (objVec[2].y + objVec[2].height/2) >=
        (objVec[i].y - objVec[i].height/2))
     {
-      window.alert("You lose!");
-      window.location.reload(); //reload game on lose
+      window.location.reload(); //reload game on loss
     }
   }
 

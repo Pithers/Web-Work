@@ -5,11 +5,13 @@
 //Laurel Beyers: https://foundation.zurb.com/building-blocks/blocks/multilevel-offcanvas-menu.html
 //Rafi: https://foundation.zurb.com/building-blocks/blocks/card-info.html
 //Harry Manchanda: https://foundation.zurb.com/building-blocks/blocks/list-group.html
+//Loading help from Dom: https://freefrontend.com/css-loaders/, https://codepen.io/ahdigital/pen/prXBzN
 //Tooltips: https://www.w3schools.com/css/css_tooltip.asp
 
 //Contents:
 //## Color Classes (contain color variables that propagate to other classes)
 //## Basic Overwrites (body, footer, etc.)
+//## Functional Classes (hide-grid, hide, etc.)
 //## Page Containers (html page specific)
 //## UI and Foundation Overwrites (buttons, sliders, etc.)
 //## Icons
@@ -19,6 +21,8 @@
 //## List Group Styling
 //## About Me Styling
 //## Tooltips
+//## Canvas
+//## Loading Page
 
 //Color references
 :root {
@@ -64,11 +68,32 @@ hr {
   margin-top: 0px;
 }
 
+//Functional Classes
+.hide-grid {
+  height: 0;
+  overflow: hidden;
+}
+
+.hide {
+  display: none;
+}
+
+.block-show {
+  display: inline-flex;
+  opacity: 1.0;
+}
+
+.view-toggle {
+  position: fixed;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.25s linear;
+}
+
 //Page Containers
 .main-wrapper {
   min-height: 100vh;
   height: auto !important;
-  padding-bottom: 50px;
 }
 
 .title-block {
@@ -165,7 +190,8 @@ select, [type="number"] {
   -ms-flex-align: center;
   align-items: center;
   background: var(--color-base);
-  height: 75px;
+  //height: 75px;
+  height: 50px;
   margin-bottom: 20px;
 }
 
@@ -214,7 +240,8 @@ select, [type="number"] {
   -webkit-justify-content: center;
   -ms-flex-pack: center;
   justify-content: center;
-  padding: 1.6rem;
+  //padding: 1.6rem;
+  padding: 15px;
   color: var(--color-text);
   text-transform: uppercase;
   background-color: var(--color-base);
@@ -385,6 +412,13 @@ select, [type="number"] {
     margin-top: 30px;
   }
 
+  .palette-form-button {
+    position: fixed;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.25s linear;
+  }
+
   .palette-field {
     text-align: center;
     margin-top: 10px;
@@ -452,7 +486,7 @@ select, [type="number"] {
   }
 
   .palette-container{
-    display: inline-flex;
+    display: none; //toggles between this and inline-flex
     color: white;
     text-shadow: 2px 2px 2px black;
     margin-bottom: 5px;
@@ -505,6 +539,16 @@ select, [type="number"] {
     }
   }
 }
+
+.palette-toggle-icon {
+  a {
+    color: var(--color-text);
+    &:hover {
+      color: var(--color-text-highlight);
+    }
+  }
+}
+
 
 //List Group
 $list-group-background: var(--color-base);
@@ -637,4 +681,86 @@ $list-group-margin: 0;
 //Show the tooltip text when you mouse over the tooltip container
 .hovertip:hover .hovertiptext {
   visibility: visible;
+}
+
+//Canvas
+canvas {
+  display: block;
+}
+
+//Loading Page
+.preloader {
+  margin: 120px auto 0;
+  color: #fff;
+  margin: 5px 0;
+  text-transform: uppercase;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  font-size: 30px;
+  letter-spacing: 2px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1000;
+  transform: translate(-50%, -50%);
+}
+
+.preloader .dot {
+  width: 8px;
+  height: 8px;
+  top: -30px;
+  left: 70px;
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  animation: opacity-dot 1000ms infinite ease-in-out;
+}
+
+//Line Specifics
+$preload-radius: 20px;
+$animation-speed: 100ms;
+$angle: 45deg;
+.preloader .dot-1 {
+  transform: translate($preload-radius);
+}
+.preloader .dot-2 {
+  animation-delay: $animation-speed;
+  transform: rotate($angle) translate($preload-radius) rotate(-$angle);
+}
+.preloader .dot-3 {
+  animation-delay: $animation-speed * 2;
+  transform: rotate($angle*2) translate($preload-radius) rotate(-$angle*2);
+}
+.preloader .dot-4 {
+  animation-delay: $animation-speed * 3;
+  transform: rotate($angle*3) translate($preload-radius) rotate(-$angle*3);
+}
+.preloader .dot-5 {
+  animation-delay: $animation-speed * 4;
+  transform: rotate($angle*4) translate($preload-radius) rotate(-$angle*4);
+}
+.preloader .dot-6 {
+  animation-delay: $animation-speed * 5;
+  transform: rotate($angle*5) translate($preload-radius) rotate(-$angle*5);
+}
+.preloader .dot-7 {
+  animation-delay: $animation-speed * 6;
+  transform: rotate($angle*6) translate($preload-radius) rotate(-$angle*6);
+}
+.preloader .dot-8 {
+  animation-delay: $animation-speed * 7;
+  transform: rotate($angle*7) translate($preload-radius) rotate(-$angle*7);
+}
+
+//Animation keyframes
+@keyframes opacity-dot {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }

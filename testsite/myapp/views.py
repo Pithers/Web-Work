@@ -16,6 +16,7 @@
 # about_view
 # music_view
 # index_view
+# three_view
 
 # Imports
 from django.shortcuts import render, HttpResponse, redirect
@@ -266,3 +267,6 @@ def index_view(request):
         return redirect('/')
     color_scheme_form = forms.ColorSchemeForm()
     return render(request, 'index.html', {'color_scheme_form': color_scheme_form})
+
+def three_view(request):
+    return render(request, 'three.html')

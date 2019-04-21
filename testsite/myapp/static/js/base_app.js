@@ -227,6 +227,11 @@ function updateStorage(name, method) {
       break;
   }
 
+  //If we're saving into sessionStorage, send a storage update event
+  if(method == "save") {
+    window.dispatchEvent(new Event('storage'));
+  }
+
   //Trianglify header and footer when color base or color bg changes
   if(name == "all" || name == "Color base" || name == "Color bg")
     trianglifyBars();
