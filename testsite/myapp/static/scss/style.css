@@ -523,7 +523,9 @@ select, [type="number"] {
   visibility: visible; }
 
 canvas {
-  display: block; }
+  display: block;
+  width: 100vw;
+  height: 100vh; }
 
 .preloader {
   margin: 120px auto 0;

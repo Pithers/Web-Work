@@ -99,7 +99,7 @@ var scene = new THREE.Scene();
 //Camera setup
 var camera = new THREE.PerspectiveCamera(
   75,                                                    //fov
-  $('.main-wrapper').width()/window.innerHeight,
+  $('.main-wrapper').width()/window.innerHeight,         //aspect ratio
   0.1,                                                   //near
   1000                                                   //far
 );
@@ -576,7 +576,7 @@ window.addEventListener('storage', function(e) {
 //Deal with window resizing
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
-  camera.aspec = $('.main-wrapper').width()/window.innerHeight,
+  camera.aspect = $('.main-wrapper').width()/window.innerHeight,
   camera.updateProjectionMatrix();
   renderer.setSize($('.main-wrapper').width(), window.innerHeight);
 }
