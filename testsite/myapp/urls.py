@@ -22,5 +22,4 @@ urlpatterns = [
     path('music/', views.music_view),
     path('rest_posts/', views.rest_post),
     path('rest_color_scheme/', views.rest_color_scheme),
-    path('three/', views.three_view),
 ]

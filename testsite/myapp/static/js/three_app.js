@@ -89,8 +89,6 @@ $('#palette-toggle-button').click(function() {
 });
 
 //Canvas, Scene, and Renderer Setup
-width_adjust = 17 //Canvas overflows by a small amount. This is used to adjust that
-
 //Scene setup
 var scene = new THREE.Scene();
 {
@@ -101,7 +99,7 @@ var scene = new THREE.Scene();
 //Camera setup
 var camera = new THREE.PerspectiveCamera(
   75,                                                    //fov
-  (window.innerWidth - width_adjust)/window.innerHeight, //aspect ratio
+  $('.main-wrapper').width()/window.innerHeight,
   0.1,                                                   //near
   1000                                                   //far
 );
@@ -117,7 +115,7 @@ var renderer = new THREE.WebGLRenderer({
 
 //Renderer Options
 renderer.setClearColor(0x000000, 0);
-renderer.setSize(window.innerWidth - width_adjust, window.innerHeight); //figure out resizing
+renderer.setSize($('.main-wrapper').width(), window.innerHeight);
 renderer.gammaInput = true;
 renderer.gammaOutput = true;
 
@@ -578,9 +576,9 @@ window.addEventListener('storage', function(e) {
 //Deal with window resizing
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
-  camera.aspec = (window.innerWidth - width_adjust)/window.innerHeight;
+  camera.aspec = $('.main-wrapper').width()/window.innerHeight,
   camera.updateProjectionMatrix();
-  renderer.setSize((window.innerWidth - width_adjust), window.innerHeight);
+  renderer.setSize($('.main-wrapper').width(), window.innerHeight);
 }
 
 //Object Click/Hover Detection Variables
@@ -601,7 +599,7 @@ mouse.set(3000,3000); //set initial mouse off canvas
 //Retrieve mouse's coordinates on the canvas
 function updateMouseCoords(event) {
   var canvasPosition = renderer.domElement.getBoundingClientRect();
-  mouse.x = ((event.clientX - canvasPosition.left)/(window.innerWidth - width_adjust)) * 2 - 1;
+  mouse.x = ((event.clientX - canvasPosition.left)/$('.main-wrapper').width()) * 2 - 1;
   mouse.y = -((event.clientY - canvasPosition.top)/window.innerHeight) * 2 + 1;
 }
 
