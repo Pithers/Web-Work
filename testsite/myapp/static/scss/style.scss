@@ -9,7 +9,7 @@
 //Tooltips: https://www.w3schools.com/css/css_tooltip.asp
 
 //Contents:
-//## Color Classes (contain color variables that propagate to other classes)
+//## Color Variables (contain color variables that propagate to other classes)
 //## Basic Overwrites (body, footer, etc.)
 //## Functional Classes (hide-grid, hide, etc.)
 //## Page Containers (html page specific)
@@ -24,7 +24,7 @@
 //## Canvas
 //## Loading Page
 
-//Color references
+//Color Variables
 :root {
   --color-bg: #24252f;
   --color-text: #eaeced;
@@ -38,7 +38,7 @@
   --color-drop-shadow: #000000;
 }
 
-//Basic overwrites
+//Basic Overwrites
 body {
   background: var(--color-bg);
   color: var(--color-text);
@@ -686,8 +686,6 @@ $list-group-margin: 0;
 //Canvas
 canvas {
   display: block;
-  width: 100vw;
-  height: 100vh;
 }
 
 //Loading Page

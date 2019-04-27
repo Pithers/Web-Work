@@ -576,7 +576,7 @@ window.addEventListener('storage', function(e) {
 //Deal with window resizing
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
-  camera.aspect = $('.main-wrapper').width()/window.innerHeight,
+  camera.aspect = $('.main-wrapper').width()/window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize($('.main-wrapper').width(), window.innerHeight);
 }
