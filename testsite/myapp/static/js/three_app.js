@@ -10,6 +10,7 @@
 
 //Contents:
 //## ToggleIndexView
+//## Screen Dimmension Functions
 //## Canvas, Scene, and Renderer Setup
 //## Geometry, Objects, and Materials
 //##   Shard Creation
@@ -76,10 +77,9 @@ function toggleIndexView() {
   $("#palette-submission-field").css('display', '');
 
   //Toggle palette blocks
-  if($(".palette-container").css('display') == 'none') {
+  if ($(".palette-container").css('display') == 'none') {
     $(".palette-container").css('display', 'inline-flex');
-  }
-  else {
+  } else {
     $(".palette-container").css('display', 'none');
   }
 }
@@ -88,100 +88,113 @@ $('#palette-toggle-button').click(function() {
   toggleIndexView();
 });
 
-//Canvas, Scene, and Renderer Setup
-//Scene setup
-var scene = new THREE.Scene();
-{
-  const color = 0xaaaaaa;
-  scene.fog = new THREE.FogExp2(color, 0.012);
+//Screen Dimmension Functions
+//These functions grab the width, height, and aspect ratio for the WebGl canvas
+//The functions have been gathered here for easy replacement as the methods
+//for determining canvas size are likely to change depending on page layout.
+function getCanvasWidth() {
+  return $('.main-wrapper').width();
+}
+function getCanvasHeight() {
+  return window.document.documentElement.clientHeight;
+}
+function getAspectRatio() {
+  return getCanvasWidth()/getCanvasHeight();
 }
 
+//Canvas, Scene, and Renderer Setup
+//Scene setup
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0xaaaaaa, 0.012);
+
 //Camera setup
-var camera = new THREE.PerspectiveCamera(
-  75,                                                    //fov
-  $('.main-wrapper').width()/window.innerHeight,         //aspect ratio
-  0.1,                                                   //near
-  1000                                                   //far
+const camera = new THREE.PerspectiveCamera(
+  75,                                       //fov
+  getAspectRatio(),                         //aspect ratio
+  0.1,                                      //near
+  1000                                      //far
 );
 
 //Camera Config
 camera.position.z = 10;
 
 //Renderer Setup
-var renderer = new THREE.WebGLRenderer({
+const renderer = new THREE.WebGLRenderer({
   canvas: webglCanvas,
   alpha: true,
-  antialias: true});
+  antialias: true
+});
 
 //Renderer Options
 renderer.setClearColor(0x000000, 0);
-renderer.setSize($('.main-wrapper').width(), window.innerHeight);
+renderer.setSize(getCanvasWidth(), getCanvasHeight());
 renderer.gammaInput = true;
 renderer.gammaOutput = true;
 
 //Geometry, Objects, and Materials
 //Create shard geometry
-var geometry_box = new THREE.OctahedronGeometry(1, 0);
+const geometry_box = new THREE.OctahedronGeometry(1, 0);
 
 //Mesh Types
-var material_standard = new THREE.MeshToonMaterial();
-var material_outline = new THREE.MeshStandardMaterial({
+const material_standard = new THREE.MeshToonMaterial();
+const material_outline = new THREE.MeshStandardMaterial({
   color: 0xff0000,
   side: THREE.BackSide,
 });
 
 //Shard Creation
 //Box Objects and outlines for the boxes
-var num_objects = 14;
-var color_objects = 10;
-var objects = [];
-var box_group = new THREE.Group();
-var function_group = new THREE.Group();
-var outlines = [];
-var outline_size = 1.1;
+const num_objects = 14;
+const color_objects = 10;
+const objects = [];
+const box_group = new THREE.Group();
+const function_group = new THREE.Group();
+const outlines = [];
+const outline_size = 1.1;
 
 //For each object, create a second one behind it to serve as an outline
 for (let i = 0; i < num_objects; i++) {
   objects.push(new THREE.Mesh(geometry_box, material_standard.clone()));
   outlines.push(new THREE.Mesh(geometry_box, material_outline.clone()));
 
+  //Set identity of objects as their creation number
   objects[i].userData.id = i;
   outlines[i].userData.id = i;
 
   //Scale the objects differently
-  if(i == 0) {
+  if (i == 0) {
     objects[i].scale.set(2, 3, 2.25);
     outlines[i].scale.set(2, 3, 2.25);
-  }
-  else if(i >= color_objects) {
+  } else if (i >= color_objects) {
     objects[i].scale.set(3, 14, 3);
     outlines[i].scale.set(4.5, 17, 4.5);
-  }
-  else {
+  } else {
     objects[i].scale.set(0.5, 1.5, 0.75);
     outlines[i].scale.set(0.5, 1.5, 0.75);
   }
 
+  //Make outline objects slightly bigger and default them to invisible
   outlines[i].scale.multiplyScalar(outline_size);
   outlines[i].visible = false;
 
-  if(i < color_objects) {
+  //Add objects to respective groups
+  if (i < color_objects) {
     box_group.add(objects[i]);
     box_group.add(outlines[i]);
-  }
-  else {
+  } else {
     function_group.add(objects[i]);
     function_group.add(outlines[i]);
   }
 }
+//Add groups to the scene
 scene.add(box_group);
 scene.add(function_group);
 
 //Shard Placement
 //Calculate even circle distribution for the rest of the elements
 //Radius for box orbit around center
-var box_radius = 16;
-var box_deg;
+const box_radius = 16;
+let box_deg;
 for(let i = 1; i < 10; i++) {
   box_deg = (i-1) * 2*Math.PI/9;
   objects[i].position.set(box_radius*Math.cos(box_deg), 0,box_radius*Math.sin(box_deg));
@@ -207,15 +220,15 @@ const jitter = (geo,per) => geo.vertices.forEach(v => {
   v.x += map(Math.random(),0,1,-per,per);
   v.y += map(Math.random(),0,1,-per,per);
   v.z += map(Math.random(),0,1,-per,per);
-})
+});
 
 //Cut a bottom plane off of object
 const chopBottom = (geo,bottom) => geo.vertices.forEach(v => v.y = Math.max(v.y,bottom));
 
 //Create Clouds Function
-var clouds = [];
+const clouds = [];
 function createCloud() {
-  let cloud_geo = new THREE.Geometry();
+  const cloud_geo = new THREE.Geometry();
 
   //Create tuft geometries and merge them
   let tuft = new THREE.SphereGeometry(1.5,7,8);
@@ -232,12 +245,12 @@ function createCloud() {
   jitter(cloud_geo, 0.5);
   chopBottom(cloud_geo,-0.5);
 
-  let cloud = new THREE.Mesh(cloud_geo);
+  const cloud = new THREE.Mesh(cloud_geo);
   clouds.push(cloud);
 }
 
 //Create Clouds
-var num_clouds = 2;
+const num_clouds = 2;
 for(let i = 0; i < num_clouds; i++) {
   createCloud();
 }
@@ -257,14 +270,14 @@ clouds[1].material.opacity = 0.9;
 clouds[1].rotation.x = 0.5;
 
 //Update matrices and combine into single geometry
-var clouds_geo = new THREE.Geometry();
-for(let i = 0; i < num_clouds; i++) {
+const clouds_geo = new THREE.Geometry();
+for (let i = 0; i < num_clouds; i++) {
   clouds[i].updateMatrix();
   clouds_geo.merge(clouds[i].geometry, clouds[i].matrix);
 }
 
 //Create new mesh of clouds_merged and add it to the scene
-var clouds_merged = new THREE.Mesh(clouds_geo, new THREE.MeshLambertMaterial({
+const clouds_merged = new THREE.Mesh(clouds_geo, new THREE.MeshLambertMaterial({
       color:'white',
       flatShading:true,
     }));
@@ -304,10 +317,10 @@ const windFragmentShader =
 
 //Create Wind Curve
 function createWindCurve() {
-  let points = [];
+  const points = [];
+  const mag = Math.random() * 5 + 2.5;
+  const length = 240;
   let a = 2 * Math.random() * Math.PI;
-  let mag = Math.random() * 5 + 2.5;
-  let length = 240;
 
   //Create length number of points to set wind curve
   for (let i = 0; i < length; i++) {
@@ -322,12 +335,12 @@ function createWindCurve() {
 }
 
 //Create Wind Object
-var shaders = [];
-var wind_streams = [];
-var wind_width = 0.3;
+const shaders = [];
+const wind_streams = [];
+const wind_width = 0.3;
 function addWindStream() {
-  let points = createWindCurve();
-  let wind_geo = new THREE.BufferGeometry();
+  const points = createWindCurve();
+  const wind_geo = new THREE.BufferGeometry();
 
   //Create two times as many vertices as points
   wind_geo.addAttribute('position',
@@ -354,7 +367,7 @@ function addWindStream() {
   });
 
   //Create uniforms that will be passed to the shader
-  let wind_uniforms = {
+  const wind_uniforms = {
     uTime: {
       type: 'f',
       value: Math.random() * 3
@@ -366,7 +379,7 @@ function addWindStream() {
   };
 
   //Create the shader for the wind material
-  let wind_shader = new THREE.ShaderMaterial({
+  const wind_shader = new THREE.ShaderMaterial({
     uniforms: wind_uniforms,
     vertexShader: windVertexShader,
     fragmentShader: windFragmentShader,
@@ -375,7 +388,7 @@ function addWindStream() {
   });
 
   //Create the wind mesh
-  let wind_mesh = new THREE.Mesh(wind_geo, wind_shader);
+  const wind_mesh = new THREE.Mesh(wind_geo, wind_shader);
 
   //Add mesh and shaders to arrays, then add the wind into the scene
   wind_streams.push(wind_mesh);
@@ -384,8 +397,8 @@ function addWindStream() {
 }
 
 //Create Windstreams
-var num_wind_streams = 4;
-for(let i = 0; i < num_wind_streams; i++) {
+const num_wind_streams = 4;
+for (let i = 0; i < num_wind_streams; i++) {
   addWindStream();
 }
 
@@ -417,9 +430,9 @@ wind_streams[3].position.x = -60;
 wind_streams[3].position.z = -90;
 
 //Mountain Creation
-var num_mountains = 5;
-var mountains = [];
-for(let i = 0; i < num_mountains; i++) {
+const num_mountains = 5;
+const mountains = [];
+for (let i = 0; i < num_mountains; i++) {
   mountains.push(new THREE.Mesh(geometry_box));
 }
 
@@ -436,37 +449,37 @@ mountains[3].position.set(-25, -40 ,-100);
 mountains[4].position.set(-70, -50 ,-90);
 
 //Update matrices and combine mountains into single geometry
-var mountain_geo = new THREE.Geometry();
-for(let i = 0; i < num_mountains; i++) {
+const mountain_geo = new THREE.Geometry();
+for (let i = 0; i < num_mountains; i++) {
   mountains[i].updateMatrix();
   mountain_geo.merge(mountains[i].geometry, mountains[i].matrix);
 }
 
 //Create new mesh of mountain range and add it to the scene
-var mountain_range = new THREE.Mesh(mountain_geo, material_standard.clone());
+const mountain_range = new THREE.Mesh(mountain_geo, material_standard.clone());
 scene.add(mountain_range);
 
 //Text Creation/Placement
-var loader = new THREE.FontLoader();
+const loader = new THREE.FontLoader();
 loader.load('//raw.githubusercontent.com/mrdoob/three.js' + 
   '/master/examples/fonts/helvetiker_regular.typeface.json',
   function(font) {
     //Create first geometry
-    let textGeo1 = new THREE.TextGeometry("Color Palette Picker", {
+    const textGeo1 = new THREE.TextGeometry("Color Palette Picker", {
       font: font,
       size: 1,
       height: 0.001,
     });
     //Create second geometry
-    let textGeo2 = new THREE.TextGeometry("Click around to experiment", {
+    const textGeo2 = new THREE.TextGeometry("Click around to experiment", {
       font: font,
       size: 0.5,
       height: 0.001,
     });
 
     //Create both meshes
-    let t1 = new THREE.Mesh(textGeo1);
-    let t2 = new THREE.Mesh(textGeo2);
+    const t1 = new THREE.Mesh(textGeo1);
+    const t2 = new THREE.Mesh(textGeo2);
 
     //Position text
     t1.position.set(-19, 12, -12);
@@ -477,19 +490,19 @@ loader.load('//raw.githubusercontent.com/mrdoob/three.js' +
     t2.updateMatrix();
 
     //Combine texts into one geometry
-    let combined_geo = new THREE.Geometry();
+    const combined_geo = new THREE.Geometry();
     combined_geo.merge(t1.geometry, t1.matrix);
     combined_geo.merge(t2.geometry, t2.matrix);
 
     //Create new mesh combined text and add it to the scene
-    let text = new THREE.Mesh(combined_geo, material_standard.clone());
+    const text = new THREE.Mesh(combined_geo, material_standard.clone());
     text.name = 'text';
     scene.add(text);
   });
 
 //Lights
-var light = new THREE.AmbientLight(0x888899); // soft white light
-var hemiLight = new THREE.HemisphereLight(0xaaaabb, 0x222244, 1);
+const light = new THREE.AmbientLight(0x888899); // soft white light
+const hemiLight = new THREE.HemisphereLight(0xaaaabb, 0x222244, 1);
 scene.add(hemiLight);
 scene.add(light);
 
@@ -515,7 +528,7 @@ objects[13].userData.color_text = "palette-view-toggle";
 
 //Event Listeners
 //Loading Manager
-var text;
+let text;
 THREE.DefaultLoadingManager.onLoad = function() {
   //Once text is loaded, set to objects
   text = scene.getObjectByName('text');
@@ -531,13 +544,13 @@ THREE.DefaultLoadingManager.onLoad = function() {
   objects[9].material.color.set(root_style.getPropertyValue("--color-base"));
 
   //Update objects based on color-bg
-  let color_bg = root_style.getPropertyValue("--color-bg");
+  const color_bg = root_style.getPropertyValue("--color-bg");
   objects[0].material.color.set(color_bg);
   mountain_range.material.color.set(color_bg);
   scene.fog.color.set(color_bg);
 
   //Update objects based on color-text
-  let color_text = root_style.getPropertyValue("--color-text");
+  const color_text = root_style.getPropertyValue("--color-text");
   objects[3].material.color.set(color_text);
   text.material.color.set(color_text);
 
@@ -561,13 +574,13 @@ window.addEventListener('storage', function(e) {
   objects[9].material.color.set(sessionStorage.getItem("color_base"));
 
   //Update objects based on color_bg
-  let color_bg = sessionStorage.getItem("color_bg");
+  const color_bg = sessionStorage.getItem("color_bg");
   objects[0].material.color.set(color_bg);
   mountain_range.material.color.set(color_bg);
   scene.fog.color.set(color_bg);
 
   //Update objects based on color_text
-  var color_text = sessionStorage.getItem("color_text");
+  const color_text = sessionStorage.getItem("color_text");
   objects[3].material.color.set(color_text);
   text.material.color.set(color_text);
 });
@@ -576,31 +589,31 @@ window.addEventListener('storage', function(e) {
 //Deal with window resizing
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
-  camera.aspect = $('.main-wrapper').width()/window.innerHeight;
+  camera.aspect = getAspectRatio();
   camera.updateProjectionMatrix();
-  renderer.setSize($('.main-wrapper').width(), window.innerHeight);
+  renderer.setSize(getCanvasWidth(), getCanvasHeight());
 }
 
 //Object Click/Hover Detection Variables
-var raycaster = new THREE.Raycaster();
-var mouse = new THREE.Vector2();
-var latestMouseProjection;
-var hoverPreTimeout;
-var hoverPostTimeout;
-var hoveredIndex = null;
-var hoveredObj = null;
-var lastHoveredObj = null;
-var hoverActive = false;
-var selectedObj = null;
-var tooltipSelected = null;
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let latestMouseProjection;
+let hoverPreTimeout;
+let hoverPostTimeout;
+let hoveredIndex = null;
+let hoveredObj = null;
+let lastHoveredObj = null;
+let hoverActive = false;
+let selectedObj = null;
+let tooltipSelected = null;
 mouse.set(3000,3000); //set initial mouse off canvas
 
 //Raycasting Functions
 //Retrieve mouse's coordinates on the canvas
 function updateMouseCoords(event) {
-  var canvasPosition = renderer.domElement.getBoundingClientRect();
-  mouse.x = ((event.clientX - canvasPosition.left)/$('.main-wrapper').width()) * 2 - 1;
-  mouse.y = -((event.clientY - canvasPosition.top)/window.innerHeight) * 2 + 1;
+  const canvasPosition = renderer.domElement.getBoundingClientRect();
+  mouse.x = ((event.clientX - canvasPosition.left)/getCanvasWidth()) * 2 - 1;
+  mouse.y = -((event.clientY - canvasPosition.top)/getCanvasHeight()) * 2 + 1;
 }
 
 //Checks collision between mouse and objs
@@ -614,8 +627,8 @@ function raycastMouse(event, objs) {
   raycaster.setFromCamera(mouse, camera);
 
   //Check intersections
-  var intersects = raycaster.intersectObjects(objs);
-  if(intersects.length > 0) {
+  const intersects = raycaster.intersectObjects(objs);
+  if (intersects.length > 0) {
     mouse.set(3000,3000); //reset mouse pos
 
     //Return the object and the intersected point
@@ -626,7 +639,7 @@ function raycastMouse(event, objs) {
 }
 
 //Mouse Click Event
-var canvas = document.getElementById('webglCanvas');
+const canvas = document.getElementById('webglCanvas');
 canvas.addEventListener('mousedown', onDocumentMouseDown, false);
 function onDocumentMouseDown(event) {
   event.preventDefault();
@@ -635,19 +648,18 @@ function onDocumentMouseDown(event) {
   selectedObj = raycastMouse(event, objects)[0];
 
   //If there is an object that has been selected...
-  if(selectedObj != null) {
-    if(tooltipSelected != selectedObj.userData.color_text) {
+  if (selectedObj != null) {
+    if (tooltipSelected != selectedObj.userData.color_text) {
       hideTooltip(tooltipSelected);
       tooltipSelected = null;
     }
     tooltipSelected = selectedObj.userData.color_text;
     showTooltip(selectedObj.userData.color_text);
-  }
-  else {
+  } else {
     hoverPostTimeout = undefined;
     hoverActive = false;
 
-    if(tooltipSelected != null) {
+    if (tooltipSelected != null) {
       hideTooltip(tooltipSelected);
       tooltipSelected = null;
     }
@@ -663,34 +675,34 @@ function onMouseMove(event) {
   [hoveredObj, latestMouseProjection] = raycastMouse(event, objects);
 
   //See if hovered object has switched
-  if(hoveredObj != lastHoveredObj) {
+  if (hoveredObj != lastHoveredObj) {
     //If an object is being hovered over
-    if(hoveredObj != null) {
+    if (hoveredObj != null) {
       hoverActive = true;
 
       //Grab the id of the hovered object
       hoveredIndex = hoveredObj.userData.id;
 
       //Set the hover state of that object
-      for(let i = 0; i < num_objects; i++) {
+      for (let i = 0; i < num_objects; i++) {
         outlines[i].visible = (i == hoveredIndex);
       }
     }
 
     //Once the hoverPostTimeout occurs
-    if(hoverPostTimeout || !latestMouseProjection) {
+    if (hoverPostTimeout || !latestMouseProjection) {
       clearTimeout(hoverPostTimeout);
       hoverPostTimeout = undefined;
     }
 
     //Once the mouse hovers over an object past the hoverPreTimeout
-    if(hoverPreTimeout || !latestMouseProjection) {
+    if (hoverPreTimeout || !latestMouseProjection) {
       clearTimeout(hoverPreTimeout);
       hoverPreTimeout = undefined;
       outlines[hoveredIndex].visible = false;
 
       //If there's no currently selected object
-      if(selectedObj == null) {
+      if (selectedObj == null) {
         //Start post hover timer
         hoverPostTimeout = setTimeout(function() {
           hoverPostTimeout = undefined;
@@ -700,7 +712,7 @@ function onMouseMove(event) {
     }
 
     //Start pre hover timer
-    if(!hoverPreTimeout && latestMouseProjection) {
+    if (!hoverPreTimeout && latestMouseProjection) {
       hoverPreTimeout = setTimeout(function() {
         hoverPreTimeout = undefined;
       }, 330);
@@ -714,29 +726,29 @@ function onMouseMove(event) {
 //Show Tooltip
 function showTooltip(element) {
   //Find the element provided to showTooltip
-  var tElement = $("[id='" + element + "']");
+  const tElement = $("[id='" + element + "']");
 
   //If the element exists, and there is a valid mouse projection
-  if(tElement && latestMouseProjection) {
+  if (tElement && latestMouseProjection) {
     //Set the style of the object
     tElement.css({
       display: "block",
       opacity: 0.0
     });
 
-    var offsetWidth = renderer.domElement.offsetWidth;
-    var offsetHeight = renderer.domElement.offsetHeight;
+    const offsetWidth = renderer.domElement.offsetWidth;
+    const offsetHeight = renderer.domElement.offsetHeight;
 
     //Grab position of mouse
-    var tPosition = latestMouseProjection.clone().project(camera);
+    const tPosition = latestMouseProjection.clone().project(camera);
     tPosition.x = (tPosition.x + 1) * offsetWidth/2 + renderer.domElement.offsetLeft;
     tPosition.y = (-tPosition.y + 1) * offsetHeight/2 + renderer.domElement.offsetTop;
 
-    var tWidth = tElement[0].offsetWidth;
-    var tHeight = tElement[0].offsetHeight;
+    const tWidth = tElement[0].offsetWidth;
+    const tHeight = tElement[0].offsetHeight;
 
     //Get position of scroll bar on page
-    var windowScroll = window.scrollY;
+    const windowScroll = window.scrollY;
 
     //Position the element above the mouse click
     tElement.css({
@@ -756,7 +768,7 @@ function showTooltip(element) {
 //Hide Tooltip
 function hideTooltip(element) {
   //Find the element provided to showTooltip
-  var tElement = $("[id='" + element + "']");
+  const tElement = $("[id='" + element + "']");
 
   //If the element exists and is visible
   if (tElement && tElement.is(":visible")) {
@@ -769,11 +781,11 @@ function hideTooltip(element) {
 }
 
 //Animate the Canvas
-var sin_motion_counter = 0;
-var clock = new THREE.Clock();
-var delta = 0;
-var update_interval = 1/2;
-var fixed_frame_rate = 90; //Stats.js says this is equivalent to 60fps, might be due to ~60fps cap by code
+const clock = new THREE.Clock();
+const update_interval = 1/2;
+const fixed_frame_rate = 90; //Stats.js says this is equivalent to 60fps, might be due to ~60fps cap by code
+let sin_motion_counter = 0;
+let delta = 0;
 
 //Randomize wind start times and define speed
 shaders.forEach(shader => {
@@ -799,7 +811,7 @@ function animate() {
 
   //Randomize color of object10 at a slower rate than everything else
   delta += clock.getDelta();
-  if(delta > update_interval) {
+  if (delta > update_interval) {
     objects[10].material.color.setRGB(Math.random()/1.5,
       Math.random()/1.5,
       Math.random()/1.5);
@@ -843,7 +855,7 @@ function animate() {
   objects[13].rotation.y += 0.001;
 
   //Rotate Group
-  if(hoverActive == false) {
+  if (hoverActive == false) {
     box_group.rotation.y += 0.003;
 
     //Rotate objects in sin pattern
@@ -868,8 +880,7 @@ function animate() {
 
     //Update rotation counter
     sin_motion_counter += Math.PI/800;
-  }
-  else {
+  } else {
     //Have the outlines object copy the position and rotation of it's parent
     outlines[hoveredIndex].position.copy(objects[hoveredIndex].position);
     outlines[hoveredIndex].rotation.copy(objects[hoveredIndex].rotation);
