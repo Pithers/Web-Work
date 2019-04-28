@@ -18,20 +18,24 @@ Vue.directive('toggler', {
     el.addEventListener('click', (event) => vnode.context.$emit(b.value, event));
   }
 });
+
 //Directive for element that will get toggled
 Vue.directive('togglee', {
   bind(el, b, vnode, oldVnode) {
     vnode.context.$on(b.value, function() {
-      let attribute = el.getAttribute('content-transition-class');
-      if(attribute) attribute.split(' ').forEach((c) => el.classList.toggle(c));
-      else el.classList.toggle('content-transition');
+      const attribute = el.getAttribute('content-transition-class');
+      if (attribute) {
+        attribute.split(' ').forEach((c) => el.classList.toggle(c));
+      } else {
+        el.classList.toggle('content-transition');
+      }
     });
   }
 });
 
 //Vue fetch_post
 //Vue object that fetches our post/comment models from the database
-var fetch_post = new Vue({
+const fetch_post = new Vue({
   delimiters: ['[[',']]'],
   el: '#fetch_post',
   data () {
@@ -51,33 +55,60 @@ var fetch_post = new Vue({
   methods: {
     //Sorts the post_list object by id, post, author, and num of comments
     sortedList: function() {
-      switch(this.sort_type) {
+      switch (this.sort_type) {
         case 'newest':
-          return this.posts_list.slice().sort(function(a,b){return b.id-a.id});
+          return this.posts_list.slice().sort(
+            function(a,b) {
+              return b.id-a.id
+            });
           break;
         case 'oldest':
-          return this.posts_list.slice().sort(function(a,b){return a.id-b.id});
+          return this.posts_list.slice().sort(
+            function(a,b) {
+              return a.id-b.id
+            });
           break;
         case 'a_to_z':
-          return this.posts_list.slice().sort(function(a,b){return a.post.localeCompare(b.post)});
+          return this.posts_list.slice().sort(
+            function(a,b) {
+              return a.post.localeCompare(b.post)
+            });
           break;
         case 'z_to_a':
-          return this.posts_list.slice().sort(function(a,b){return b.post.localeCompare(a.post)});
+          return this.posts_list.slice().sort(
+            function(a,b) {
+              return b.post.localeCompare(a.post)
+            });
           break;
         case 'author_a':
-          return this.posts_list.slice().sort(function(a,b){return a.author.localeCompare(b.author)});
+          return this.posts_list.slice().sort(
+            function(a,b) {
+              return a.author.localeCompare(b.author)
+            });
           break;
         case 'author_z':
-          return this.posts_list.slice().sort(function(a,b){return b.author.localeCompare(a.author)});
+          return this.posts_list.slice().sort(
+            function(a,b) {
+              return b.author.localeCompare(a.author)
+            });
           break;
         case 'most':
-          return this.posts_list.slice().sort(function(a,b){return b.comments.length-a.comments.length});
+          return this.posts_list.slice().sort(
+            function(a,b) {
+              return b.comments.length-a.comments.length
+            });
           break;
         case 'least':
-          return this.posts_list.slice().sort(function(a,b){return a.comments.length-b.comments.length});
+          return this.posts_list.slice().sort(
+            function(a,b) {
+              return a.comments.length-b.comments.length
+            });
           break
         default:
-          return this.posts_list.slice().sort(function(a,b){return a.id-b.id});
+          return this.posts_list.slice().sort(
+            function(a,b) {
+              return a.id-b.id
+            });
       }
     },
 

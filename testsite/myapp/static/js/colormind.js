@@ -18,26 +18,36 @@
 //## Colormind loading button
 
 //Colormind info
-var colormind_url = "http://colormind.io/api/";
-var colormind_data = {
+const colormind_url = "http://colormind.io/api/";
+const colormind_data = {
   model : "ui",
   input : ["N","N","N","N","N"]
+}
+
+//randomHexColor()
+//random HexColor generates a random color hex value string
+//Ex: #343424
+//Provide the function with a seed large enough to chop the last 6 characters off of
+//Eight digit numbers seem to be statistically high enough.
+function randomHexColor(seed) {
+  const random_num = Math.floor(Math.random() * seed);
+  return '#' + ('000000' + random_num.toString(16)).slice(-6);
 }
 
 //colorRandomizer()
 //This takes every css color variable and changes them to a random hex color
 //It then updates session storage, and updates the site colors
 function colorRandomizer() {
-  root_style.setProperty("--color-bg",'#'+('000000'+Math.floor(Math.random()*16777215).toString(16)).slice(-6));
-  root_style.setProperty("--color-base",'#'+('000000'+Math.floor(Math.random()*16777215).toString(16)).slice(-6));
-  root_style.setProperty("--color-accent",'#'+('000000'+Math.floor(Math.random()*16777215).toString(16)).slice(-6));
-  root_style.setProperty("--color-tertiary",'#'+('000000'+Math.floor(Math.random()*16777215).toString(16)).slice(-6));
-  root_style.setProperty("--color-text",'#'+('000000'+Math.floor(Math.random()*16777215).toString(16)).slice(-6));
-  root_style.setProperty("--color-text-invert",'#'+('000000'+Math.floor(Math.random()*16777215).toString(16)).slice(-6));
-  root_style.setProperty("--color-text-highlight",'#'+('000000'+Math.floor(Math.random()*16777215).toString(16)).slice(-6));
-  root_style.setProperty("--color-border",'#'+('000000'+Math.floor(Math.random()*16777215).toString(16)).slice(-6));
-  root_style.setProperty("--color-border-accent",'#'+('000000'+Math.floor(Math.random()*16777215).toString(16)).slice(-6));
-  root_style.setProperty("--color-drop-shadow",'#'+('000000'+Math.floor(Math.random()*16777215).toString(16)).slice(-6));
+  root_style.setProperty("--color-bg", randomHexColor(16777215));
+  root_style.setProperty("--color-base", randomHexColor(30243194));
+  root_style.setProperty("--color-accent", randomHexColor(32047111));
+  root_style.setProperty("--color-tertiary", randomHexColor(39924913));
+  root_style.setProperty("--color-text", randomHexColor(34194342));
+  root_style.setProperty("--color-text-invert", randomHexColor(19932439));
+  root_style.setProperty("--color-text-highlight", randomHexColor(73894012));
+  root_style.setProperty("--color-border", randomHexColor(43104931));
+  root_style.setProperty("--color-border-accent", randomHexColor(39402934));
+  root_style.setProperty("--color-drop-shadow", randomHexColor(15839428));
 
   //Change site storage to new color scheme
   updateStorage("all", "save");
@@ -63,11 +73,11 @@ function rgbToHex(r, g, b) {
 //Generic api get function
 //We specifically leverage this to get data from colormind
 function get(url, data, callback) {
-  var http = new XMLHttpRequest();
+  const http = new XMLHttpRequest();
   http.open("POST", url, true);
 
   http.onreadystatechange = function() {
-    if(http.readyState == 4 && http.status == 200) {
+    if (http.readyState == 4 && http.status == 200) {
       callback.apply(http);
     }
   };
@@ -79,7 +89,7 @@ function get(url, data, callback) {
 function getColormindPalette() {
   //Send get request
   get(colormind_url, colormind_data,
-    function () {
+    function() {
       colormind_palette = JSON.parse(this.responseText).result;
 
       //Take results and set css color properties
@@ -93,10 +103,10 @@ function getColormindPalette() {
         rgbToHex(colormind_palette[4][0], colormind_palette[4][1], colormind_palette[4][2]));
       root_style.setProperty("--color-text", "#241a22");
       root_style.setProperty("--color-text-invert", "#e5e4d3");
-      root_style.setProperty("--color-text-highlight", '#'+('000000'+Math.floor(Math.random()*16777215).toString(16)).slice(-6));
+      root_style.setProperty("--color-text-highlight", randomHexColor(14039429));
       root_style.setProperty("--color-border",
         rgbToHex(colormind_palette[3][0], colormind_palette[3][1], colormind_palette[3][2]));
-      root_style.setProperty("--color-border-accent", '#'+('000000'+Math.floor(Math.random()*16777215).toString(16)).slice(-6));
+      root_style.setProperty("--color-border-accent", randomHexColor(23432433));
       root_style.setProperty("--color-drop-shadow", "#1f1f1f");
 
       //Update site with needed colors

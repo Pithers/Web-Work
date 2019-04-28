@@ -19,25 +19,22 @@
 //scheme_name = the color scheme name in the database
 function setDefaultScheme(id, scheme_name) {
   //Submit the form with the appropriate scheme_name
-  var form = document.getElementById("preferences_form");
-  var form_input = document.getElementById("preference_form_input");
+  const form = document.getElementById("preferences_form");
+  const form_input = document.getElementById("preference_form_input");
   form_input.name = "scheme_name";
   form_input.value = scheme_name;
   form.submit();
 
-  //Set the color scheme for the button chosen
-  var light_switch;
-  var length = fetch_color_scheme.color_scheme.length;
-  if(id < length) {
+  //Set the color scheme for the button chosen or if dark/light mode has been selected
+  let light_switch;
+  const length = fetch_color_scheme.color_scheme.length;
+  if (id < length) {
     fetch_color_scheme.loadColorScheme(scheme_name);
-  }
-  //Or check to see if dark/light mode has been selected
-  else {
+  } else {
     light_switch = document.getElementById("light-switch");
     if (id == length) {
       light_switch.checked = true;
-    }
-    else {
+    } else {
       light_switch.checked = false;
     }
     themeUpdate(light_switch);
@@ -54,8 +51,8 @@ function deleteScheme(scheme_name) {
   }
 
   //Submit the form with the scheme_name to be deleted
-  var form = document.getElementById("preferences_form");
-  var form_input = document.getElementById("preference_form_input");
+  const form = document.getElementById("preferences_form");
+  const form_input = document.getElementById("preference_form_input");
   form_input.name = "delete_name";
   form_input.value = scheme_name;
   form.submit();
@@ -67,19 +64,19 @@ function deleteScheme(scheme_name) {
 //list = an array of color schemes (get this from the colorschemes Vue object)
 function colorPreferences(list, default_scheme) {
   //Fields for each color preference
-  var fields = ["color_bg","color_base","color_accent","color_tertiary","color_text",
-                "color_text_invert","color_text_highlight","color_border",
-                "color_border_accent","color_drop_shadow"];
+  const fields = ["color_bg","color_base","color_accent","color_tertiary","color_text",
+                  "color_text_invert","color_text_highlight","color_border",
+                  "color_border_accent","color_drop_shadow"];
 
   //Create HTML main list group
-  var html_list = document.createElement("ul");
+  const html_list = document.createElement("ul");
   html_list.classList.add("list-group");
 
   //Generate color scheme preference list
-  for(i = 0; i < list.length; i++) {
-    var html_button = document.createElement("ul");
-    var html_palette = document.createElement("div");
-    var delete_button = document.createElement("div");
+  for (let i = 0; i < list.length; i++) {
+    const html_button = document.createElement("ul");
+    const html_palette = document.createElement("div");
+    const delete_button = document.createElement("div");
 
     html_button.name = "scheme_name";
     html_button.id = "scheme-" + i;
@@ -94,8 +91,8 @@ function colorPreferences(list, default_scheme) {
     delete_button.classList.add("fa-trash");
 
     //Generate list-group for selecting color schemes
-    if(i < list.length) {
-      if(list[i].color_scheme_name == default_scheme) {
+    if (i < list.length) {
+      if (list[i].color_scheme_name == default_scheme) {
         html_button.classList.add("active");
       }
 
@@ -106,8 +103,8 @@ function colorPreferences(list, default_scheme) {
       html_button.innerText = list[i].color_scheme_name;
 
       //This searches the list for any of the fields and writes it to the DOM
-      for(j = 0; j < 10; j++) {
-        var html_color = document.createElement("div");
+      for (let j = 0; j < 10; j++) {
+        const html_color = document.createElement("div");
         html_color.classList.add("user-list-patches");
         html_color.style.background = "#" + list[i][fields[j]];
         html_palette.appendChild(html_color);

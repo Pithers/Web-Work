@@ -17,23 +17,23 @@
 //## updateJscolor()
 
 //Color element definitions
-var color_scheme_name = document.getElementById("id_color_scheme_name");
-var color_bg = document.getElementById("color-bg");
-var color_text = document.getElementById("color-text");
-var color_text_invert = document.getElementById("color-text-invert");
-var color_text_highlight = document.getElementById("color-text-highlight");
-var color_base = document.getElementById("color-base");
-var color_accent = document.getElementById("color-accent");
-var color_tertiary = document.getElementById("color-tertiary");
-var color_border = document.getElementById("color-border");
-var color_border_accent = document.getElementById("color-border-accent");
-var color_drop_shadow = document.getElementById("color-drop-shadow");
+const color_scheme_name = document.getElementById("id_color_scheme_name");
+const color_bg = document.getElementById("color-bg");
+const color_text = document.getElementById("color-text");
+const color_text_invert = document.getElementById("color-text-invert");
+const color_text_highlight = document.getElementById("color-text-highlight");
+const color_base = document.getElementById("color-base");
+const color_accent = document.getElementById("color-accent");
+const color_tertiary = document.getElementById("color-tertiary");
+const color_border = document.getElementById("color-border");
+const color_border_accent = document.getElementById("color-border-accent");
+const color_drop_shadow = document.getElementById("color-drop-shadow");
 
 //Form specific elements
-var palette_form = document.getElementById("palette-form");
-var palette_form_submit = document.getElementById("palette-form-submit");
-var palette_form_button = document.getElementsByClassName("palette-form-button");
-var palette_form_randomize = document.getElementById("palette-button-randomize");
+const palette_form = document.getElementById("palette-form");
+const palette_form_submit = document.getElementById("palette-form-submit");
+const palette_form_button = document.getElementsByClassName("palette-form-button");
+const palette_form_randomize = document.getElementById("palette-button-randomize");
 
 //Html buttons
 //When user submits the palette form
@@ -56,7 +56,7 @@ palette_form_randomize.onclick = function() {
 //The form submits the color scheme to the Django database
 function colorFormSubmit() {
   //Check to see if form is saving or overwriting
-  if(palette_form_submit.value == "Overwrite Color Scheme") {
+  if (palette_form_submit.value == "Overwrite Color Scheme") {
     msg = "Overwrite color scheme: " + color_scheme_name.value + "?"
   } else {
     msg = "Save: " + color_scheme_name.value + " to user color schemes?"
@@ -78,11 +78,12 @@ function colorFormSubmit() {
 //the user enters a name that is in the fetch_color_scheme list
 function colorSchemeNameUpdate() {
   if (palette_form_submit != null) {
-    var array = fetch_color_scheme.color_scheme.filter(obj => obj.color_scheme_name === color_scheme_name.value)
+    const array = fetch_color_scheme.color_scheme.filter(
+      obj => obj.color_scheme_name === color_scheme_name.value
+    );
     if (array === undefined || array.length == 0) {
       palette_form_submit.value = "Save Color Scheme";
-    }
-    else {
+    } else {
       palette_form_submit.value = "Overwrite Color Scheme";
     }
   }
@@ -91,39 +92,41 @@ color_scheme_name.oninput = colorSchemeNameUpdate;
 
 //Color buttons
 //Set root css variables properly on changing any of the color elements
+const docstyle = document.documentElement.style;
 color_bg.onchange = function() {
-  document.documentElement.style.setProperty("--color-bg", "#" + color_bg.value);
+  docstyle.setProperty("--color-bg", "#" + color_bg.value);
 };
 color_text.onchange = function() {
-  document.documentElement.style.setProperty("--color-text", "#" + color_text.value);
+  docstyle.setProperty("--color-text", "#" + color_text.value);
 };
 color_text_invert.onchange = function() {
-  document.documentElement.style.setProperty("--color-text-invert", "#" + color_text_invert.value);
+  docstyle.setProperty("--color-text-invert", "#" + color_text_invert.value);
 };
 color_text_highlight.onchange = function() {
-  document.documentElement.style.setProperty("--color-text-highlight", "#" + color_text_highlight.value);
+  docstyle.setProperty("--color-text-highlight", "#" + color_text_highlight.value);
 };
 color_base.onchange = function() {
-  document.documentElement.style.setProperty("--color-base", "#" + color_base.value);
+  docstyle.setProperty("--color-base", "#" + color_base.value);
 };
 color_accent.onchange = function() {
-  document.documentElement.style.setProperty("--color-accent", "#" + color_accent.value);
+  docstyle.setProperty("--color-accent", "#" + color_accent.value);
 };
 color_tertiary.onchange = function() {
-  document.documentElement.style.setProperty("--color-tertiary", "#" + color_tertiary.value);
+  docstyle.setProperty("--color-tertiary", "#" + color_tertiary.value);
 };
 color_border.onchange = function() {
-  document.documentElement.style.setProperty("--color-border", "#" + color_border.value);
+  docstyle.setProperty("--color-border", "#" + color_border.value);
 };
 color_border_accent.onchange = function() {
-  document.documentElement.style.setProperty("--color-border-accent", "#" + color_border_accent.value);
+  docstyle.setProperty("--color-border-accent", "#" + color_border_accent.value);
 };
 color_drop_shadow.onchange = function() {
-  document.documentElement.style.setProperty("--color-drop-shadow", "#" + color_drop_shadow.value);
+  docstyle.setProperty("--color-drop-shadow", "#" + color_drop_shadow.value);
 };
 
 //updateJscolor()
-//Each line in this function locates the specific jscolor element and updates the field
+//Each line in this function locates the specific jscolor element in the DOM
+//then updates each field
 function updateJscolor() {
   document.getElementsByClassName("jscolor {valueElement: color_bg}")[0].style =
     "background-color:" + root_style.getPropertyValue("--color-bg") + ";";
@@ -148,14 +151,24 @@ function updateJscolor() {
 
   //Update jscolor text fields
   //If there are hashtags, be sure to strip them off
-  document.getElementById("color-bg").value = (root_style.getPropertyValue("--color-bg")).replace('#','');
-  document.getElementById("color-base").value = (root_style.getPropertyValue("--color-base")).replace('#','');
-  document.getElementById("color-accent").value = (root_style.getPropertyValue("--color-accent")).replace('#','');
-  document.getElementById("color-tertiary").value = (root_style.getPropertyValue("--color-tertiary")).replace('#','');
-  document.getElementById("color-text").value = (root_style.getPropertyValue("--color-text")).replace('#','');
-  document.getElementById("color-text-invert").value = (root_style.getPropertyValue("--color-text-invert")).replace('#','');
-  document.getElementById("color-text-highlight").value = (root_style.getPropertyValue("--color-text-highlight")).replace('#','');
-  document.getElementById("color-border").value = (root_style.getPropertyValue("--color-border")).replace('#','');
-  document.getElementById("color-border-accent").value = (root_style.getPropertyValue("--color-border-accent")).replace('#','');
-  document.getElementById("color-drop-shadow").value = (root_style.getPropertyValue("--color-drop-shadow")).replace('#','');
+  document.getElementById("color-bg").value =
+    (root_style.getPropertyValue("--color-bg")).replace('#','');
+  document.getElementById("color-base").value =
+    (root_style.getPropertyValue("--color-base")).replace('#','');
+  document.getElementById("color-accent").value =
+    (root_style.getPropertyValue("--color-accent")).replace('#','');
+  document.getElementById("color-tertiary").value =
+    (root_style.getPropertyValue("--color-tertiary")).replace('#','');
+  document.getElementById("color-text").value =
+    (root_style.getPropertyValue("--color-text")).replace('#','');
+  document.getElementById("color-text-invert").value =
+    (root_style.getPropertyValue("--color-text-invert")).replace('#','');
+  document.getElementById("color-text-highlight").value =
+    (root_style.getPropertyValue("--color-text-highlight")).replace('#','');
+  document.getElementById("color-border").value =
+    (root_style.getPropertyValue("--color-border")).replace('#','');
+  document.getElementById("color-border-accent").value =
+    (root_style.getPropertyValue("--color-border-accent")).replace('#','');
+  document.getElementById("color-drop-shadow").value =
+    (root_style.getPropertyValue("--color-drop-shadow")).replace('#','');
 }

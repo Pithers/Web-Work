@@ -18,7 +18,7 @@
 
 //Launch foundation and define root style
 $(document).foundation();
-var root_style = document.documentElement.style
+const root_style = document.documentElement.style
 
 //Light and Dark modes
 //These load default styles into the site's css color variables
@@ -48,7 +48,7 @@ function dark_mode() {
 }
 
 //Vue app for fetching colorschemes from database
-var fetch_color_scheme = new Vue({
+const fetch_color_scheme = new Vue({
   el: '#fetch_color_scheme',
   delimiters: ['[[',']]'],
   data () {
@@ -66,15 +66,14 @@ var fetch_color_scheme = new Vue({
   //Upon data change, causes virtual DOM to be re-rendered
   updated: function() {
     //This checks to see if user is logged in
-    if(this.default_scheme != null && sessionStorage.getItem("preferences") != "loaded") {
+    if (this.default_scheme != null && sessionStorage.getItem("preferences") != "loaded") {
       sessionStorage.setItem("preferences", "loaded");
       this.loadColorScheme(this.default_scheme);
     }
 
-    if(window.location.pathname == "/") {
+    if (window.location.pathname == "/") {
       colorSchemeNameUpdate();
-    }
-    else if(window.location.pathname == "/preferences/") {
+    } else if (window.location.pathname == "/preferences/") {
       colorPreferences(this.color_scheme, this.default_scheme);
     }
   },
@@ -86,25 +85,31 @@ var fetch_color_scheme = new Vue({
         //Access our own API to get a json object
         .get('/rest_color_scheme/')
         //Make sure to grab the response data, not the response itself
-        .then(response => (this.color_scheme = response.data.color_scheme, this.default_scheme = response.data.default_scheme))
+        .then(response => (
+          this.color_scheme = response.data.color_scheme,
+          this.default_scheme = response.data.default_scheme
+        ))
     },
 
     //Method loads colorscheme into website when clicked. Index locates specific color scheme
     loadColorScheme: function(default_scheme) {
       //Get index of default scheme in color scheme list
-      var index = this.color_scheme.findIndex(x => x.color_scheme_name==default_scheme);
+      const index = this.color_scheme.findIndex(
+        x => x.color_scheme_name == default_scheme
+      );
+      const scheme = this.color_scheme[index];
 
       //Objects save without hashtag so add it back in before loading
-      root_style.setProperty("--color-bg", "#" + this.color_scheme[index].color_bg);
-      root_style.setProperty("--color-base", "#" + this.color_scheme[index].color_base);
-      root_style.setProperty("--color-accent", "#" + this.color_scheme[index].color_accent);
-      root_style.setProperty("--color-tertiary", "#" + this.color_scheme[index].color_tertiary);
-      root_style.setProperty("--color-text", "#" + this.color_scheme[index].color_text);
-      root_style.setProperty("--color-text-invert", "#" + this.color_scheme[index].color_text_invert);
-      root_style.setProperty("--color-text-highlight", "#" + this.color_scheme[index].color_text_highlight);
-      root_style.setProperty("--color-border", "#" + this.color_scheme[index].color_border);
-      root_style.setProperty("--color-border-accent", "#" + this.color_scheme[index].color_border_accent);
-      root_style.setProperty("--color-drop-shadow", "#" + this.color_scheme[index].color_drop_shadow);
+      root_style.setProperty("--color-bg", "#" + scheme.color_bg);
+      root_style.setProperty("--color-base", "#" + scheme.color_base);
+      root_style.setProperty("--color-accent", "#" + scheme.color_accent);
+      root_style.setProperty("--color-tertiary", "#" + scheme.color_tertiary);
+      root_style.setProperty("--color-text", "#" + scheme.color_text);
+      root_style.setProperty("--color-text-invert", "#" + scheme.color_text_invert);
+      root_style.setProperty("--color-text-highlight", "#" + scheme.color_text_highlight);
+      root_style.setProperty("--color-border", "#" + scheme.color_border);
+      root_style.setProperty("--color-border-accent", "#" + scheme.color_border_accent);
+      root_style.setProperty("--color-drop-shadow", "#" + scheme.color_drop_shadow);
 
       //Save name of color scheme into session Storage
       sessionStorage.setItem("color-mode", this.color_scheme[index].color_scheme_name);
@@ -113,9 +118,10 @@ var fetch_color_scheme = new Vue({
       updateStorage("all", "save");
 
       //We need to only update js color when we are on the index page
-      if(window.location.pathname == "/") {
+      if (window.location.pathname == "/") {
         updateJscolor();
-        document.getElementById("id_color_scheme_name").value = this.color_scheme[index].color_scheme_name;
+        document.getElementById("id_color_scheme_name").value =
+          this.color_scheme[index].color_scheme_name;
         colorSchemeNameUpdate();
       }
     }
@@ -123,12 +129,13 @@ var fetch_color_scheme = new Vue({
 })
 
 //updateStorage()
-//Upon changing colors, save them to browser session storage so colorscheme can be held across pages
+//Upon changing colors, save them to browser session storage
+//This allows color schemes to persist across pages
 //If name == "all" then every element will be saved/loaded
 //If method == "save" then the css color property will be saved into session storage
 //If method == "load" then the css color property will be loaded from session storage
 function updateStorage(name, method) {
-  var all = false;
+  let all = false;
 
   if(name == "all") {
     name = "Color bg"; //Trigger all of the switch statements starting from the top
@@ -137,125 +144,137 @@ function updateStorage(name, method) {
 
   switch(name) {
     case "Color bg":
-      if(method == "save")
+      if(method == "save") {
         sessionStorage.setItem("color_bg", root_style.getPropertyValue("--color-bg"));
-      else if(method == "load" && sessionStorage.getItem("color_bg") !== null)
+      } else if (method == "load" && sessionStorage.getItem("color_bg") !== null) {
         root_style.setProperty("--color-bg", sessionStorage.getItem("color_bg"));
-      else
+      } else {
         root_style.setProperty("--color-bg", "#24252f");
+      }
       if(all == false)
         break;
     case "Color text":
-      if(method == "save")
+      if(method == "save") {
         sessionStorage.setItem("color_text", root_style.getPropertyValue("--color-text"));
-      else if(method == "load" && sessionStorage.getItem("color_text") !== null)
+      } else if (method == "load" && sessionStorage.getItem("color_text") !== null) {
         root_style.setProperty("--color-text", sessionStorage.getItem("color_text"));
-      else
+      } else {
         root_style.setProperty("--color-text", "#eaeced");
+      }
       if(all == false)
         break;
     case "Color border":
-      if(method == "save")
+      if(method == "save") {
         sessionStorage.setItem("color_border", root_style.getPropertyValue("--color-border"));
-      else if(method == "load" && sessionStorage.getItem("color_border") !== null)
+      } else if (method == "load" && sessionStorage.getItem("color_border") !== null) {
         root_style.setProperty("--color-border", sessionStorage.getItem("color_border"));
-      else
+      } else {
         root_style.setProperty("--color-border", "#826c73");
+      }
       if(all == false)
         break;
     case "Color base":
-      if(method == "save")
+      if(method == "save") {
         sessionStorage.setItem("color_base", root_style.getPropertyValue("--color-base"));
-      else if(method == "load" && sessionStorage.getItem("color_base") !== null)
+      } else if (method == "load" && sessionStorage.getItem("color_base") !== null) {
         root_style.setProperty("--color-base", sessionStorage.getItem("color_base"));
-      else
+      } else {
         root_style.setProperty("--color-base", "#7f838e");
+      }
       if(all == false)
         break;
     case "Color text invert":
-      if(method == "save")
+      if(method == "save") {
         sessionStorage.setItem("color_text_invert", root_style.getPropertyValue("--color-text-invert"));
-      else if(method == "load" && sessionStorage.getItem("color_text_invert") !== null)
+      } else if (method == "load" && sessionStorage.getItem("color_text_invert") !== null) {
         root_style.setProperty("--color-text-invert", sessionStorage.getItem("color_text_invert"));
-      else
+      } else {
         root_style.setProperty("--color-text-invert", "#24252f");
+      }
       if(all == false)
         break;
     case "Color border accent":
-      if(method == "save")
+      if(method == "save") {
         sessionStorage.setItem("color_border_accent", root_style.getPropertyValue("--color-border-accent"));
-      else if(method == "load" && sessionStorage.getItem("color_border_accent") !== null)
+      } else if (method == "load" && sessionStorage.getItem("color_border_accent") !== null) {
         root_style.setProperty("--color-border-accent", sessionStorage.getItem("color_border_accent"));
-      else
+      } else {
         root_style.setProperty("--color-border-accent", "#715d62");
+      }
       if(all == false)
         break;
     case "Color accent":
-      if(method == "save")
+      if(method == "save") {
         sessionStorage.setItem("color_accent", root_style.getPropertyValue("--color-accent"));
-      else if(method == "load" && sessionStorage.getItem("color_accent") !== null)
+      } else if(method == "load" && sessionStorage.getItem("color_accent") !== null){
         root_style.setProperty("--color-accent", sessionStorage.getItem("color_accent"));
-      else
+      } else {
         root_style.setProperty("--color-accent", "#7dacc4");
+      }
       if(all == false)
         break;
     case "Color text highlight":
-      if(method == "save")
+      if(method == "save") {
         sessionStorage.setItem("color_text_highlight", root_style.getPropertyValue("--color-text-highlight"));
-      else if(method == "load" && sessionStorage.getItem("color_text_highlight") !== null)
+      } else if (method == "load" && sessionStorage.getItem("color_text_highlight") !== null) {
         root_style.setProperty("--color-text-highlight", sessionStorage.getItem("color_text_highlight"));
-      else
+      } else {
         root_style.setProperty("--color-text-highlight", "#1f6f90");
+      }
       if(all == false)
         break;
     case "Color drop shadow":
-      if(method == "save")
+      if(method == "save") {
         sessionStorage.setItem("color_drop_shadow", root_style.getPropertyValue("--color-drop-shadow"));
-      else if(method == "load" && sessionStorage.getItem("color_drop_shadow") !== null)
+      } else if (method == "load" && sessionStorage.getItem("color_drop_shadow") !== null) {
         root_style.setProperty("--color-drop-shadow", sessionStorage.getItem("color_drop_shadow"));
-      else
+      } else {
         root_style.setProperty("--color-drop-shadow", "#000000");
+      }
       if(all == false)
         break;
     case "Color tertiary":
-      if(method == "save")
+      if(method == "save") {
         sessionStorage.setItem("color_tertiary", root_style.getPropertyValue("--color-tertiary"));
-      else if(method == "load" && sessionStorage.getItem("color_tertiary") !== null)
+      } else if(method == "load" && sessionStorage.getItem("color_tertiary") !== null) {
         root_style.setProperty("--color-tertiary", sessionStorage.getItem("color_tertiary"));
-      else
+      } else {
         root_style.setProperty("--color-tertiary", "#666666");
+      }
       break;
   }
 
   //If we're saving into sessionStorage, send a storage update event
-  if(method == "save") {
+  if (method == "save") {
     window.dispatchEvent(new Event('storage'));
   }
 
   //Trianglify header and footer when color base or color bg changes
-  if(name == "all" || name == "Color base" || name == "Color bg")
+  if (name == "all" || name == "Color base" || name == "Color bg") {
     trianglifyBars();
+  }
 }
 
 //loadSession()
 //Grab session data from browser and set color-mode and checkbox accordingly
 //If preferences haven't been loaded once, it will load them
 function loadSession() {
-  var color_mode = sessionStorage.getItem("color-mode");
+  let color_mode = sessionStorage.getItem("color-mode");
 
   //If first time visiting website, set color mode to default
-  if(color_mode === null){
+  if (color_mode === null){
     sessionStorage.setItem("color-mode", "default-dark-mode");
     color_mode = "default-dark-mode";
   }
   updateStorage("all", "load"); //Load from session storage
 
-  if(color_mode == "default-dark-mode")
+  if (color_mode == "default-dark-mode") {
     document.getElementById("light-switch").checked = false;
-  else if (color_mode == "default-light-mode")
+  } else if (color_mode == "default-light-mode") {
     document.getElementById("light-switch").checked = true;
+  }
 
-  if(window.location.pathname == "/") {
+  if (window.location.pathname == "/") {
     document.getElementById("id_color_scheme_name").value = color_mode;
     colorSchemeNameUpdate();
   }
@@ -268,19 +287,23 @@ document.getElementById("light-switch").onclick = function() {
 };
 //Site theme toggle, set root css variables accordingly and save into sessionStorage
 function themeUpdate(element) {
-  if(element.checked) {
+  if (element.checked) {
     light_mode();
     sessionStorage.setItem("color-mode", "default-light-mode");
-    if(window.location.pathname == "/")
+    if (window.location.pathname == "/") {
       document.getElementById("id_color_scheme_name").value = "default-light-mode";
+    }
   } else {
     dark_mode();
     sessionStorage.setItem("color-mode", "default-dark-mode");
-    if(window.location.pathname == "/")
+    if (window.location.pathname == "/") {
       document.getElementById("id_color_scheme_name").value = "default-dark-mode";
+    }
   }
+
   updateStorage("all", "save");
-  if(window.location.pathname == "/") {
+
+  if (window.location.pathname == "/") {
     updateJscolor();
     colorSchemeNameUpdate();
   }
@@ -290,11 +313,11 @@ function themeUpdate(element) {
 //This function when called updates the header and footer with Trianglify
 function trianglifyBars() {
   //Get locations of header and footer
-  var navbar = document.getElementById("nav-bar");
-  var footer = document.getElementById("footer");
+  const navbar = document.getElementById("nav-bar");
+  const footer = document.getElementById("footer");
 
   //Create Trianglify svg
-  var pattern = Trianglify({
+  const pattern = Trianglify({
     height: 200,
     width: 1940,
     variance: 0.75,
@@ -305,8 +328,8 @@ function trianglifyBars() {
   });
 
   // Serialize the SVG object to a String, get the base64 encoding and set property
-  var pattern_string = new XMLSerializer().serializeToString(pattern.svg());
-  var pattern_64 = window.btoa(pattern_string);
+  const pattern_string = new XMLSerializer().serializeToString(pattern.svg());
+  const pattern_64 = window.btoa(pattern_string);
   navbar.style.backgroundImage = 'url("data:image/svg+xml;base64,' + pattern_64 + '")';
   footer.style.backgroundImage = 'url("data:image/svg+xml;base64,' + pattern_64 + '")';
 }
@@ -314,20 +337,18 @@ function trianglifyBars() {
 //Onload functions for each page
 $(window).ready(function() {
 
-  //Upon logout erases preference loaded variable in session storage
-  if(document.getElementById("logout-msg")) {
+  //Upon logout, erases preference loaded variable in session storage
+  if (document.getElementById("logout-msg")) {
     sessionStorage.setItem("preferences", "unloaded");
   }
 
   //Set colorschemes correctly
   loadSession();
-  if(window.location.pathname == "/") {
+  if (window.location.pathname == "/") {
     updateJscolor();
     colorSchemeNameUpdate();
-  }
-  //If we're on a webgl page, launch main of the corresponding javascript
-  else if(window.location.href.indexOf("/webgl/") !== -1) {
+  } else if (window.location.href.indexOf("/webgl/") !== -1) {
+    //If we're on a webgl page, launch main of the corresponding javascript
     main();
   }
 });
-
