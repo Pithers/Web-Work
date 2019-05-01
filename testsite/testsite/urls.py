@@ -16,6 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+# Page Error Handlers
+handler404 = 'myapp.views.handler404'
+handler500 = 'myapp.views.handler500'
+handler403 = 'myapp.views.handler403'
+handler400 = 'myapp.views.handler400'
+
 # Admin site access is through gifnoc. This is changed from the default.
 urlpatterns = [
     path('gifnoc/', admin.site.urls),

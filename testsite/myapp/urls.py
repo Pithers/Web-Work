@@ -9,11 +9,6 @@ from django.urls import path
 from django.contrib.auth import views as adminviews
 from . import views
 
-handler404 = 'myapp.views.handler404'
-handler500 = 'myapp.views.handler500'
-handler403 = 'myapp.views.handler403'
-handler400 = 'myapp.views.handler400'
-
 urlpatterns = [
     path('', views.index_view),
     path('posts/', views.post_view),
