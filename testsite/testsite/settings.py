@@ -27,7 +27,7 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 #Develoment vs Production settings
 if os.environ.get('SERVER_MODE') == 'development':
     # SECURITY WARNING: don't run with debug turned on in production!
-    DEBUG = False
+    DEBUG = True
     # SECURITY WARNING: keep the secret key used in production secret!
     SECRET_KEY = 'l@mrk-)+j-1t33!)dszy0r0t-5%4h*de3yqn4yllmn0c&ysbmz'
 else:
