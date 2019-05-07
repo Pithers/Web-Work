@@ -567,6 +567,20 @@ Promise.all([textReady, domReady]).then(function() {
   objects[3].material.color.set(color_text);
   text.material.color.set(color_text);
 
+  //Sometimes object colors don't update correctly so force it here
+  objects[0].material.needsUpdate = true;
+  objects[1].material.needsUpdate = true;
+  objects[2].material.needsUpdate = true;
+  objects[3].material.needsUpdate = true;
+  objects[4].material.needsUpdate = true;
+  objects[5].material.needsUpdate = true;
+  objects[6].material.needsUpdate = true;
+  objects[6].material.needsUpdate = true;
+  objects[8].material.needsUpdate = true;
+  objects[9].material.needsUpdate = true;
+  mountain_range.material.needsUpdate = true;
+  text.material.needsUpdate = true;
+
   //Hide Loading Screen
   $(".preloader").hide();
 
@@ -796,7 +810,10 @@ function hideTooltip(element) {
 //Animate the Canvas
 const clock = new THREE.Clock();
 const update_interval = 1/2;
-const fixed_frame_rate = 90; //Stats.js says this is equivalent to 60fps, might be due to ~60fps cap by code
+
+//Stats.js says this is equivalent to 60fps, might be due to ~60fps cap by code
+const fixed_frame_rate = 90;
+
 let sin_motion_counter = 0;
 let delta = 0;
 
