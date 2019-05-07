@@ -539,7 +539,7 @@ let domResolve;
 const domReady = new Promise(function(resolve) {
   domResolve = resolve;
 });
-window.onload = domResolve;
+window.addEventListener('load', domResolve);
 
 //When both the dom promise and the text promise have resolved, load index page
 Promise.all([textReady, domReady]).then(function() {
