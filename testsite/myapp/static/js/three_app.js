@@ -21,7 +21,7 @@
 //##   Wind Placement
 //##   Mountain Creation
 //##   Mountain Placement
-//##   Text Creation/Placement
+//##   Text Creation/Placement/Loading
 //## Lights
 //## Color Objects
 //## Event Listeners
@@ -459,23 +459,25 @@ for (let i = 0; i < num_mountains; i++) {
 const mountain_range = new THREE.Mesh(mountain_geo, material_standard.clone());
 scene.add(mountain_range);
 
-//Text Creation/Placement
+//Text Creation/Placement/Loading
+//This uses a promise that is resolved when the text objects have loaded
 const loader = new THREE.FontLoader();
-loader.load('//raw.githubusercontent.com/mrdoob/three.js' + 
-  '/master/examples/fonts/helvetiker_regular.typeface.json',
-  function(font) {
-    //Create first geometry
-    const textGeo1 = new THREE.TextGeometry("Color Palette Picker", {
-      font: font,
-      size: 1,
-      height: 0.001,
-    });
-    //Create second geometry
-    const textGeo2 = new THREE.TextGeometry("Click around to experiment", {
-      font: font,
-      size: 0.5,
-      height: 0.001,
-    });
+const textReady = new Promise(function(resolve) {
+  loader.load('//raw.githubusercontent.com/mrdoob/three.js' + 
+    '/master/examples/fonts/helvetiker_regular.typeface.json',
+    function(font) {
+      //Create first geometry
+      const textGeo1 = new THREE.TextGeometry("Color Palette Picker", {
+        font: font,
+        size: 1,
+        height: 0.001,
+      });
+      //Create second geometry
+      const textGeo2 = new THREE.TextGeometry("Click around to experiment", {
+        font: font,
+        size: 0.5,
+        height: 0.001,
+      });
 
     //Create both meshes
     const t1 = new THREE.Mesh(textGeo1);
@@ -498,7 +500,11 @@ loader.load('//raw.githubusercontent.com/mrdoob/three.js' +
     const text = new THREE.Mesh(combined_geo, material_standard.clone());
     text.name = 'text';
     scene.add(text);
+
+    //Text has finished loading, resolve promise
+    resolve();
   });
+});
 
 //Lights
 const light = new THREE.AmbientLight(0x888899); // soft white light
@@ -528,10 +534,17 @@ objects[13].userData.color_text = "palette-view-toggle";
 
 //Event Listeners
 //Loading Manager
-let text;
-THREE.DefaultLoadingManager.onLoad = function() {
+//Resolves a promise when the dom has loaded
+let domResolve;
+const domReady = new Promise(function(resolve) {
+  domResolve = resolve;
+});
+document.addEventListener("DOMContentLoaded", domResolve);
+
+//When both the dom promise and the text promise have resolved, load index page
+Promise.all([textReady, domReady]).then(function() {
   //Once text is loaded, set to objects
-  text = scene.getObjectByName('text');
+  let text = scene.getObjectByName('text');
 
   //Once everything is loaded, set colors accordingly
   objects[1].material.color.set(root_style.getPropertyValue("--color-accent"));
@@ -559,7 +572,7 @@ THREE.DefaultLoadingManager.onLoad = function() {
 
   //Launch animation when ready
   animate();
-};
+});
 
 //Session Storage Event
 //Change colors anytime sessionStorage changes
