@@ -32,12 +32,18 @@ pylint:
     - python -V
     - pylint --load-plugins pylint_django --disable=missing-docstring ./testsite/testsite
     - pylint --load-plugins pylint_django --ignore=migrations --disable=missing-docstring ./testsite/myapp
+  only:
+    changes:
+      - "*.py"
 
 scsslint:
   image: "$CI_REGISTRY_IMAGE:testing"
   stage: lint
   script:
     - sass-lint ./testsite/myapp/static/scss
+  only:
+    changes:
+      - "*.scss"
 
 # Run django unit testing/coverage generation on app code
 test:
@@ -51,6 +57,9 @@ test:
     - coverage --version
     - coverage run --source='.' ./manage.py test
     - coverage report --skip-covered
+  only:
+    changes:
+      - "*.py"
 
 # Create latest docker container if all the tests/lint passes on master
 deploy:
