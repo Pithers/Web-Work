@@ -15,7 +15,6 @@ services:
 
     build: .
     command: >
-      bash -c "python /code/testsite/manage.py compilescss
+      bash -c 'python /code/testsite/manage.py compilescss
       && python /code/testsite/manage.py collectstatic --ignore=*.scss --noinput
-      && python /code/testsite/manage.py runserver 0.0.0.0:8000 --insecure"
-
+      && python /code/testsite/manage.py runserver 0.0.0.0:8000 --insecure'

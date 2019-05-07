@@ -18,11 +18,12 @@ services:
 
     image: registry.gitlab.com/pithers/web-work:latest
     command: >
-      bash -c "python /code/testsite/manage.py compilescss
+      bash -c 'python /code/testsite/manage.py compilescss
       && python /code/testsite/manage.py collectstatic --ignore=*.scss --noinput
       && crass /code/testsite/static/scss/style.css --optimize
+      && find /code/testsite/static/js -maxdepth 1 -iname "*.js" -exec uglifyjs --compress --mangle -o {} -- {} \;
       && chmod 0777 /code/testsite
-      && uwsgi /code/deployment.ini"
+      && uwsgi /code/deployment.ini'
 
   nginx:
     restart: always
