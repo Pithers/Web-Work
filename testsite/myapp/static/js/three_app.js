@@ -539,12 +539,15 @@ let domResolve;
 const domReady = new Promise(function(resolve) {
   domResolve = resolve;
 });
-window.addEventListener('load', domResolve);
+$(window).ready(function() {
+  domResolve();
+});
 
 //When both the dom promise and the text promise have resolved, load index page
+let text;
 Promise.all([textReady, domReady]).then(function() {
   //Once text is loaded, set to objects
-  let text = scene.getObjectByName('text');
+  text = scene.getObjectByName('text');
 
   //Once everything is loaded, set colors accordingly
   objects[1].material.color.set(root_style.getPropertyValue("--color-accent"));
@@ -566,20 +569,6 @@ Promise.all([textReady, domReady]).then(function() {
   const color_text = root_style.getPropertyValue("--color-text");
   objects[3].material.color.set(color_text);
   text.material.color.set(color_text);
-
-  //Sometimes object colors don't update correctly so force it here
-  objects[0].material.needsUpdate = true;
-  objects[1].material.needsUpdate = true;
-  objects[2].material.needsUpdate = true;
-  objects[3].material.needsUpdate = true;
-  objects[4].material.needsUpdate = true;
-  objects[5].material.needsUpdate = true;
-  objects[6].material.needsUpdate = true;
-  objects[6].material.needsUpdate = true;
-  objects[8].material.needsUpdate = true;
-  objects[9].material.needsUpdate = true;
-  mountain_range.material.needsUpdate = true;
-  text.material.needsUpdate = true;
 
   //Hide Loading Screen
   $(".preloader").hide();
