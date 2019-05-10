@@ -48,7 +48,7 @@ palette_form.onsubmit = function() {
 });
 //Set click for randomize color pallete button
 palette_form_randomize.onclick = function() {
-    colorRandomizer();
+  colorRandomizer();
 };
 
 //colorFormSubmit()

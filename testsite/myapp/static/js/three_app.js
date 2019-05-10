@@ -56,7 +56,7 @@ function toggleIndexView() {
   $("[id='Color border accent']").toggleClass('palette-form-button');
   $("[id='Color drop shadow']").toggleClass('palette-form-button');
   $("[id='Color base']").toggleClass('palette-form-button');
-  $("#palette-button-randomize").toggleClass('palette-form-button');
+  $("#palette-button-random-container").toggleClass('palette-form-button');
   $("#palette-button-generate").toggleClass('palette-form-button');
   $("#palette-submission-field").toggleClass('palette-form-button');
 
@@ -72,7 +72,7 @@ function toggleIndexView() {
   $("[id='Color border accent']").css('display', '');
   $("[id='Color drop shadow']").css('display', '');
   $("[id='Color base']").css('display', '');
-  $("#palette-button-randomize").css('display', '');
+  $("#palette-button-random-container").css('display', '');
   $("#palette-button-generate").css('display', '');
   $("#palette-submission-field").css('display', '');
 
@@ -527,7 +527,7 @@ objects[8].userData.color_text = "Color drop shadow";
 objects[9].userData.color_text = "Color base";
 
 //Randomize, Generate, and Submission Field objects
-objects[10].userData.color_text = "palette-button-randomize";
+objects[10].userData.color_text = "palette-button-random-container";
 objects[11].userData.color_text = "palette-submission-field";
 objects[12].userData.color_text = "palette-button-generate";
 objects[13].userData.color_text = "palette-view-toggle";

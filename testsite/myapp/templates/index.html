@@ -95,19 +95,21 @@
         {% endfor %}
         <div class="palette-field cell small-4">
           <div id="palette-button-generate" class="palette-form-button">
+            <!--Colormind API currently not working due to it not using https-->
+            <!--Code is kept here incase colormind updates to use https-->
             <div class="palette-button button colormind hovertip" data-colormind-start>
               Generate Color Scheme
-              <span class="hovertiptext">This uses the Colormind API, which is not available over https. To use it, you will need to temporarily disable insecure content blocking in your browser</span>
+              <!--span class="hovertiptext">This uses the Colormind API, which is not available over https. To use it, you will need to temporarily disable insecure content blocking in your browser</span-->
             </div>
             <div class="palette-button button colormind hovertip hide" data-colormind-end>
               Generating...
-              <span class="hovertiptext">This uses the Colormind API, which is not available over https. To use it, you will need to temporarily disable insecure content blocking in your browser</span>
+              <!--span class="hovertiptext">This uses the Colormind API, which is not available over https. To use it, you will need to temporarily disable insecure content blocking in your browser</span-->
             </div>
           </div>
         </div>
         <div class="palette-field cell small-4">
-          <div id="palette-button-randomize" class="palette-form-button">
-            <div class="palette-button button colormind">
+          <div id = "palette-button-random-container" class="palette-form-button">
+            <div id="palette-button-randomize" class="palette-button button colormind">
               Randomize
             </div>
           </div>
@@ -141,6 +143,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/102/three.min.js"></script>
 <!--script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script-->
 <script src="{% static "js/color_mode.js" %}?v=1.1.0"></script>
-<script src="{% static "js/colormind.js" %}?v=1.1.0"></script>
+<script src="{% static "js/color_generate.js" %}?v=1.1.0"></script>
 <script src="{% static "js/three_app.js" %}?v=1.1.5"></script>
 {% endblock %}
