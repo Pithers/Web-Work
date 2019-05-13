@@ -20,6 +20,7 @@ urlpatterns = [
     path('webgl/<slug:name>/', views.webgl_view),
     path('about/', views.about_view),
     path('music/', views.music_view),
+    path('playlist/', views.playlist_view),
     path('rest_posts/', views.rest_post),
     path('rest_color_scheme/', views.rest_color_scheme),
 ]

@@ -15,6 +15,7 @@
 # webgl_view
 # about_view
 # music_view
+# playlist_view
 # index_view
 # error_views
 
@@ -242,6 +243,10 @@ def about_view(request):
 # music_view
 def music_view(request):
     return render(request, 'music.html')
+
+# playlist_view
+def playlist_view(request):
+    return render(request, 'playlist.html')
 
 # index_view
 # Defines the functionality for the index page.

@@ -17,4 +17,5 @@ services:
     command: >
       bash -c 'python /code/testsite/manage.py compilescss
       && python /code/testsite/manage.py collectstatic --ignore=*.scss --noinput
+      && babel --no-babelrc --presets /usr/lib/node_modules/@babel/preset-react /code/testsite/myapp/static/jsx/react_app.jsx -o /code/testsite/myapp/static/js/react_app.js
       && python /code/testsite/manage.py runserver 0.0.0.0:8000 --insecure'

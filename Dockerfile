@@ -11,5 +11,7 @@ RUN curl -sL https://deb.nodesource.com/setup_11.x | bash
 RUN apt-get install -y nodejs
 RUN npm install -g sass-lint
 RUN npm install -g --save-dev crass
-RUN npm install --save-dev babel-core
+RUN npm install --save-dev -g @babel/core
+RUn npm install --save-dev -g @babel/cli
+RUN npm install --save-dev -g @babel/preset-react
 RUN npm install -g uglify-es
