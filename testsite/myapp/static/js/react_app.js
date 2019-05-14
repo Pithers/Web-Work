@@ -13,99 +13,9 @@
 //Contents:
 //##
 const APIKey = "AIzaSyCHDk3UdiZ5MEXlFKRwCdhzDGDPi2dD4x0";
-const baseURL = "https://www.googleapis.com/youtube/v3/"; //Get the specified username
-
-function getYoutubeUserId(username) {
-  return new Promise(function (resolve, reject) {
-    $.get(baseURL + 'channels', {
-      part: "id",
-      forUsername: username,
-      key: APIKey
-    }, function (data) {
-      resolve(data.items[0].id);
-    });
-  });
-}
-
-function getYoutubePlaylists(id) {
-  return new Promise(function (resolve, reject) {
-    $.get(baseURL + 'playlists', {
-      part: "snippet",
-      channelId: id,
-      maxResults: 25,
-      key: APIKey
-    }, function (data) {
-      resolve(data.items);
-    });
-  });
-}
-
-function youtubePlaylistVideosPromise(listId) {
-  return new Promise(function (resolve, reject) {
-    $.get(baseURL + 'playlistItems', {
-      part: "snippet",
-      playlistId: listId,
-      key: APIKey
-    }, function (data) {
-      resolve(data);
-    });
-  });
-}
-
-function getPlaylistVideos(listId) {
-  youtubePlaylistVideosPromise(listId).then(function (data) {
-    console.log(data.items[0].snippet.title);
-  });
-} //Search For User
-//getUserPlaylists('misterpithers').then();
-//Display Playlists from User
-//Select Playlists from User
-//getPlaylistVideos('PLH0PzuhXpJp2N1XZN7ikHF8UqDcbCbY5q');
-//Cancelable promise
-
-/*const makeCancelable = (promise) => {
-  let hasCanceled_ = false;
-
-  const wrappedPromise = new Promise((resolve, reject) => {
-    promise.then(
-      val => hasCanceled_ ? reject({isCanceled: true}) : resolve(val),
-      error => hasCanceled_ ? reject({isCanceled: true}) : reject(error)
-    );
-  });
-
-  return {
-    promise: wrappedPromise,
-    cancel() {
-      hasCanceled_ = true;
-    },
-  };
-};
-
-const cancelablePromise = makeCancelable(
-  //Search for typed user and get all playlists
-  getYoutubeUserId(this.state.term).then((user_id) => {
-    getYoutubePlaylists(user_id).then((data) => {
-      data.forEach(function(element) {
-        console.log(element.snippet.title);
-        console.log(element.id);
-      });
-      this.setState({
-        playlists: ['a'],
-      });
-    });
-  })
-);*/
-//Main class. App goes here
-
+const baseURL = "https://www.googleapis.com/youtube/v3/"; //App for generating playlists
 
 class PlaylistRandomizer extends React.Component {
-  render() {
-    return React.createElement(Playlist, null);
-  }
-
-}
-
-class Playlist extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -118,53 +28,188 @@ class Playlist extends React.Component {
   handleChange(event) {
     this.setState({
       term: event.target.value
-    });
+    }); //Find channel of user searched
+
     $.get(baseURL + 'channels', {
       part: "id",
-      forUsername: this.state.term,
+      forUsername: event.target.value,
       key: APIKey
     }, channel => {
-      $.get(baseURL + 'playlists', {
-        part: "snippet",
-        channelId: channel.items[0].id,
-        maxResults: 25,
-        key: APIKey
-      }, list => {
-        this.setState({
-          playlists: list.items
+      //If username is valid, get playlists from user's channel
+      if (channel.items.length == 1) {
+        $.get(baseURL + 'playlists', {
+          part: "snippet",
+          channelId: channel.items[0].id,
+          maxResults: 25,
+          key: APIKey
+        }, list => {
+          this.setState({
+            playlists: list.items
+          });
+        }).fail(() => {
+          console.log('Get youtube playlists error');
         });
-      });
+      } else {
+        //If not, no playlists found
+        this.setState({
+          playlists: []
+        });
+      }
+    }).fail(() => {
+      console.log('Get youtube user error');
     });
   }
 
   render() {
-    const items = this.state.playlists.map((element, i) => {
-      return React.createElement("li", {
-        key: i
-      }, element.snippet.title);
+    const playlist_items = this.state.playlists.map((element, i) => {
+      return React.createElement(Playlist, {
+        title: element.snippet.title,
+        id: element.id,
+        key: element.id
+      });
     });
-    return React.createElement("div", null, items, React.createElement("label", {
+    let result;
+
+    if (this.state.term != '') {
+      if (playlist_items.length == 0) {
+        result = React.createElement("li", {
+          key: "result"
+        }, "No User Found");
+      } else {
+        result = React.createElement("li", {
+          key: "result"
+        }, "User: ", this.state.term);
+      }
+    }
+
+    return React.createElement("div", null, React.createElement("label", {
       htmlFor: "user-search"
-    }, "Input Username"), React.createElement("input", {
+    }, "Search Username"), React.createElement("input", {
       onChange: this.handleChange,
       name: "user-search",
       type: "text",
       value: this.state.term
-    }));
+    }), result, playlist_items);
   }
 
-}
+} //Object that holds each playlist
 
-class Clock extends React.Component {
+
+class Playlist extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      active: false,
+      videos_grabbed: false,
+      playlist_videos: []
+    };
+    this.handleClick = this.handleClick.bind(this);
+    this.getPlaylistVideos = this.getPlaylistVideos.bind(this);
+  } //Recurse through get request through youtube via page tokens
+  //Send multiple get requests if the playlist is over 50 videos
+  //The list parameter will accumulate the playlist videos
+  //Once recursion is done, the list will be saved to the
+  //playlist_videos state variable
+
+
+  getPlaylistVideos(list, token) {
+    $.get(baseURL + 'playlistItems', {
+      part: "snippet",
+      playlistId: this.props.id,
+      maxResults: 50,
+      pageToken: token,
+      key: APIKey
+    }, videos => {
+      //Push all videos into the list
+      videos.items.forEach(element => {
+        list.push(element);
+      }); //Recurse if there's a nextPageToken
+
+      if (videos.nextPageToken) {
+        this.getPlaylistVideos(list, videos.nextPageToken);
+      } else {
+        //When done, if the list has more than one video
+        //put the list into the playlist_videos state variable
+        if (list.length >= 1) {
+          this.setState({
+            playlist_videos: list
+          });
+        } else {
+          this.setState({
+            playlist_videos: []
+          });
+        }
+      }
+    }).fail(() => {
+      console.log('Get playlist videos error');
+    });
+  } //When a Playlist Item is Clicked
+
+
+  handleClick() {
+    //Toggle active state
+    this.setState({
+      active: !this.state.active
+    }); //On first click, grab all videos associated with the playlist
+
+    if (!this.state.videos_grabbed) {
+      this.getPlaylistVideos([], null);
+      this.setState({
+        videos_grabbed: true
+      });
+    }
+  }
+
   render() {
-    return React.createElement("div", null, React.createElement("h1", null, "Hello, world!"), React.createElement("h2", null, "It is ", this.props.date.toLocaleTimeString(), "."));
+    const playlist_videos_items = this.state.playlist_videos.map((element, i) => {
+      return React.createElement(PlaylistVideo, {
+        title: element.snippet.title,
+        urlId: element.snippet.resourceId.videoId,
+        id: element.id,
+        key: element.id
+      });
+    });
+    return React.createElement("div", null, React.createElement("div", {
+      key: this.props.id,
+      onClick: this.handleClick
+    }, this.props.title), React.createElement("ul", null, this.state.active && playlist_videos_items));
   }
 
-} //Create DOM
+} //Object that holds each playlist
 
 
-function tick() {
-  ReactDOM.render(React.createElement(PlaylistRandomizer, null), document.getElementById('react-block'));
+class PlaylistVideo extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
+  } //When a Playlist Video is Clicked
+
+
+  handleClick() {
+    console.log(this.props.id);
+    console.log(this.props.title);
+  }
+
+  render() {
+    //Get the youtube url of the video
+    const ref = "https://www.youtube.com/watch?v=" + this.props.urlId;
+    return React.createElement("li", {
+      key: this.props.id,
+      onClick: this.handleClick
+    }, React.createElement("a", {
+      href: ref,
+      target: "_blank"
+    }, this.props.title));
+  }
+
 }
 
-setInterval(tick, 1000);
+ReactDOM.render(React.createElement(PlaylistRandomizer, null), document.getElementById('react-block')); //Create DOM
+
+/*function tick() {
+  ReactDOM.render(
+    <PlaylistRandomizer />,
+    document.getElementById('react-block')
+  );
+}
+setInterval(tick, 1000);*/
