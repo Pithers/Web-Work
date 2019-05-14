@@ -27,9 +27,11 @@ class PlaylistRandomizer extends React.Component {
     this.state = {
       term: '',
       playlists: [],
+      randomizer: [],
     };
 
     this.handleChange = this.handleChange.bind(this);
+    this.pullPlaylist = this.pullPlaylist.bind(this);
   }
 
   handleChange(event) {
@@ -70,10 +72,15 @@ class PlaylistRandomizer extends React.Component {
     });
   }
 
+  pullPlaylist(value) {
+    console.log(value);
+  }
+
   render() {
     const playlist_items = this.state.playlists.map((element, i) => {
       return (
         <Playlist
+          pullPlaylist = {this.pullPlaylist}
           title = {element.snippet.title}
           id = {element.id}
           key= {element.id}
@@ -160,6 +167,9 @@ class Playlist extends React.Component {
     this.setState({
       active: !this.state.active
     });
+
+    //Pass data up to parent
+    this.props.pullPlaylist(this.state.active);
 
     //On first click, grab all videos associated with the playlist
     if (!this.state.videos_grabbed) {

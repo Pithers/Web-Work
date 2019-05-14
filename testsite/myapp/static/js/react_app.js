@@ -20,9 +20,11 @@ class PlaylistRandomizer extends React.Component {
     super(props);
     this.state = {
       term: '',
-      playlists: []
+      playlists: [],
+      randomizer: []
     };
     this.handleChange = this.handleChange.bind(this);
+    this.pullPlaylist = this.pullPlaylist.bind(this);
   }
 
   handleChange(event) {
@@ -60,9 +62,14 @@ class PlaylistRandomizer extends React.Component {
     });
   }
 
+  pullPlaylist(value) {
+    console.log(value);
+  }
+
   render() {
     const playlist_items = this.state.playlists.map((element, i) => {
       return React.createElement(Playlist, {
+        pullPlaylist: this.pullPlaylist,
         title: element.snippet.title,
         id: element.id,
         key: element.id
@@ -150,7 +157,8 @@ class Playlist extends React.Component {
     //Toggle active state
     this.setState({
       active: !this.state.active
-    }); //On first click, grab all videos associated with the playlist
+    });
+    this.props.pullPlaylist(this.state.active); //On first click, grab all videos associated with the playlist
 
     if (!this.state.videos_grabbed) {
       this.getPlaylistVideos([], null);
@@ -202,14 +210,7 @@ class PlaylistVideo extends React.Component {
     }, this.props.title));
   }
 
-}
+} //Create DOM
 
-ReactDOM.render(React.createElement(PlaylistRandomizer, null), document.getElementById('react-block')); //Create DOM
 
-/*function tick() {
-  ReactDOM.render(
-    <PlaylistRandomizer />,
-    document.getElementById('react-block')
-  );
-}
-setInterval(tick, 1000);*/
+ReactDOM.render(React.createElement(PlaylistRandomizer, null), document.getElementById('react-block'));
