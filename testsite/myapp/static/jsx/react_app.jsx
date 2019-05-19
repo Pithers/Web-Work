@@ -18,19 +18,63 @@
 
 //References:
 //Youtube API v3: https://developers.google.com/youtube/v3/
-//Durstenfeld shuffle: 
+//Durstenfeld shuffle:
 //  https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
 //  https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+//Seeding Random:
+//  https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript/47593316#47593316
 
 //Contents:
 //##
 
+function onYouTubeIframeAPIReady() {
+  console.log("hi");
+}
+
+//CSS Styling
+const columns = {
+  color: 'white',
+  fontSize: 200,
+};
+
 const APIKey = "AIzaSyCHDk3UdiZ5MEXlFKRwCdhzDGDPi2dD4x0";
 const baseURL = "https://www.googleapis.com/youtube/v3/";
 
+//MurmurHash3's mixing function. Turns a string into a 32-bit hash
+function xmur3(str) {
+  for(var i = 0, h = 1779033703 ^ str.length; i < str.length; i++)
+    h = Math.imul(h ^ str.charCodeAt(i), 3432918353),
+    h = h << 13 | h >>> 19;
+  return function() {
+    h = Math.imul(h ^ h >>> 16, 2246822507);
+    h = Math.imul(h ^ h >>> 13, 3266489909);
+    return (h ^= h >>> 16) >>> 0;
+  }
+}
+
+//Sfc 32 random number generator. Provide it with 4 seeds.
+function sfc32(a, b, c, d) {
+  return function() {
+    a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0; 
+    var t = (a + b) | 0;
+    a = b ^ b >>> 9;
+    b = c + (c << 3) | 0;
+    c = (c << 21 | c >>> 11);
+    d = d + 1 | 0;
+    t = t + d | 0;
+    c = c + t | 0;
+    return (t >>> 0) / 4294967296;
+  }
+}
+
+//Create random number generator
+const seed = xmur3(new Date().toLocaleString());
+const rand = sfc32(seed(), seed(), seed(), seed());
+
+//Durstenfeld Array shuffler
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(rand() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
   return array;
@@ -46,7 +90,6 @@ class PlaylistRandomizer extends React.Component {
       playlists: [],
       selected: [],
       randomizer: [],
-      index: 0,
     };
 
     //Bind functions
@@ -120,6 +163,7 @@ class PlaylistRandomizer extends React.Component {
         selected: prevState.selected.concat(playlistId),
         randomizer: prevState.randomizer.concat(videos),
       }));
+      this.shufflePlaylist();
     };
   }
 
@@ -137,6 +181,7 @@ class PlaylistRandomizer extends React.Component {
           return element.playlistId !== playlistId;
         }),
       }));
+      this.shufflePlaylist();
     }
   }
 
@@ -146,17 +191,25 @@ class PlaylistRandomizer extends React.Component {
 
   //Randomizes this.state.randomizer using a Durstenfeld shuffle
   shufflePlaylist() {
-    console.log('shuffling');
     this.setState((prevState) => ({
       randomizer: shuffleArray(prevState.randomizer),
     }));
   }
 
+  //Puts the first element of the randomizer onto the back of the randomizer
   nextVideo() {
-    console.log('next video');
+    this.setState((prevState) => ({
+      randomizer: prevState.randomizer.concat(prevState.randomizer.shift()),
+    }));
   }
+
+  //Puts the last element of the randomizer onto the front of the randomizer
+  //The odd array functionality was used instead of unshift due to the need
+  //to return a new array
   prevVideo() {
-    console.log('prev video');
+    this.setState((prevState) => ({
+      randomizer: [prevState.randomizer.pop()].concat(prevState.randomizer),
+    }));
   }
 
   render() {
@@ -168,7 +221,7 @@ class PlaylistRandomizer extends React.Component {
           removePlaylist = {this.removePlaylist}
           title = {element.snippet.title}
           id = {element.id}
-          key= {element.id}
+          key = {element.id}
         />
       );
     });
@@ -192,9 +245,26 @@ class PlaylistRandomizer extends React.Component {
       )
     });
 
+    let title = null;
+    let videoId = null;
+    if (this.state.randomizer.length) {
+      title = this.state.randomizer[0].title;
+      videoId = this.state.randomizer[0].videoId;
+    }
+
     return (
       <div>
+        <Player
+          title = {title}
+          videoId = {videoId}
+          nextVideo = {this.nextVideo}
+          pause = {this.state.pause}
+          id = 'video-player'
+          key = 'video-player'
+        />
         <button onClick={this.shufflePlaylist}>Shuffle</button>
+        <button onClick={this.nextVideo}>Next</button>
+        <button onClick={this.prevVideo}>Prev</button>
         <label htmlFor="user-search">Search Username</label>
         <input onChange={this.handleChange} name='user-search' type="text" value={this.state.term}/>
         {result}
@@ -202,12 +272,6 @@ class PlaylistRandomizer extends React.Component {
         <ul>
           {randomizer}
         </ul>
-        <Player
-          video = {this.state.randomizer[0]}
-          nextVideo = {this.nextVideo}
-          id = 'video-player'
-          key = 'video-player'
-        />
       </div>
     );
   }
@@ -218,34 +282,82 @@ class Player extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      paused: false,
-      done: false,
-    };
-
     //Bind functions
-    this.getYoutubeVideo = this.getYoutubevideo.bind(this);
-    this.nextVideo = this.nextVideo.bind(this);
+    this.onPlayerReady = this.onPlayerReady.bind(this);
+    this.onPlayerError = this.onPlayerError.bind(this);
+    this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
+
+    //Init Player
+    this.init();
+
+    //This function gets exposed globally as it
+    //Youtube's API will call it when ready
+    this.player;
+    window.onYouTubeIframeAPIReady = (() => {
+      this.player = new YT.Player('youtube-player', {
+        playerVars: {
+          'autoplay': 1,
+          'origin': window.location.href,
+          'enablejsapi': 1,
+        },
+        events: {
+          'onReady': this.onPlayerReady,
+          'onError': this.onPlayerError,
+          'onStateChange': this.onPlayerStateChange,
+        }
+      });
+    });
   }
 
-  //Wait for properties to contain a video
-  //Play video from video prop
-  //When done, notify randomizer to update properties
-  getYoutubeVideo() {
-    console.log('get youtube video');
+  //Uneeded for now
+  onPlayerReady(event) {
+    //console.log('READY');
+    //  event.target.playVideo();
   }
 
-  nextVideo(){
-    console.log('next video please');
+  //Error usually play on a broken video link, so cycle to the next video
+  onPlayerError(event) {
+    console.log('ERROR');
+    console.log(event.data);
+    this.props.nextVideo();
+  }
+
+  //We can respond to player state changes here
+  //If the video ends, request another one from the randomizer
+  onPlayerStateChange(event) {
+    switch (event.data) {
+      /*case YT.PlayerState.PLAYING:
+        break;
+      case YT.PlayerState.PAUSED:
+        break;*/
+      case YT.PlayerState.ENDED:
+        this.props.nextVideo();
+        break;
+    }
+  }
+
+  //On creation, grab the youtube iframe helper script
+  init() {
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
   }
 
   //Can probably have video logic here as 
   //The only rerendering will occur on property changes
   render() {
+    //If the player exists and is ready with a video
+    if(this.player && this.props.videoId) {
+      this.player.loadVideoById(this.props.videoId);
+    }
     return (
       <div>
+        <div id='youtube-player'></div>
+        <div>Now Playing: {this.props.title}</div>
       </div>
     );
+  }
 }
 
 //Object that holds each playlist
