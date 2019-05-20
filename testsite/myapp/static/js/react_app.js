@@ -21,14 +21,13 @@
 //  https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript/47593316#47593316
 //Contents:
 //##
-function onYouTubeIframeAPIReady() {
-  console.log("hi");
-} //CSS Styling
-
-
-const columns = {
+//CSS Styling
+const styleColumns = {
   color: 'white',
   fontSize: 200
+};
+const styleCenter = {
+  textAlign: 'center'
 };
 const APIKey = "AIzaSyCHDk3UdiZ5MEXlFKRwCdhzDGDPi2dD4x0";
 const baseURL = "https://www.googleapis.com/youtube/v3/"; //MurmurHash3's mixing function. Turns a string into a 32-bit hash
@@ -145,10 +144,10 @@ class PlaylistRandomizer extends React.Component {
   //When new values are added to the randomizer randomize the order
 
 
-  addPlaylist(videos, playlistId) {
-    if (!this.state.selected.includes(playlistId)) {
+  addPlaylist(videos, playlist) {
+    if (!this.state.selected.filter(element => element.id == playlist.id).length) {
       this.setState(prevState => ({
-        selected: prevState.selected.concat(playlistId),
+        selected: prevState.selected.concat(playlist),
         randomizer: prevState.randomizer.concat(videos)
       }));
       this.shufflePlaylist();
@@ -162,13 +161,13 @@ class PlaylistRandomizer extends React.Component {
 
 
   removePlaylist(playlistId) {
-    if (this.state.selected.includes(playlistId)) {
+    if (this.state.selected.filter(element => element.id == playlistId).length) {
       this.setState(prevState => ({
         selected: prevState.selected.filter(element => {
-          return element != playlistId;
+          return element.id != playlistId;
         }),
         randomizer: prevState.randomizer.filter(element => {
-          return element.playlistId !== playlistId;
+          return element.playlistId != playlistId;
         })
       }));
       this.shufflePlaylist();
@@ -188,18 +187,22 @@ class PlaylistRandomizer extends React.Component {
 
 
   nextVideo() {
-    this.setState(prevState => ({
-      randomizer: prevState.randomizer.concat(prevState.randomizer.shift())
-    }));
+    if (this.state.randomizer.length) {
+      this.setState(prevState => ({
+        randomizer: prevState.randomizer.concat(prevState.randomizer.shift())
+      }));
+    }
   } //Puts the last element of the randomizer onto the front of the randomizer
   //The odd array functionality was used instead of unshift due to the need
   //to return a new array
 
 
   prevVideo() {
-    this.setState(prevState => ({
-      randomizer: [prevState.randomizer.pop()].concat(prevState.randomizer)
-    }));
+    if (this.state.randomizer.length) {
+      this.setState(prevState => ({
+        randomizer: [prevState.randomizer.pop()].concat(prevState.randomizer)
+      }));
+    }
   }
 
   render() {
@@ -218,22 +221,39 @@ class PlaylistRandomizer extends React.Component {
 
     if (this.state.term != '') {
       if (playlists.length == 0) {
-        result = React.createElement("li", {
+        result = React.createElement("div", {
           key: "result"
-        }, "No User Found");
+        }, "User: Not Found");
       } else {
-        result = React.createElement("li", {
+        result = React.createElement("div", {
           key: "result"
         }, "User: ", this.state.term);
       }
     } //Random List of Videos, can access id, title, videoId, and playlistId
 
 
-    const randomizer = this.state.randomizer.map(element => {
-      return React.createElement("li", {
-        key: element.id
-      }, element.title);
-    });
+    let randomizer = null;
+
+    if (this.state.randomizer.length) {
+      randomizer = this.state.randomizer.map(element => {
+        return React.createElement("li", {
+          key: element.id
+        }, element.title);
+      });
+    } //Random List of Videos, can access id, title, videoId, and playlistId
+
+
+    let selected = null;
+
+    if (this.state.selected.length) {
+      //Need to include a delete button here to remove from playlist
+      selected = this.state.selected.map(element => {
+        return React.createElement("li", {
+          key: element.id
+        }, element.title);
+      });
+    }
+
     let title = null;
     let videoId = null;
 
@@ -242,27 +262,40 @@ class PlaylistRandomizer extends React.Component {
       videoId = this.state.randomizer[0].videoId;
     }
 
-    return React.createElement("div", null, React.createElement(Player, {
-      title: title,
-      videoId: videoId,
-      nextVideo: this.nextVideo,
-      pause: this.state.pause,
-      id: "video-player",
-      key: "video-player"
-    }), React.createElement("button", {
-      onClick: this.shufflePlaylist
-    }, "Shuffle"), React.createElement("button", {
-      onClick: this.nextVideo
-    }, "Next"), React.createElement("button", {
-      onClick: this.prevVideo
-    }, "Prev"), React.createElement("label", {
+    return React.createElement("div", null, React.createElement("label", {
       htmlFor: "user-search"
     }, "Search Username"), React.createElement("input", {
       onChange: this.handleChange,
       name: "user-search",
       type: "text",
       value: this.state.term
-    }), result, playlists, React.createElement("ul", null, randomizer));
+    }), React.createElement(Player, {
+      title: title,
+      videoId: videoId,
+      nextVideo: this.nextVideo,
+      pause: this.state.pause,
+      id: "video-player",
+      key: "video-player"
+    }), React.createElement("div", {
+      className: "grid-x"
+    }, React.createElement("button", {
+      className: "cell small-4",
+      onClick: this.prevVideo
+    }, "Prev"), React.createElement("button", {
+      className: "cell small-4",
+      onClick: this.shufflePlaylist
+    }, "Shuffle"), React.createElement("button", {
+      className: "cell auto",
+      onClick: this.nextVideo
+    }, "Next")), React.createElement("div", {
+      className: "grid-x grid-padding-x"
+    }, React.createElement("div", {
+      className: "cell small-4"
+    }, result, playlists), React.createElement("div", {
+      className: "cell small-4"
+    }, React.createElement("div", null, "Current Playlists"), selected), React.createElement("div", {
+      className: "cell auto"
+    }, React.createElement("div", null, "Videos"), randomizer)));
   }
 
 } //Video Player Class
@@ -301,12 +334,12 @@ class Player extends React.Component {
   onPlayerReady(event) {} //console.log('READY');
   //  event.target.playVideo();
   //Error usually play on a broken video link, so cycle to the next video
+  //NOTE: very much need to differentiate these
 
 
   onPlayerError(event) {
     console.log('ERROR');
-    console.log(event.data);
-    this.props.nextVideo();
+    console.log(event.data); //this.props.nextVideo();
   } //We can respond to player state changes here
   //If the video ends, request another one from the randomizer
 
@@ -339,7 +372,9 @@ class Player extends React.Component {
       this.player.loadVideoById(this.props.videoId);
     }
 
-    return React.createElement("div", null, React.createElement("div", {
+    return React.createElement("div", {
+      style: styleCenter
+    }, React.createElement("div", {
       id: "youtube-player"
     }), React.createElement("div", null, "Now Playing: ", this.props.title));
   }
@@ -441,12 +476,18 @@ class Playlist extends React.Component {
     //We only need to store the video title and videoId
     if (!this.state.loaded) {
       this.getPlaylistVideos([], null).then(() => {
-        this.props.addPlaylist(this.state.videos, this.props.id);
+        this.props.addPlaylist(this.state.videos, {
+          id: this.props.id,
+          title: this.props.title
+        });
       }).catch(() => {
         console.log('Unable to add playlist to randomizer. Get failed');
       });
     } else {
-      this.props.addPlaylist(this.state.videos, this.props.id);
+      this.props.addPlaylist(this.state.videos, {
+        id: this.props.id,
+        title: this.props.title
+      });
     }
 
     this.setState({

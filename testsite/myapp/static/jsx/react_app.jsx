@@ -27,16 +27,6 @@
 //Contents:
 //##
 
-function onYouTubeIframeAPIReady() {
-  console.log("hi");
-}
-
-//CSS Styling
-const columns = {
-  color: 'white',
-  fontSize: 200,
-};
-
 const APIKey = "AIzaSyCHDk3UdiZ5MEXlFKRwCdhzDGDPi2dD4x0";
 const baseURL = "https://www.googleapis.com/youtube/v3/";
 
@@ -157,10 +147,10 @@ class PlaylistRandomizer extends React.Component {
   //This function will check to see if the playlist is currently in the
   //randomizer list or not then decided whether or not to add videos
   //When new values are added to the randomizer randomize the order
-  addPlaylist(videos, playlistId) {
-    if(!this.state.selected.includes(playlistId)) {
+  addPlaylist(videos, playlist) {
+    if (!(this.state.selected.filter(element => (element.id == playlist.id))).length) {
       this.setState((prevState) => ({
-        selected: prevState.selected.concat(playlistId),
+        selected: prevState.selected.concat(playlist),
         randomizer: prevState.randomizer.concat(videos),
       }));
       this.shufflePlaylist();
@@ -172,13 +162,13 @@ class PlaylistRandomizer extends React.Component {
   //Use the filter function to compare both arrays with
   //the playlistId
   removePlaylist(playlistId) {
-    if(this.state.selected.includes(playlistId)) {
+    if ((this.state.selected.filter(element => (element.id == playlistId))).length) {
       this.setState((prevState) => ({
         selected: prevState.selected.filter((element) => {
-          return element != playlistId;
+          return element.id != playlistId;
         }),
         randomizer: prevState.randomizer.filter((element) => {
-          return element.playlistId !== playlistId;
+          return element.playlistId != playlistId;
         }),
       }));
       this.shufflePlaylist();
@@ -198,18 +188,22 @@ class PlaylistRandomizer extends React.Component {
 
   //Puts the first element of the randomizer onto the back of the randomizer
   nextVideo() {
-    this.setState((prevState) => ({
-      randomizer: prevState.randomizer.concat(prevState.randomizer.shift()),
-    }));
+    if (this.state.randomizer.length) {
+      this.setState((prevState) => ({
+        randomizer: prevState.randomizer.concat(prevState.randomizer.shift()),
+      }));
+    }
   }
 
   //Puts the last element of the randomizer onto the front of the randomizer
   //The odd array functionality was used instead of unshift due to the need
   //to return a new array
   prevVideo() {
-    this.setState((prevState) => ({
-      randomizer: [prevState.randomizer.pop()].concat(prevState.randomizer),
-    }));
+    if (this.state.randomizer.length) {
+      this.setState((prevState) => ({
+        randomizer: [prevState.randomizer.pop()].concat(prevState.randomizer),
+      }));
+    }
   }
 
   render() {
@@ -230,20 +224,36 @@ class PlaylistRandomizer extends React.Component {
     let result;
     if(this.state.term != '') {
       if (playlists.length == 0) {
-        result = <li key='result'>No User Found</li>
+        result = <div key='result'>User: Not Found</div>
       } else {
-        result = <li key='result'>User: {this.state.term}</li>
+        result = <div key='result'>User: {this.state.term}</div>
       }
     }
 
     //Random List of Videos, can access id, title, videoId, and playlistId
-    const randomizer = this.state.randomizer.map((element) => {
-      return (
-        <li key={element.id}>
-          {element.title}
-        </li>
-      )
-    });
+    let randomizer = null;
+    if (this.state.randomizer.length) {
+      randomizer = this.state.randomizer.map((element) => {
+        return (
+          <li key={element.id}>
+            {element.title}
+          </li>
+        )
+      });
+    }
+
+    //Random List of Videos, can access id, title, videoId, and playlistId
+    let selected = null;
+    if (this.state.selected.length) {
+      //Need to include a delete button here to remove from playlist
+      selected = this.state.selected.map((element) => {
+        return (
+          <li key={element.id}>
+            {element.title}
+          </li>
+        )
+      });
+    }
 
     let title = null;
     let videoId = null;
@@ -254,6 +264,8 @@ class PlaylistRandomizer extends React.Component {
 
     return (
       <div>
+        <label htmlFor="user-search">Search Username</label>
+        <input onChange={this.handleChange} name='user-search' type="text" value={this.state.term}/>
         <Player
           title = {title}
           videoId = {videoId}
@@ -262,16 +274,29 @@ class PlaylistRandomizer extends React.Component {
           id = 'video-player'
           key = 'video-player'
         />
-        <button onClick={this.shufflePlaylist}>Shuffle</button>
-        <button onClick={this.nextVideo}>Next</button>
-        <button onClick={this.prevVideo}>Prev</button>
-        <label htmlFor="user-search">Search Username</label>
-        <input onChange={this.handleChange} name='user-search' type="text" value={this.state.term}/>
-        {result}
-        {playlists}
-        <ul>
-          {randomizer}
-        </ul>
+        <div className="grid-x">
+          <button className="cell small-4" onClick={this.prevVideo}>Prev</button>
+          <button className="cell small-4" onClick={this.shufflePlaylist}>Shuffle</button>
+          <button className="cell auto" onClick={this.nextVideo}>Next</button>
+        </div>
+        <div className="grid-x grid-padding-x">
+          <div className="cell small-4">
+            {result}
+            {playlists}
+          </div>
+          <div className="cell small-4">
+            <div>
+              Current Playlists
+            </div>
+            {selected}
+          </div>
+          <div className="cell auto">
+            <div>
+              Videos
+            </div>
+            {randomizer}
+          </div>
+        </div>
       </div>
     );
   }
@@ -316,10 +341,11 @@ class Player extends React.Component {
   }
 
   //Error usually play on a broken video link, so cycle to the next video
+  //NOTE: very much need to differentiate these
   onPlayerError(event) {
     console.log('ERROR');
     console.log(event.data);
-    this.props.nextVideo();
+    //this.props.nextVideo();
   }
 
   //We can respond to player state changes here
@@ -460,13 +486,19 @@ class Playlist extends React.Component {
     if (!this.state.loaded) {
       this.getPlaylistVideos([], null)
         .then(() => {
-          this.props.addPlaylist(this.state.videos, this.props.id);
+          this.props.addPlaylist(this.state.videos, {
+            id: this.props.id,
+            title: this.props.title,
+          });
         })
         .catch(() => {
           console.log('Unable to add playlist to randomizer. Get failed');
         });
     } else {
-      this.props.addPlaylist(this.state.videos, this.props.id);
+      this.props.addPlaylist(this.state.videos, {
+        id: this.props.id,
+        title: this.props.title,
+      });
     }
     this.setState({
       added: true,
