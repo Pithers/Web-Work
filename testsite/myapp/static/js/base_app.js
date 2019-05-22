@@ -330,8 +330,14 @@ function trianglifyBars() {
   // Serialize the SVG object to a String, get the base64 encoding and set property
   const pattern_string = new XMLSerializer().serializeToString(pattern.svg());
   const pattern_64 = window.btoa(pattern_string);
-  navbar.style.backgroundImage = 'url("data:image/svg+xml;base64,' + pattern_64 + '")';
-  footer.style.backgroundImage = 'url("data:image/svg+xml;base64,' + pattern_64 + '")';
+
+  if(navbar != null) {
+    navbar.style.backgroundImage = 'url("data:image/svg+xml;base64,' + pattern_64 + '")';
+  }
+
+  if(footer != null) {
+    footer.style.backgroundImage = 'url("data:image/svg+xml;base64,' + pattern_64 + '")';
+  }
 }
 
 //Onload functions for each page

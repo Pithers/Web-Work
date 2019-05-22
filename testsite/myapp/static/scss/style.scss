@@ -7,6 +7,7 @@
 //Harry Manchanda: https://foundation.zurb.com/building-blocks/blocks/list-group.html
 //Loading help from Dom: https://freefrontend.com/css-loaders/, https://codepen.io/ahdigital/pen/prXBzN
 //Tooltips: https://www.w3schools.com/css/css_tooltip.asp
+//Scrolling Text: http://jsfiddle.net/murphy1976/1yenpwmr/22/
 
 //Contents:
 //## Color Variables (contain color variables that propagate to other classes)
@@ -23,6 +24,11 @@
 //## Tooltips
 //## Canvas
 //## Loading Page
+//## React App
+//##   React Dropdown
+//##   Video Container
+//##   Video List Container
+//##   Text Scroll
 
 //Color Variables
 :root {
@@ -766,4 +772,85 @@ $angle: 45deg;
   100% {
     opacity: 1;
   }
+}
+
+//React App
+//React Dropdown Menu
+.rd-wrapper {
+  position: relative;
+  width: 100%;
+
+  .rd-header {
+    input[type=text] {
+      margin: 0;
+    }
+  }
+
+  .rd-header-title {
+  }
+
+  .rd-list {
+    position: absolute;
+    display: none;
+    overflow-y: auto;
+    background-color: white;
+    z-index: 1;
+    width: 100%;
+    max-height: 200px;
+
+    .rd-list-item{
+    }
+  }
+
+  &:hover .rd-list {
+    display: block;
+  }
+}
+
+//Video Container
+.video-container {
+}
+
+//Video List Container
+.video-list-container {
+  overflow-y: auto;
+  .video-list {
+  }
+}
+
+$marquee-speed: 15s;
+.marquee-container{
+  overflow: hidden;
+}
+
+.marquee {
+  -webkit-animation: marquee $marquee-speed linear infinite;
+  -moz-animation: marquee $marquee-speed linear infinite;
+  -ms-animation: marquee $marquee-speed linear infinite;
+  -o-animation: marquee $marquee-speed linear infinite;
+  animation: marquee $marquee-speed linear infinite;
+  white-space: nowrap;
+  overflow: hidden; 
+  position: relative;
+}
+
+@-webkit-keyframes marquee {
+  0% { left: 100%; }
+  100% { left: -100%; }
+}
+@-moz-keyframes marquee {
+  0% { left: 100%; }
+  100% { left: -100%; }
+}
+@-ms-keyframes marquee {
+  0% { left: 100%; }
+  100% { left: -100%; }
+}
+@-o-keyframes marquee {
+  0% { left: 100%; }
+  100% { left: -100%; }
+}
+@keyframes marquee {
+  0% { left: 100%; }
+  100% { left: -100%; }
 }

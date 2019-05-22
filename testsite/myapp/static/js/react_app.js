@@ -21,14 +21,6 @@
 //  https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript/47593316#47593316
 //Contents:
 //##
-//CSS Styling
-const styleColumns = {
-  color: 'white',
-  fontSize: 200
-};
-const styleCenter = {
-  textAlign: 'center'
-};
 const APIKey = "AIzaSyCHDk3UdiZ5MEXlFKRwCdhzDGDPi2dD4x0";
 const baseURL = "https://www.googleapis.com/youtube/v3/"; //MurmurHash3's mixing function. Turns a string into a 32-bit hash
 
@@ -172,10 +164,14 @@ class PlaylistRandomizer extends React.Component {
       }));
       this.shufflePlaylist();
     }
-  }
+  } //Remove all playlists
+
 
   clearPlaylist() {
-    console.log('clear playlist');
+    this.setState({
+      selected: [],
+      randomizer: []
+    });
   } //Randomizes this.state.randomizer using a Durstenfeld shuffle
 
 
@@ -203,6 +199,15 @@ class PlaylistRandomizer extends React.Component {
         randomizer: [prevState.randomizer.pop()].concat(prevState.randomizer)
       }));
     }
+  } //Upon first render we need to calculate some css for elements
+  //Also set up event watcher for when the window resizes
+
+
+  componentDidMount() {
+    $('.video-list-container').css('height', $(window).height() - $('#randomizer-list').offset().top);
+    $(window).resize(() => {
+      $('.video-list-container').css('height', $(window).height() - $('#randomizer-list').offset().top);
+    });
   }
 
   render() {
@@ -223,11 +228,11 @@ class PlaylistRandomizer extends React.Component {
       if (playlists.length == 0) {
         result = React.createElement("div", {
           key: "result"
-        }, "User: Not Found");
+        }, "No results for user");
       } else {
         result = React.createElement("div", {
           key: "result"
-        }, "User: ", this.state.term);
+        });
       }
     } //Random List of Videos, can access id, title, videoId, and playlistId
 
@@ -262,14 +267,25 @@ class PlaylistRandomizer extends React.Component {
       videoId = this.state.randomizer[0].videoId;
     }
 
-    return React.createElement("div", null, React.createElement("label", {
+    return React.createElement("div", null, React.createElement("div", {
+      className: "grid-x"
+    }, React.createElement("div", {
+      className: "video-container cell small-12 large-6 large-order-2 center"
+    }, React.createElement("div", {
+      className: "rd-wrapper"
+    }, React.createElement("div", {
+      className: "rd-header"
+    }, React.createElement("label", {
+      className: "rd-header-title",
       htmlFor: "user-search"
     }, "Search Username"), React.createElement("input", {
-      onChange: this.handleChange,
       name: "user-search",
       type: "text",
+      onChange: this.handleChange,
       value: this.state.term
-    }), React.createElement(Player, {
+    })), React.createElement("div", {
+      className: "rd-list"
+    }, result, playlists)), React.createElement(Player, {
       title: title,
       videoId: videoId,
       nextVideo: this.nextVideo,
@@ -278,24 +294,37 @@ class PlaylistRandomizer extends React.Component {
       key: "video-player"
     }), React.createElement("div", {
       className: "grid-x"
-    }, React.createElement("button", {
+    }, React.createElement("div", {
       className: "cell small-4",
       onClick: this.prevVideo
-    }, "Prev"), React.createElement("button", {
+    }, React.createElement("div", {
+      className: "center"
+    }, React.createElement("i", {
+      className: "fas fa-step-backward fa-3x"
+    }))), React.createElement("div", {
       className: "cell small-4",
       onClick: this.shufflePlaylist
-    }, "Shuffle"), React.createElement("button", {
+    }, React.createElement("div", {
+      className: "center"
+    }, React.createElement("i", {
+      className: "fas fa-random fa-3x"
+    }))), React.createElement("div", {
       className: "cell auto",
       onClick: this.nextVideo
-    }, "Next")), React.createElement("div", {
-      className: "grid-x grid-padding-x"
     }, React.createElement("div", {
-      className: "cell small-4"
-    }, result, playlists), React.createElement("div", {
-      className: "cell small-4"
-    }, React.createElement("div", null, "Current Playlists"), selected), React.createElement("div", {
-      className: "cell auto"
-    }, React.createElement("div", null, "Videos"), randomizer)));
+      className: "center"
+    }, React.createElement("i", {
+      className: "fas fa-step-forward fa-3x"
+    }))))), React.createElement("div", {
+      className: "video-list-container cell small-6 large-3 large-order-1"
+    }, React.createElement("div", {
+      className: "video-list center"
+    }, "Current Playlists", selected)), React.createElement("div", {
+      id: "randomizer-list",
+      className: "video-list-container cell small-6 large-3 large-order-3"
+    }, React.createElement("div", {
+      className: "video-list center"
+    }, "Videos", randomizer))));
   }
 
 } //Video Player Class
@@ -305,7 +334,6 @@ class Player extends React.Component {
   constructor(props) {
     super(props); //Bind functions
 
-    this.onPlayerReady = this.onPlayerReady.bind(this);
     this.onPlayerError = this.onPlayerError.bind(this);
     this.onPlayerStateChange = this.onPlayerStateChange.bind(this); //Init Player
 
@@ -322,24 +350,47 @@ class Player extends React.Component {
           'enablejsapi': 1
         },
         events: {
-          'onReady': this.onPlayerReady,
           'onError': this.onPlayerError,
           'onStateChange': this.onPlayerStateChange
         }
       });
-    };
-  } //Uneeded for now
+    }; //player.setSize(width=200, height=150);
+
+  } //We only want this compent to rerender when it's videoId property changes
 
 
-  onPlayerReady(event) {} //console.log('READY');
-  //  event.target.playVideo();
-  //Error usually play on a broken video link, so cycle to the next video
-  //NOTE: very much need to differentiate these
+  shouldComponentUpdate(nextProps) {
+    return this.props.videoId != nextProps.videoId;
+  } //Error usually play on a broken video link
+  //Cycle to the next video if possible
 
 
   onPlayerError(event) {
-    console.log('ERROR');
-    console.log(event.data); //this.props.nextVideo();
+    switch (event.data) {
+      case 2:
+        console.log('Youtube Video: Invalid video Id value');
+        break;
+
+      case 5:
+        console.log('Youtube Video: HTML5 player error');
+        this.props.nextVideo();
+        break;
+
+      case 100:
+        console.log('Youtube Video: Video not found.');
+        this.props.nextVideo();
+        break;
+
+      case 101:
+        console.log('Youtube Video: Video not allowed in embedded players.');
+        this.props.nextVideo();
+        break;
+
+      case 150:
+        console.log('Youtube Video: Video not allowed in embedded players.');
+        this.props.nextVideo();
+        break;
+    }
   } //We can respond to player state changes here
   //If the video ends, request another one from the randomizer
 
@@ -362,9 +413,7 @@ class Player extends React.Component {
     tag.src = 'https://www.youtube.com/iframe_api';
     const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-  } //Can probably have video logic here as 
-  //The only rerendering will occur on property changes
-
+  }
 
   render() {
     //If the player exists and is ready with a video
@@ -372,11 +421,13 @@ class Player extends React.Component {
       this.player.loadVideoById(this.props.videoId);
     }
 
-    return React.createElement("div", {
-      style: styleCenter
-    }, React.createElement("div", {
+    return React.createElement("div", null, React.createElement("div", {
       id: "youtube-player"
-    }), React.createElement("div", null, "Now Playing: ", this.props.title));
+    }), React.createElement("div", {
+      className: "marquee-container"
+    }, React.createElement("span", {
+      className: "marquee"
+    }, "Now playing: ", this.props.title)));
   }
 
 } //Object that holds each playlist
@@ -517,14 +568,25 @@ class Playlist extends React.Component {
         key: element.id
       });
     });
-    return React.createElement("div", null, React.createElement("div", {
+    /*<div>
+      {this.state.active && playlist}
+    </div>*/
+
+    return React.createElement("div", {
+      className: "rd-list-item grid-x"
+    }, React.createElement("div", {
+      className: "cell small-4",
       key: this.props.id,
       onClick: this.handleClick
-    }, this.props.title), React.createElement("div", null, React.createElement("button", {
+    }, this.props.title), React.createElement("div", {
+      className: "cell small-4"
+    }, React.createElement("button", {
       onClick: this.addPlaylist
-    }, "Add"), React.createElement("button", {
+    }, "Add")), React.createElement("div", {
+      className: "cell auto"
+    }, React.createElement("button", {
       onClick: this.removePlaylist
-    }, "Remove")), React.createElement("ul", null, this.state.active && playlist));
+    }, "Remove")));
   }
 
 } //Object that holds each Video
@@ -547,7 +609,7 @@ class PlaylistVideo extends React.Component {
   render() {
     //Get the youtube url of the video
     const ref = "https://www.youtube.com/watch?v=" + this.props.urlId;
-    return React.createElement("li", {
+    return React.createElement("div", {
       key: this.props.id,
       onClick: this.handleClick
     }, React.createElement("a", {

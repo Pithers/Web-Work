@@ -591,3 +591,65 @@ canvas {
     opacity: 0; }
   100% {
     opacity: 1; } }
+
+.rd-wrapper {
+  position: relative;
+  width: 100%; }
+  .rd-wrapper .rd-header input[type=text] {
+    margin: 0; }
+  .rd-wrapper .rd-list {
+    position: absolute;
+    display: none;
+    overflow-y: auto;
+    background-color: white;
+    z-index: 1;
+    width: 100%;
+    max-height: 200px; }
+  .rd-wrapper:hover .rd-list {
+    display: block; }
+
+.video-list-container {
+  overflow-y: auto; }
+
+.marquee-container {
+  overflow: hidden; }
+
+.marquee {
+  -webkit-animation: marquee 15s linear infinite;
+  -moz-animation: marquee 15s linear infinite;
+  -ms-animation: marquee 15s linear infinite;
+  -o-animation: marquee 15s linear infinite;
+  animation: marquee 15s linear infinite;
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative; }
+
+@-webkit-keyframes marquee {
+  0% {
+    left: 100%; }
+  100% {
+    left: -100%; } }
+
+@-moz-keyframes marquee {
+  0% {
+    left: 100%; }
+  100% {
+    left: -100%; } }
+
+@-ms-keyframes marquee {
+  0% {
+    left: 100%; }
+  100% {
+    left: -100%; } }
+
+@-o-keyframes marquee {
+  0% {
+    left: 100%; }
+  100% {
+    left: -100%; } }
+
+@keyframes marquee {
+  0% {
+    left: 100%; }
+  100% {
+    left: -100%; } }

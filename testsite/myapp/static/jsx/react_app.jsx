@@ -175,8 +175,12 @@ class PlaylistRandomizer extends React.Component {
     }
   }
 
+  //Remove all playlists
   clearPlaylist() {
-    console.log('clear playlist');
+    this.setState({
+      selected: [],
+      randomizer: [],
+    });
   }
 
   //Randomizes this.state.randomizer using a Durstenfeld shuffle
@@ -206,6 +210,20 @@ class PlaylistRandomizer extends React.Component {
     }
   }
 
+  //Upon first render we need to calculate some css for elements
+  //Also set up event watcher for when the window resizes
+  componentDidMount() {
+    $('.video-list-container').css('height',
+      $(window).height() - $('#randomizer-list').offset().top
+    );
+
+    $(window).resize(() => {
+      $('.video-list-container').css('height',
+        $(window).height() - $('#randomizer-list').offset().top
+      );
+    });
+  }
+
   render() {
     //Render playlists
     const playlists = this.state.playlists.map((element, i) => {
@@ -224,9 +242,9 @@ class PlaylistRandomizer extends React.Component {
     let result;
     if(this.state.term != '') {
       if (playlists.length == 0) {
-        result = <div key='result'>User: Not Found</div>
+        result = <div key='result'>No results for user</div>
       } else {
-        result = <div key='result'>User: {this.state.term}</div>
+        result = <div key='result'></div>
       }
     }
 
@@ -264,37 +282,60 @@ class PlaylistRandomizer extends React.Component {
 
     return (
       <div>
-        <label htmlFor="user-search">Search Username</label>
-        <input onChange={this.handleChange} name='user-search' type="text" value={this.state.term}/>
-        <Player
-          title = {title}
-          videoId = {videoId}
-          nextVideo = {this.nextVideo}
-          pause = {this.state.pause}
-          id = 'video-player'
-          key = 'video-player'
-        />
         <div className="grid-x">
-          <button className="cell small-4" onClick={this.prevVideo}>Prev</button>
-          <button className="cell small-4" onClick={this.shufflePlaylist}>Shuffle</button>
-          <button className="cell auto" onClick={this.nextVideo}>Next</button>
-        </div>
-        <div className="grid-x grid-padding-x">
-          <div className="cell small-4">
-            {result}
-            {playlists}
+          <div className="video-container cell small-12 large-6 large-order-2 center">
+            <div className='rd-wrapper'>
+              <div className='rd-header'>
+                <label className='rd-header-title' htmlFor='user-search'>Search Username</label>
+                <input
+                  name='user-search'
+                  type='text'
+                  onChange={this.handleChange}
+                  value={this.state.term}
+                />
+              </div>
+              <div className='rd-list'>
+                {result}
+                {playlists}
+              </div>
+            </div>
+            <Player
+              title = {title}
+              videoId = {videoId}
+              nextVideo = {this.nextVideo}
+              pause = {this.state.pause}
+              id = 'video-player'
+              key = 'video-player'
+            />
+            <div className="grid-x">
+              <div className="cell small-4" onClick={this.prevVideo}>
+                <div className="center">
+                  <i className="fas fa-step-backward fa-3x"></i>
+                </div>
+              </div>
+              <div className="cell small-4" onClick={this.shufflePlaylist}>
+                <div className="center">
+                  <i className="fas fa-random fa-3x"></i>
+                </div>
+              </div>
+              <div className="cell auto" onClick={this.nextVideo}>
+                <div className="center">
+                  <i className="fas fa-step-forward fa-3x"></i>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="cell small-4">
-            <div>
+          <div className="video-list-container cell small-6 large-3 large-order-1">
+            <div className="video-list center">
               Current Playlists
+              {selected}
             </div>
-            {selected}
           </div>
-          <div className="cell auto">
-            <div>
+          <div id='randomizer-list' className="video-list-container cell small-6 large-3 large-order-3">
+            <div className="video-list center">
               Videos
+              {randomizer}
             </div>
-            {randomizer}
           </div>
         </div>
       </div>
@@ -308,7 +349,6 @@ class Player extends React.Component {
     super(props);
 
     //Bind functions
-    this.onPlayerReady = this.onPlayerReady.bind(this);
     this.onPlayerError = this.onPlayerError.bind(this);
     this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
 
@@ -326,26 +366,44 @@ class Player extends React.Component {
           'enablejsapi': 1,
         },
         events: {
-          'onReady': this.onPlayerReady,
           'onError': this.onPlayerError,
           'onStateChange': this.onPlayerStateChange,
         }
       });
     });
+
+    //player.setSize(width=200, height=150);
   }
 
-  //Uneeded for now
-  onPlayerReady(event) {
-    //console.log('READY');
-    //  event.target.playVideo();
+  //We only want this compent to rerender when it's videoId property changes
+  shouldComponentUpdate(nextProps) {
+    return (this.props.videoId != nextProps.videoId);
   }
 
-  //Error usually play on a broken video link, so cycle to the next video
-  //NOTE: very much need to differentiate these
+  //Error usually play on a broken video link
+  //Cycle to the next video if possible
   onPlayerError(event) {
-    console.log('ERROR');
-    console.log(event.data);
-    //this.props.nextVideo();
+    switch (event.data) {
+      case 2:
+        console.log('Youtube Video: Invalid video Id value');
+        break;
+      case 5:
+        console.log('Youtube Video: HTML5 player error');
+        this.props.nextVideo();
+        break;
+      case 100:
+        console.log('Youtube Video: Video not found.');
+        this.props.nextVideo();
+        break;
+      case 101:
+        console.log('Youtube Video: Video not allowed in embedded players.');
+        this.props.nextVideo();
+        break;
+      case 150:
+        console.log('Youtube Video: Video not allowed in embedded players.');
+        this.props.nextVideo();
+        break;
+    }
   }
 
   //We can respond to player state changes here
@@ -370,17 +428,29 @@ class Player extends React.Component {
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
   }
 
-  //Can probably have video logic here as 
-  //The only rerendering will occur on property changes
+  //Once the component mounts we need to target the
+  //Marquee animation's keyframe to change width and length
+  //Need to attach a custom animation command and keyframe to className->marquee
+  componentDidMount() {
+    //Can I create something like this?
+    /*@keyframes marquee {
+      0% { left: 100%; }
+      100% { left: -100%; }
+    }*/
+  }
+
   render() {
     //If the player exists and is ready with a video
     if(this.player && this.props.videoId) {
       this.player.loadVideoById(this.props.videoId);
     }
+
     return (
       <div>
         <div id='youtube-player'></div>
-        <div>Now Playing: {this.props.title}</div>
+        <div className='marquee-container'>
+          <span className='marquee'>Now playing: {this.props.title}</span>
+        </div>
       </div>
     );
   }
@@ -530,18 +600,20 @@ class Playlist extends React.Component {
       );
     });
 
+        /*<div>
+          {this.state.active && playlist}
+        </div>*/
     return (
-      <div>
-        <div key={this.props.id} onClick={this.handleClick}>
+      <div className='rd-list-item grid-x'>
+        <div className='cell small-4' key={this.props.id} onClick={this.handleClick}>
           { this.props.title }
         </div>
-        <div>
+        <div className='cell small-4'>
           <button onClick={this.addPlaylist}>Add</button>
+        </div>
+        <div className='cell auto'>
           <button onClick={this.removePlaylist}>Remove</button>
         </div>
-        <ul>
-          {this.state.active && playlist}
-        </ul>
       </div>
     );
   }
@@ -567,11 +639,11 @@ class PlaylistVideo extends React.Component {
     //Get the youtube url of the video
     const ref ="https://www.youtube.com/watch?v=" + this.props.urlId;
     return (
-      <li key={this.props.id} onClick={this.handleClick}>
-      <a href={ref} target="_blank">
-        {this.props.title}
-      </a>
-      </li>
+      <div key={this.props.id} onClick={this.handleClick}>
+        <a href={ref} target="_blank">
+          {this.props.title}
+        </a>
+      </div>
     );
   }
 }
