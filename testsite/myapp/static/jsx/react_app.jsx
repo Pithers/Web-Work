@@ -4,13 +4,7 @@
 //File Description:
 //This is a youtube playlist randomizer app
 //Set up multiple playlists in youtube and this will
-//Shuffle videos between them
-
-//Notes:
-//As this is a JSX app, here will be an attempt to contain the
-//JS, HTML, and CSS styling all in a single file. There have been
-//arguments made about the benefit of this; so this is kind of an
-//experiment in how it reads.
+//shuffle videos between them
 
 //Efficiency Note:
 //Once done, go back and make youtube API request GETs more specific
@@ -25,12 +19,22 @@
 //  https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript/47593316#47593316
 
 //Contents:
-//##
+//## Random Number Functions
+//##   MurmurHash3's Mixing Function
+//##   Sfc32
+//##   Durstenfeld Array shuffler
+//## React App
+//##   Playlist Randomizer Class
+//##   Player Class
+//##   Playlist Class
+//##   PlaylistVideo Class
+//## React Render Create DOM
 
+//Youtube Api and base Url
 const APIKey = "AIzaSyCHDk3UdiZ5MEXlFKRwCdhzDGDPi2dD4x0";
 const baseURL = "https://www.googleapis.com/youtube/v3/";
 
-//MurmurHash3's mixing function. Turns a string into a 32-bit hash
+//MurmurHash3's Mixing Function. Turns a string into a 32-bit hash
 function xmur3(str) {
   for(var i = 0, h = 1779033703 ^ str.length; i < str.length; i++)
     h = Math.imul(h ^ str.charCodeAt(i), 3432918353),
@@ -42,7 +46,7 @@ function xmur3(str) {
   }
 }
 
-//Sfc 32 random number generator. Provide it with 4 seeds.
+//Sfc32 random number generator. Provide it with 4 seeds.
 function sfc32(a, b, c, d) {
   return function() {
     a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0; 
@@ -70,6 +74,8 @@ function shuffleArray(array) {
   return array;
 }
 
+//React App
+//React Playlist Randomizer
 //App for generating playlists
 class PlaylistRandomizer extends React.Component {
   //Object constructor
@@ -255,9 +261,13 @@ class PlaylistRandomizer extends React.Component {
     let result;
     if(this.state.term != '') {
       if (playlists.length == 0) {
-        result = <div key='result'>No results for user</div>
+        result = <a href={"https://www.youtube.com/user/" + this.state.term} target="_blank">
+                   <div className='rd-button'>
+                     No results for -{this.state.term}-
+                   </div>
+                 </a>
       } else {
-        result = <div key='result'></div>
+        result = <div></div>
       }
     }
 
@@ -305,12 +315,12 @@ class PlaylistRandomizer extends React.Component {
 
     return (
       <div>
-        <div className="grid-x">
-          <div className="cell small-12 large-6 large-order-2 center">
+        <div className="grid-x grid-padding-x">
+          <div className="cell small-12 large-6 large-order-2 center small-collapse">
             <div className='rd-wrapper'>
               <div className='rd-header'>
                 <label className='rd-header-title' htmlFor='user-search'>
-                  Search username and add playlists to start!
+                  Search a username and add playlists to start!
                 </label>
                 <input
                   name='user-search'
@@ -350,15 +360,18 @@ class PlaylistRandomizer extends React.Component {
               </div>
             </div>
           </div>
-          <div className="video-list-container cell small-6 large-3 large-order-1">
+          <div className="video-list-container cell small-6 large-3 large-order-1 small-collapse">
             <div className="video-list center">
               Current Playlists:
               {selected}
             </div>
           </div>
-          <div id='randomizer-list' className="video-list-container cell small-6 large-3 large-order-3">
-            <div className="video-list center">
-              Next Up:
+          <div
+            id='randomizer-list'
+            className="video-list-container cell small-6 large-3 large-order-3 small-collapse"
+          >
+            <div className="center">Next Up:</div>
+            <div className="video-list">
               {randomizer}
             </div>
           </div>
@@ -368,7 +381,7 @@ class PlaylistRandomizer extends React.Component {
   }
 }
 
-//Video Player Class
+//Player Class
 class Player extends React.Component {
   constructor(props) {
     super(props);
@@ -470,6 +483,7 @@ class Player extends React.Component {
   }
 }
 
+//Playlist Class
 //Object that holds each playlist
 class Playlist extends React.Component {
   //Object constructor
@@ -633,6 +647,7 @@ class Playlist extends React.Component {
   }
 }
 
+//PlaylistVideo Class
 //Object that holds each Video
 class PlaylistVideo extends React.Component {
   //Object constructor
@@ -662,7 +677,7 @@ class PlaylistVideo extends React.Component {
   }
 }
 
-//Create DOM
+//React Render Create DOM
 ReactDOM.render(
   <PlaylistRandomizer />,
   document.getElementById('react-block')

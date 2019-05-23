@@ -778,6 +778,14 @@ $angle: 45deg;
 }
 
 //React App
+//Foundation fix for padding collapse
+@media screen and (max-width: 39.9375em) {
+  .small-collapse {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+  }
+}
+
 //Playlist Title
 .playlist-title {
   text-align: center;
@@ -814,7 +822,7 @@ $angle: 45deg;
 
   .rd-button {
     color: black;
-    transition: color 0.2 ease-in;
+    transition: color 0.2s ease-in;
     &:hover {
       color: var(--color-text-highlight);
       cursor: pointer;
@@ -870,7 +878,7 @@ $marquee-speed: 15s;
 
   i {
     color: var(--color-text);
-    transition: color 0.2 ease-in;
+    transition: color 0.2s ease-in;
 
     &:hover {
       color: var(--color-text-highlight);
@@ -882,7 +890,7 @@ $marquee-speed: 15s;
 //Playlist Button
 .playlist-button {
   color: var(--color-text);
-  transition: color 0.2 ease-in;
+  transition: color 0.2s ease-in;
   &:hover {
     color: var(--color-text-highlight);
     cursor: pointer;

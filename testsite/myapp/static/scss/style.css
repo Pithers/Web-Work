@@ -592,6 +592,11 @@ canvas {
   100% {
     opacity: 1; } }
 
+@media screen and (max-width: 39.9375em) {
+  .small-collapse {
+    padding-right: 0 !important;
+    padding-left: 0 !important; } }
+
 .playlist-title {
   text-align: center;
   font-size: 1.5rem;
@@ -616,7 +621,7 @@ canvas {
     display: block; }
   .rd-wrapper .rd-button {
     color: black;
-    transition: color 0.2 ease-in; }
+    transition: color 0.2s ease-in; }
     .rd-wrapper .rd-button:hover {
       color: var(--color-text-highlight);
       cursor: pointer; }
@@ -656,14 +661,14 @@ canvas {
   text-align: center; }
   .playlist-icon-button i {
     color: var(--color-text);
-    transition: color 0.2 ease-in; }
+    transition: color 0.2s ease-in; }
     .playlist-icon-button i:hover {
       color: var(--color-text-highlight);
       cursor: pointer; }
 
 .playlist-button {
   color: var(--color-text);
-  transition: color 0.2 ease-in; }
+  transition: color 0.2s ease-in; }
   .playlist-button:hover {
     color: var(--color-text-highlight);
     cursor: pointer; }

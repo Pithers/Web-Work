@@ -237,13 +237,14 @@ class PlaylistRandomizer extends React.Component {
 
     if (this.state.term != '') {
       if (playlists.length == 0) {
-        result = React.createElement("div", {
-          key: "result"
-        }, "No results for user");
+        result = React.createElement("a", {
+          href: "https://www.youtube.com/user/" + this.state.term,
+          target: "_blank"
+        }, React.createElement("div", {
+          className: "rd-button"
+        }, "No results for -", this.state.term, "-"));
       } else {
-        result = React.createElement("div", {
-          key: "result"
-        });
+        result = React.createElement("div", null);
       }
     } //Random List of Videos, can access id, title, videoId, and playlistId
 
@@ -291,9 +292,9 @@ class PlaylistRandomizer extends React.Component {
     }
 
     return React.createElement("div", null, React.createElement("div", {
-      className: "grid-x"
+      className: "grid-x grid-padding-x"
     }, React.createElement("div", {
-      className: "cell small-12 large-6 large-order-2 center"
+      className: "cell small-12 large-6 large-order-2 center small-collapse"
     }, React.createElement("div", {
       className: "rd-wrapper"
     }, React.createElement("div", {
@@ -301,7 +302,7 @@ class PlaylistRandomizer extends React.Component {
     }, React.createElement("label", {
       className: "rd-header-title",
       htmlFor: "user-search"
-    }, "Search username and add playlists to start!"), React.createElement("input", {
+    }, "Search a username and add playlists to start!"), React.createElement("input", {
       name: "user-search",
       type: "text",
       onChange: this.handleChange,
@@ -339,15 +340,17 @@ class PlaylistRandomizer extends React.Component {
     }, React.createElement("i", {
       className: "fas fa-step-forward fa-3x"
     }))))), React.createElement("div", {
-      className: "video-list-container cell small-6 large-3 large-order-1"
+      className: "video-list-container cell small-6 large-3 large-order-1 small-collapse"
     }, React.createElement("div", {
       className: "video-list center"
     }, "Current Playlists:", selected)), React.createElement("div", {
       id: "randomizer-list",
-      className: "video-list-container cell small-6 large-3 large-order-3"
+      className: "video-list-container cell small-6 large-3 large-order-3 small-collapse"
     }, React.createElement("div", {
-      className: "video-list center"
-    }, "Next Up:", randomizer))));
+      className: "center"
+    }, "Next Up:"), React.createElement("div", {
+      className: "video-list"
+    }, randomizer))));
   }
 
 } //Video Player Class
@@ -620,9 +623,8 @@ class PlaylistVideo extends React.Component {
   } //When a Playlist Video is Clicked
 
 
-  handleClick() {
-    console.log(this.props.id);
-    console.log(this.props.title);
+  handleClick() {//console.log(this.props.id);
+    //console.log(this.props.title);
   }
 
   render() {
