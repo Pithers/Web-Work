@@ -29,7 +29,7 @@ function light_mode() {
   root_style.setProperty("--color-tertiary", "#666666");
   root_style.setProperty("--color-text", "#241a22");
   root_style.setProperty("--color-text-invert", "#e5e4d3");
-  root_style.setProperty("--color-text-highlight", "#20436f");
+  root_style.setProperty("--color-text-highlight", "#206fd0");
   root_style.setProperty("--color-border", "#838378");
   root_style.setProperty("--color-border-accent", "#727267");
   root_style.setProperty("--color-drop-shadow", "#000000");

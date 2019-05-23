@@ -95,6 +95,7 @@ class PlaylistRandomizer extends React.Component {
     this.shufflePlaylist = this.shufflePlaylist.bind(this);
     this.nextVideo = this.nextVideo.bind(this);
     this.prevVideo = this.prevVideo.bind(this);
+    this.changeVideo = this.changeVideo.bind(this);
   }
 
   //Handles changes in the search bar for users
@@ -210,6 +211,18 @@ class PlaylistRandomizer extends React.Component {
     }
   }
 
+  //Change randomizer array to have selected index be the 0th element
+  changeVideo(i) {
+    //This will output the array up to the index, we need to attach that removed to the end
+    if (this.state.randomizer.length) {
+      this.setState((prevState) => ({
+        randomizer:
+          prevState.randomizer.slice(i, prevState.randomizer.length)
+          .concat(prevState.randomizer.slice(0, i)),
+      }));
+    }
+  }
+
   //Upon first render we need to calculate some css for elements
   //Also set up event watcher for when the window resizes
   componentDidMount() {
@@ -251,24 +264,34 @@ class PlaylistRandomizer extends React.Component {
     //Random List of Videos, can access id, title, videoId, and playlistId
     let randomizer = null;
     if (this.state.randomizer.length) {
-      randomizer = this.state.randomizer.map((element) => {
+      randomizer = this.state.randomizer.map((element, index) => {
         return (
-          <li key={element.id}>
+          <div
+            className="playlist-button"
+            key={element.id}
+            onClick={() => {this.changeVideo(index)}}
+          >
             {element.title}
-          </li>
+          </div>
         )
       });
     }
 
-    //Random List of Videos, can access id, title, videoId, and playlistId
+    //List of selected Playlists
     let selected = null;
     if (this.state.selected.length) {
       //Need to include a delete button here to remove from playlist
       selected = this.state.selected.map((element) => {
         return (
-          <li key={element.id}>
-            {element.title}
-          </li>
+          <div className='grid-x' key={element.id}>
+              <div className='cell small-6'>{element.title}</div>
+              <div
+                className='playlist-button cell small-6'
+                onClick={() => {this.removePlaylist(element.id)}}
+               >
+                remove
+               </div>
+          </div>
         )
       });
     }
@@ -283,10 +306,12 @@ class PlaylistRandomizer extends React.Component {
     return (
       <div>
         <div className="grid-x">
-          <div className="video-container cell small-12 large-6 large-order-2 center">
+          <div className="cell small-12 large-6 large-order-2 center">
             <div className='rd-wrapper'>
               <div className='rd-header'>
-                <label className='rd-header-title' htmlFor='user-search'>Search Username</label>
+                <label className='rd-header-title' htmlFor='user-search'>
+                  Search username and add playlists to start!
+                </label>
                 <input
                   name='user-search'
                   type='text'
@@ -309,17 +334,17 @@ class PlaylistRandomizer extends React.Component {
             />
             <div className="grid-x">
               <div className="cell small-4" onClick={this.prevVideo}>
-                <div className="center">
+                <div className="playlist-icon-button">
                   <i className="fas fa-step-backward fa-3x"></i>
                 </div>
               </div>
               <div className="cell small-4" onClick={this.shufflePlaylist}>
-                <div className="center">
+                <div className="playlist-icon-button">
                   <i className="fas fa-random fa-3x"></i>
                 </div>
               </div>
               <div className="cell auto" onClick={this.nextVideo}>
-                <div className="center">
+                <div className="playlist-icon-button">
                   <i className="fas fa-step-forward fa-3x"></i>
                 </div>
               </div>
@@ -327,13 +352,13 @@ class PlaylistRandomizer extends React.Component {
           </div>
           <div className="video-list-container cell small-6 large-3 large-order-1">
             <div className="video-list center">
-              Current Playlists
+              Current Playlists:
               {selected}
             </div>
           </div>
           <div id='randomizer-list' className="video-list-container cell small-6 large-3 large-order-3">
             <div className="video-list center">
-              Videos
+              Next Up:
               {randomizer}
             </div>
           </div>
@@ -371,8 +396,6 @@ class Player extends React.Component {
         }
       });
     });
-
-    //player.setSize(width=200, height=150);
   }
 
   //We only want this compent to rerender when it's videoId property changes
@@ -428,17 +451,6 @@ class Player extends React.Component {
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
   }
 
-  //Once the component mounts we need to target the
-  //Marquee animation's keyframe to change width and length
-  //Need to attach a custom animation command and keyframe to className->marquee
-  componentDidMount() {
-    //Can I create something like this?
-    /*@keyframes marquee {
-      0% { left: 100%; }
-      100% { left: -100%; }
-    }*/
-  }
-
   render() {
     //If the player exists and is ready with a video
     if(this.player && this.props.videoId) {
@@ -447,7 +459,9 @@ class Player extends React.Component {
 
     return (
       <div>
-        <div id='youtube-player'></div>
+        <div className='video-container'>
+          <div className='video' id='youtube-player'></div>
+        </div>
         <div className='marquee-container'>
           <span className='marquee'>Now playing: {this.props.title}</span>
         </div>
@@ -474,7 +488,6 @@ class Playlist extends React.Component {
     this.getPlaylistVideos = this.getPlaylistVideos.bind(this);
     this.addPlaylist = this.addPlaylist.bind(this);
     this.removePlaylist = this.removePlaylist.bind(this);
-    this.playVideo = this.playVideo.bind(this);
   }
 
   //Recurse through get request through youtube via page tokens
@@ -583,11 +596,6 @@ class Playlist extends React.Component {
     });
   }
 
-  //This pushes the video to the top of the list
-  playVideo() {
-    console.log('play Video');
-  }
-
   render() {
     const playlist = this.state.videos.map((element) => {
       return (
@@ -600,19 +608,25 @@ class Playlist extends React.Component {
       );
     });
 
-        /*<div>
-          {this.state.active && playlist}
-        </div>*/
     return (
       <div className='rd-list-item grid-x'>
-        <div className='cell small-4' key={this.props.id} onClick={this.handleClick}>
-          { this.props.title }
+        <div className='cell small-4' key={this.props.id}>
+          <div className='rd-button' onClick={this.handleClick}>
+            {this.props.title}
+          </div>
         </div>
         <div className='cell small-4'>
-          <button onClick={this.addPlaylist}>Add</button>
+          <div className='rd-button' onClick={this.addPlaylist}>
+            Add
+          </div>
         </div>
         <div className='cell auto'>
-          <button onClick={this.removePlaylist}>Remove</button>
+          <div className='rd-button' onClick={this.removePlaylist}>
+            Remove
+          </div>
+        </div>
+        <div>
+          {this.state.active && playlist}
         </div>
       </div>
     );
@@ -631,8 +645,8 @@ class PlaylistVideo extends React.Component {
 
   //When a Playlist Video is Clicked
   handleClick() {
-    console.log(this.props.id);
-    console.log(this.props.title);
+    //console.log(this.props.id);
+    //console.log(this.props.title);
   }
 
   render() {

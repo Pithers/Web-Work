@@ -7,7 +7,7 @@
 //Harry Manchanda: https://foundation.zurb.com/building-blocks/blocks/list-group.html
 //Loading help from Dom: https://freefrontend.com/css-loaders/, https://codepen.io/ahdigital/pen/prXBzN
 //Tooltips: https://www.w3schools.com/css/css_tooltip.asp
-//Scrolling Text: http://jsfiddle.net/murphy1976/1yenpwmr/22/
+//Scrolling Text: Kyeotic: https://stackoverflow.com/questions/34145172/scrolling-div-ticker
 
 //Contents:
 //## Color Variables (contain color variables that propagate to other classes)
@@ -25,10 +25,13 @@
 //## Canvas
 //## Loading Page
 //## React App
+//##   Playlist Title
 //##   React Dropdown
 //##   Video Container
 //##   Video List Container
-//##   Text Scroll
+//##   Marquee
+//##   Playlist Icon Button
+//##   Playlist Button
 
 //Color Variables
 :root {
@@ -775,6 +778,15 @@ $angle: 45deg;
 }
 
 //React App
+//Playlist Title
+.playlist-title {
+  text-align: center;
+  font-size: 1.5rem;
+  line-height: 0.5;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
 //React Dropdown Menu
 .rd-wrapper {
   position: relative;
@@ -786,9 +798,6 @@ $angle: 45deg;
     }
   }
 
-  .rd-header-title {
-  }
-
   .rd-list {
     position: absolute;
     display: none;
@@ -797,18 +806,36 @@ $angle: 45deg;
     z-index: 1;
     width: 100%;
     max-height: 200px;
-
-    .rd-list-item{
-    }
   }
 
   &:hover .rd-list {
     display: block;
   }
+
+  .rd-button {
+    color: black;
+    transition: color 0.2 ease-in;
+    &:hover {
+      color: var(--color-text-highlight);
+      cursor: pointer;
+    }
+  }
 }
 
 //Video Container
 .video-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%; //16:9 aspect ratio
+
+  .video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
 }
 
 //Video List Container
@@ -818,39 +845,46 @@ $angle: 45deg;
   }
 }
 
+//Marquee
 $marquee-speed: 15s;
-.marquee-container{
+.marquee-container {
+  margin: 0 auto;
+  white-space: nowrap;
   overflow: hidden;
 }
 
 .marquee {
-  -webkit-animation: marquee $marquee-speed linear infinite;
-  -moz-animation: marquee $marquee-speed linear infinite;
-  -ms-animation: marquee $marquee-speed linear infinite;
-  -o-animation: marquee $marquee-speed linear infinite;
+  display: inline-block;
+  padding-left: 100%;
   animation: marquee $marquee-speed linear infinite;
-  white-space: nowrap;
-  overflow: hidden; 
-  position: relative;
 }
 
-@-webkit-keyframes marquee {
-  0% { left: 100%; }
-  100% { left: -100%; }
-}
-@-moz-keyframes marquee {
-  0% { left: 100%; }
-  100% { left: -100%; }
-}
-@-ms-keyframes marquee {
-  0% { left: 100%; }
-  100% { left: -100%; }
-}
-@-o-keyframes marquee {
-  0% { left: 100%; }
-  100% { left: -100%; }
-}
 @keyframes marquee {
-  0% { left: 100%; }
-  100% { left: -100%; }
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-100%, 0); }
+}
+
+//Playlist Icon Button
+.playlist-icon-button {
+  text-align: center;
+
+  i {
+    color: var(--color-text);
+    transition: color 0.2 ease-in;
+
+    &:hover {
+      color: var(--color-text-highlight);
+      cursor: pointer;
+    }
+  }
+}
+
+//Playlist Button
+.playlist-button {
+  color: var(--color-text);
+  transition: color 0.2 ease-in;
+  &:hover {
+    color: var(--color-text-highlight);
+    cursor: pointer;
+  }
 }

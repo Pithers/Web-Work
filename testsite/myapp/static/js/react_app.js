@@ -87,6 +87,7 @@ class PlaylistRandomizer extends React.Component {
     this.shufflePlaylist = this.shufflePlaylist.bind(this);
     this.nextVideo = this.nextVideo.bind(this);
     this.prevVideo = this.prevVideo.bind(this);
+    this.changeVideo = this.changeVideo.bind(this);
   } //Handles changes in the search bar for users
   //Each search will locate the user-id and then search for
   //youtube user's playlists and display them
@@ -199,6 +200,16 @@ class PlaylistRandomizer extends React.Component {
         randomizer: [prevState.randomizer.pop()].concat(prevState.randomizer)
       }));
     }
+  } //Change randomizer array to have selected index be the 0th element
+
+
+  changeVideo(i) {
+    //This will output the array up to the index, we need to attach that removed to the end
+    if (this.state.randomizer.length) {
+      this.setState(prevState => ({
+        randomizer: prevState.randomizer.slice(i, prevState.randomizer.length).concat(prevState.randomizer.slice(0, i))
+      }));
+    }
   } //Upon first render we need to calculate some css for elements
   //Also set up event watcher for when the window resizes
 
@@ -240,12 +251,16 @@ class PlaylistRandomizer extends React.Component {
     let randomizer = null;
 
     if (this.state.randomizer.length) {
-      randomizer = this.state.randomizer.map(element => {
-        return React.createElement("li", {
-          key: element.id
+      randomizer = this.state.randomizer.map((element, index) => {
+        return React.createElement("div", {
+          className: "playlist-button",
+          key: element.id,
+          onClick: () => {
+            this.changeVideo(index);
+          }
         }, element.title);
       });
-    } //Random List of Videos, can access id, title, videoId, and playlistId
+    } //List of selected Playlists
 
 
     let selected = null;
@@ -253,9 +268,17 @@ class PlaylistRandomizer extends React.Component {
     if (this.state.selected.length) {
       //Need to include a delete button here to remove from playlist
       selected = this.state.selected.map(element => {
-        return React.createElement("li", {
+        return React.createElement("div", {
+          className: "grid-x",
           key: element.id
-        }, element.title);
+        }, React.createElement("div", {
+          className: "cell small-6"
+        }, element.title), React.createElement("div", {
+          className: "playlist-button cell small-6",
+          onClick: () => {
+            this.removePlaylist(element.id);
+          }
+        }, "remove"));
       });
     }
 
@@ -270,7 +293,7 @@ class PlaylistRandomizer extends React.Component {
     return React.createElement("div", null, React.createElement("div", {
       className: "grid-x"
     }, React.createElement("div", {
-      className: "video-container cell small-12 large-6 large-order-2 center"
+      className: "cell small-12 large-6 large-order-2 center"
     }, React.createElement("div", {
       className: "rd-wrapper"
     }, React.createElement("div", {
@@ -278,7 +301,7 @@ class PlaylistRandomizer extends React.Component {
     }, React.createElement("label", {
       className: "rd-header-title",
       htmlFor: "user-search"
-    }, "Search Username"), React.createElement("input", {
+    }, "Search username and add playlists to start!"), React.createElement("input", {
       name: "user-search",
       type: "text",
       onChange: this.handleChange,
@@ -298,33 +321,33 @@ class PlaylistRandomizer extends React.Component {
       className: "cell small-4",
       onClick: this.prevVideo
     }, React.createElement("div", {
-      className: "center"
+      className: "playlist-icon-button"
     }, React.createElement("i", {
       className: "fas fa-step-backward fa-3x"
     }))), React.createElement("div", {
       className: "cell small-4",
       onClick: this.shufflePlaylist
     }, React.createElement("div", {
-      className: "center"
+      className: "playlist-icon-button"
     }, React.createElement("i", {
       className: "fas fa-random fa-3x"
     }))), React.createElement("div", {
       className: "cell auto",
       onClick: this.nextVideo
     }, React.createElement("div", {
-      className: "center"
+      className: "playlist-icon-button"
     }, React.createElement("i", {
       className: "fas fa-step-forward fa-3x"
     }))))), React.createElement("div", {
       className: "video-list-container cell small-6 large-3 large-order-1"
     }, React.createElement("div", {
       className: "video-list center"
-    }, "Current Playlists", selected)), React.createElement("div", {
+    }, "Current Playlists:", selected)), React.createElement("div", {
       id: "randomizer-list",
       className: "video-list-container cell small-6 large-3 large-order-3"
     }, React.createElement("div", {
       className: "video-list center"
-    }, "Videos", randomizer))));
+    }, "Next Up:", randomizer))));
   }
 
 } //Video Player Class
@@ -354,8 +377,7 @@ class Player extends React.Component {
           'onStateChange': this.onPlayerStateChange
         }
       });
-    }; //player.setSize(width=200, height=150);
-
+    };
   } //We only want this compent to rerender when it's videoId property changes
 
 
@@ -422,8 +444,11 @@ class Player extends React.Component {
     }
 
     return React.createElement("div", null, React.createElement("div", {
+      className: "video-container"
+    }, React.createElement("div", {
+      className: "video",
       id: "youtube-player"
-    }), React.createElement("div", {
+    })), React.createElement("div", {
       className: "marquee-container"
     }, React.createElement("span", {
       className: "marquee"
@@ -448,7 +473,6 @@ class Playlist extends React.Component {
     this.getPlaylistVideos = this.getPlaylistVideos.bind(this);
     this.addPlaylist = this.addPlaylist.bind(this);
     this.removePlaylist = this.removePlaylist.bind(this);
-    this.playVideo = this.playVideo.bind(this);
   } //Recurse through get request through youtube via page tokens
   //and create a promise to wait on
   //Send multiple get requests if the playlist is over 50 videos
@@ -552,11 +576,6 @@ class Playlist extends React.Component {
     this.setState({
       added: false
     });
-  } //This pushes the video to the top of the list
-
-
-  playVideo() {
-    console.log('play Video');
   }
 
   render() {
@@ -568,25 +587,25 @@ class Playlist extends React.Component {
         key: element.id
       });
     });
-    /*<div>
-      {this.state.active && playlist}
-    </div>*/
-
     return React.createElement("div", {
       className: "rd-list-item grid-x"
     }, React.createElement("div", {
       className: "cell small-4",
-      key: this.props.id,
+      key: this.props.id
+    }, React.createElement("div", {
+      className: "rd-button",
       onClick: this.handleClick
-    }, this.props.title), React.createElement("div", {
+    }, this.props.title)), React.createElement("div", {
       className: "cell small-4"
-    }, React.createElement("button", {
+    }, React.createElement("div", {
+      className: "rd-button",
       onClick: this.addPlaylist
     }, "Add")), React.createElement("div", {
       className: "cell auto"
-    }, React.createElement("button", {
+    }, React.createElement("div", {
+      className: "rd-button",
       onClick: this.removePlaylist
-    }, "Remove")));
+    }, "Remove")), React.createElement("div", null, this.state.active && playlist));
   }
 
 } //Object that holds each Video
