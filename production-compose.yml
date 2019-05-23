@@ -19,6 +19,7 @@ services:
     image: registry.gitlab.com/pithers/web-work:latest
     command: >
       bash -c 'python /code/testsite/manage.py compilescss
+      && babel --no-babelrc --presets /usr/lib/node_modules/@babel/preset-react /code/testsite/myapp/static/jsx/react_app.jsx -o /code/testsite/myapp/static/js/react_app.js
       && python /code/testsite/manage.py collectstatic --ignore=*.scss --noinput
       && crass /code/testsite/static/scss/style.css --optimize
       && find /code/testsite/static/js -maxdepth 1 -iname "*.js" -exec uglifyjs --compress --mangle -o {} -- {} \;
