@@ -801,8 +801,15 @@ $angle: 45deg;
   width: 100%;
 
   .rd-header {
+    //Search Bar
     input[type=text] {
       margin: 0;
+    }
+
+    //Search icon for the input box
+    .search-box {
+      i {
+      }
     }
   }
 

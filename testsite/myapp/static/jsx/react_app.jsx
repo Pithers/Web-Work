@@ -17,6 +17,18 @@
 //  https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 //Seeding Random:
 //  https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript/47593316#47593316
+//Swipe Detection: https://github.com/marcandre/detect_swipe
+
+//Future Ideas:
+// Place tutorial areas under Current and Next Up when they're empty
+// Add functionality to search-plus icon next to search bar
+//   -allow users to search for different properties
+//   -could search for only playlists without knowing user
+//   -could search for popular playlists etc.
+//   -(style) make icon space look like it's part of the input bar
+// Need to figure out how to deal with browsing and not hitting
+//   youtube's api limit when multiple people are using the app
+//   (making the user log in is nice, but not ideal for the user
 
 //Contents:
 //## Random Number Functions
@@ -93,6 +105,7 @@ class PlaylistRandomizer extends React.Component {
     this.handleChange = this.handleChange.bind(this);
 
     //Playlist Construction
+    this.getPlaylists = this.getPlaylists.bind(this);
     this.addPlaylist = this.addPlaylist.bind(this);
     this.removePlaylist = this.removePlaylist.bind(this);
     this.clearPlaylist = this.clearPlaylist.bind(this);
@@ -109,45 +122,102 @@ class PlaylistRandomizer extends React.Component {
   //youtube user's playlists and display them
   //returns a promise to wait on
   handleChange(event) {
+    let search = event.target.value;
     return new Promise((resolve, reject) => {
       this.setState({
-        term: event.target.value,
+        term: search,
       });
 
-      //Find channel of user searched
+      //Find channel of user searched or display name of channel if there is one
       $.get(baseURL + 'channels', {
         part: "id",
-        forUsername: event.target.value,
+        forUsername: search,
         key: APIKey },
         (channel) => {
           //If username is valid, get playlists from user's channel
           if (channel.items.length == 1) {
-            $.get(baseURL + 'playlists', {
+            //console.log('results for channel names');
+            //console.log(channel);
+            this.getPlaylists(channel.items[0].id, [], null);
+          } else {
+            //If not, we will search for display names, which there can be multiple of
+            $.get(baseURL + 'search', {
               part: "snippet",
-              channelId: channel.items[0].id,
-              maxResults: 25,
+              type: "channel",
+              q: search,
               key: APIKey },
-              (list) => {
-                this.setState({
-                  playlists: list.items,
-                });
-                resolve();
+              (names) => {
+                //Get Playlists for display names, if not there's no results
+                if (names.items.length > 0) {
+                  //console.log('results for display names');
+                  //console.log(names);
+                  this.getPlaylists(names.items, [], null);
+                } else {
+                  this.setState({
+                    playlists: [],
+                  });
+                }
               }
             ).fail(() => {
-              reject('Could not get playlists for youtube user');
-            });
-          } else {
-            //If not, no playlists found
-            //Need to then search for channel name
-            //Do same call, but use part="snippet", type="channel", q="display name"
-            //Then be prepared to handle multiple returns
-            this.setState({
-              playlists: [],
+              reject('Failed to find other users of same name');
             });
           }
         }
       ).fail(() => {
         reject('Could not get youtube user');
+      });
+    });
+  }
+
+  //Recursively get playlists from the user object (can be multiple or single)
+  getPlaylists(users, list, token) {
+    return new Promise((resolve, reject) => {
+      //Detect if we're dealing with a channel response or a display name response
+      //since the objects returned from youtube are slightly different
+      let requestId;
+      if (typeof users === 'object') {
+        requestId = users[0].id.channelId;
+      } else {
+        requestId = users;
+      }
+
+      $.get(baseURL + 'playlists', {
+        part: "snippet",
+        channelId: requestId,
+        maxResults: 50,
+        pageToken: token,
+        key: APIKey },
+        (results) => {
+          results.items.forEach((element) => {
+            list.push({
+              id: element.id,
+              title: element.snippet.title,
+              owner: '',
+            });
+          });
+
+          //Recurse if there are more results
+          if (results.nextPageToken) {
+            this.getPlaylists(users, list, results.nextPageToken)
+              .then(resolve)
+              .catch(reject);
+          } else {
+            //When done, if the list has more than one playlist
+            //put the list into the playlists variable
+            if (list.length >= 1) {
+              this.setState({
+                playlists: list,
+              });
+            } else {
+              this.setState({
+                playlists: [],
+              });
+            }
+            resolve();
+          }
+        }
+      ).fail(() => {
+        reject('Could not get playlists for youtube user');
       });
     });
   }
@@ -244,6 +314,17 @@ class PlaylistRandomizer extends React.Component {
         $(window).height() - $('#randomizer-list').offset().top
       );
     });
+
+    //Swipe Detection
+    //On swipe right or left, switch to another video
+    if ($.detectSwipe.enabled) {
+      $(window).on('swipeleft', () => {
+        this.nextVideo();
+      });
+      $(window).on('swiperight', () => {
+        this.prevVideo();
+      });
+    }
   }
 
   render() {
@@ -253,7 +334,8 @@ class PlaylistRandomizer extends React.Component {
         <Playlist
           addPlaylist = {this.addPlaylist}
           removePlaylist = {this.removePlaylist}
-          title = {element.snippet.title}
+          owner = {element.owner}
+          title = {element.title}
           id = {element.id}
           key = {element.id}
         />
@@ -262,15 +344,17 @@ class PlaylistRandomizer extends React.Component {
 
     //Searchbar results
     let result;
-    if(this.state.term != '') {
+    if (this.state.term != '') {
       if (playlists.length == 0) {
-        //NEED TO DEAL WITH WHITESPACE IN USERNAME SEARCH FOR URL
-        //Possibly need to differentiate between channel-name and username
-        result = <a href={"https://www.youtube.com/user/" + this.state.term} target="_blank">
-                   <div className='rd-button'>
-                     No results for -{this.state.term}-
-                   </div>
-                 </a>
+        result =
+          <a
+            href={encodeURI("https://www.youtube.com/user/" + this.state.term)}
+            target="_blank"
+          >
+            <div className='rd-button'>
+              No results for -{this.state.term}-
+            </div>
+          </a>
       } else {
         result = <div></div>
       }
@@ -303,9 +387,9 @@ class PlaylistRandomizer extends React.Component {
               <div
                 className='playlist-button cell small-6'
                 onClick={() => {this.removePlaylist(element.id)}}
-               >
-                remove
-               </div>
+              >
+                <i className='fas fa-minus-circle'></i>
+              </div>
           </div>
         )
       });
@@ -327,12 +411,18 @@ class PlaylistRandomizer extends React.Component {
                 <label className='rd-header-title' htmlFor='user-search'>
                   Search a username and add playlists to start!
                 </label>
-                <input
-                  name='user-search'
-                  type='text'
-                  onChange={this.handleChange}
-                  value={this.state.term}
-                />
+                <div className='grid-x'>
+                  <input
+                    className='cell small-10'
+                    name='user-search'
+                    type='text'
+                    onChange={this.handleChange}
+                    value={this.state.term}
+                  />
+                  <div className='cell auto search-box'>
+                    <i className='fas fa-search-plus fa-2x'></i>
+                  </div>
+                </div>
               </div>
               <div className='rd-list'>
                 {result}
@@ -629,19 +719,17 @@ class Playlist extends React.Component {
 
     return (
       <div className='rd-list-item grid-x'>
-        <div className='cell small-4' key={this.props.id}>
+        <div className='cell small-5'>
+          {this.props.owner}
+        </div>
+        <div className='cell small-5' key={this.props.id}>
           <div className='rd-button' onClick={this.handleClick}>
             {this.props.title}
           </div>
         </div>
-        <div className='cell small-4'>
-          <div className='rd-button' onClick={this.addPlaylist}>
-            Add
-          </div>
-        </div>
         <div className='cell auto'>
-          <div className='rd-button' onClick={this.removePlaylist}>
-            Remove
+          <div className='rd-button' onClick={this.addPlaylist}>
+            <i className='fas fa-plus'></i>
           </div>
         </div>
         <div>
