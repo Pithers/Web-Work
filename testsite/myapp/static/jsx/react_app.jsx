@@ -138,6 +138,9 @@ class PlaylistRandomizer extends React.Component {
             });
           } else {
             //If not, no playlists found
+            //Need to then search for channel name
+            //Do same call, but use part="snippet", type="channel", q="display name"
+            //Then be prepared to handle multiple returns
             this.setState({
               playlists: [],
             });
@@ -261,6 +264,8 @@ class PlaylistRandomizer extends React.Component {
     let result;
     if(this.state.term != '') {
       if (playlists.length == 0) {
+        //NEED TO DEAL WITH WHITESPACE IN USERNAME SEARCH FOR URL
+        //Possibly need to differentiate between channel-name and username
         result = <a href={"https://www.youtube.com/user/" + this.state.term} target="_blank">
                    <div className='rd-button'>
                      No results for -{this.state.term}-
