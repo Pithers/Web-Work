@@ -597,7 +597,8 @@ class PlaylistRandomizer extends React.Component {
       }, React.createElement("div", {
         className: "cell small-6 icon-button"
       }, React.createElement("i", {
-        className: "fas fa-chevron-left fa-2x"
+        className: "fas fa-chevron-left fa-2x",
+        onClick: this.prevPage
       })), React.createElement("div", {
         className: "cell auto icon-button"
       }, this.state.more && React.createElement("i", {
