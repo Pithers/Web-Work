@@ -26,7 +26,8 @@
 //## Loading Page
 //## React App
 //##   Playlist Title
-//##   React Dropdown
+//##   Search Menu
+//##   Search Menu Transition
 //##   Video Container
 //##   Video List Container
 //##   Marquee
@@ -690,7 +691,7 @@ $list-group-margin: 0;
   z-index: 1;
 }
 
-//Show the tooltip text when you mouse over the tooltip container
+//Show the tooltip text when you mouse over the hovertip container
 .hovertip:hover .hovertiptext {
   visibility: visible;
 }
@@ -789,52 +790,129 @@ $angle: 45deg;
 //Playlist Title
 .playlist-title {
   text-align: center;
-  font-size: 1.5rem;
-  line-height: 0.5;
+  font-size: calc(22px + (35 - 22) * ((100vw - 320px) / (1080 - 320)));
   margin-top: 0;
-  margin-bottom: 0.5rem;
+  margin-bottom: 20px;
 }
 
-//React Dropdown Menu
-.rd-wrapper {
-  position: relative;
+
+//Search Menu
+.search-wrapper {
+  height: 0;
   width: 100%;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.9);
+  overflow-y: hidden;
 
-  .rd-header {
-    //Search Bar
-    input[type=text] {
-      margin: 0;
-    }
-
-    //Search icon for the input box
-    .search-box {
-      i {
-      }
-    }
-  }
-
-  .rd-list {
-    position: absolute;
-    display: none;
-    overflow-y: auto;
-    background-color: white;
-    z-index: 1;
-    width: 100%;
-    max-height: 200px;
-  }
-
-  &:hover .rd-list {
-    display: block;
-  }
-
-  .rd-button {
-    color: black;
+  .icon-button {
+    color: white;
     transition: color 0.2s ease-in;
+    text-align: center;
+
     &:hover {
       color: var(--color-text-highlight);
       cursor: pointer;
     }
+
+    .align-vertical {
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+    }
   }
+
+  //This area is used to click out of the options menu
+  .search-area {
+    width: 100%;
+    height: 100%;
+  }
+
+  .options {
+    z-index: 2;
+    position: fixed;
+    left: 50%;
+    top: 35%;
+    transform: translate(-50%, -35%);
+    background-color: rgb(20,20,20);
+    padding: 20px 20px;
+    border: 2px solid white;
+    border-radius: 20px;
+  }
+
+  .header {
+    .close {
+      font-size: 60px;
+    }
+
+    .title {
+      text-align: center;
+      color: white;
+      font-size: calc(22px + (35 - 22) * ((100vw - 320px) / (1080 - 320)));
+    }
+  }
+
+  .searchbar {
+    padding-bottom: 5px;
+    //Search Bar
+    input[type=text] {
+      margin: 0;
+      border-radius: 15px;
+    }
+  }
+
+  //Search Results
+  .content {
+    overflow-y: scroll;
+    padding-bottom: 5px;
+    height: 100%;
+
+    .content-item {
+      padding-top: 10px;
+
+      .name {
+        font-size: calc(15px + (30 - 15) * ((100vw - 320px) / (1080 - 320)));
+      }
+      .desc {
+        font-size: calc(12px + (20 - 12) * ((100vw - 320px) / (1080 - 320)));
+      }
+
+      img {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+    }
+  }
+
+  .page-arrows {
+  }
+}
+
+//Search Menu Transitions
+$search-transition-speed: 500ms;
+.search-transition-enter {
+  height: 0%;
+}
+.search-transition-enter-active {
+  height: 100%;
+  transition: $search-transition-speed;
+}
+.search-transition-enter-done {
+  height: 100%;
+}
+.search-transition-exit {
+  height: 100%;
+}
+.search-transition-exit-active {
+  height: 0%;
+  transition: $search-transition-speed;
+}
+.search-transition-exit-done {
+  height: 0%;
 }
 
 //Video Container
@@ -863,7 +941,7 @@ $angle: 45deg;
 //Marquee
 $marquee-speed: 15s;
 .marquee-container {
-  margin: 0 auto;
+  margin: 5px auto;
   white-space: nowrap;
   overflow: hidden;
 }
@@ -882,6 +960,7 @@ $marquee-speed: 15s;
 //Playlist Icon Button
 .playlist-icon-button {
   text-align: center;
+  margin-bottom: 5px;
 
   i {
     color: var(--color-text);

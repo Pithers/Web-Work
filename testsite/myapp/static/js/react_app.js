@@ -4,9 +4,6 @@
 //This is a youtube playlist randomizer app
 //Set up multiple playlists in youtube and this will
 //shuffle videos between them
-//Efficiency Note:
-//Once done, go back and make youtube API request GETs more specific
-//There's a lot of data that youtube gives us that we don't need
 //References:
 //Youtube API v3: https://developers.google.com/youtube/v3/
 //Durstenfeld shuffle:
@@ -17,13 +14,24 @@
 //Swipe Detection: https://github.com/marcandre/detect_swipe
 //Future Ideas:
 // Place tutorial areas under Current and Next Up when they're empty
-// Improve searchbar functionality so users can search for playlists without knowing the user
-//  -perhaps by adding a search selection option to the search bar
+// Add functionality to search-plus icon next to search bar
+//   -allow users to search for different properties
+//   -could search for only playlists without knowing user
+//   -could search for popular playlists etc.
+//   -(style) make icon space look like it's part of the input bar
+// Need to figure out how to deal with browsing and not hitting
+//   youtube's api limit when multiple people are using the app
+//   (making the user log in is nice, but not ideal for the user
+// Efficiency Note:
+//   Once done, go back and make youtube API request GETs more specific
+//   There's a lot of data that youtube gives us that we don't need
 //Contents:
+//## React Imports
 //## Random Number Functions
 //##   MurmurHash3's Mixing Function
 //##   Sfc32
 //##   Durstenfeld Array shuffler
+//## Fix Div Height
 //## React App
 //##   Playlist Randomizer Class
 //##   Player Class
@@ -73,6 +81,19 @@ function shuffleArray(array) {
   }
 
   return array;
+} //Fix Div Height
+//Small jquery function to push height of divs to the bottom of the screen
+
+
+function fixDivHeight(ref) {
+  $(ref).height(function (index, height) {
+    var current_height = $(this).height();
+    var new_height = window.innerHeight - $(this).offset().top - parseInt($(this).css('padding-top')) - parseInt($(this).css('padding-bottom'));
+
+    if (new_height > current_height) {
+      $(ref).css('height', new_height);
+    }
+  });
 } //React App
 //React Playlist Randomizer
 //App for generating playlists
@@ -84,13 +105,29 @@ class PlaylistRandomizer extends React.Component {
     super(props);
     this.state = {
       term: '',
+      results: [],
       playlists: [],
       selected: [],
-      randomizer: []
-    }; //Bind functions
-    //Keyboard Input
+      randomizer: [],
+      search: false,
+      options: false,
+      failure: false,
+      more: false
+    }; //Menu Options
 
-    this.handleChange = this.handleChange.bind(this); //Playlist Construction
+    this.openSearch = this.openSearch.bind(this);
+    this.closeSearch = this.closeSearch.bind(this);
+    this.openOptions = this.openOptions.bind(this);
+    this.closeOptions = this.closeOptions.bind(this); //Keyboard Input
+
+    this.handleChange = this.handleChange.bind(this); //Search Functions
+
+    this.searchUser = this.searchUser.bind(this);
+    this.searchVideos = this.searchVideos.bind(this);
+    this.searchPlaylists = this.searchPlaylists.bind(this);
+    this.searchButton = this.searchButton.bind(this);
+    this.nextPage = this.nextPage.bind(this);
+    this.prevPage = this.prevPage.bind(this); //Playlist Construction
 
     this.getPlaylists = this.getPlaylists.bind(this);
     this.addPlaylist = this.addPlaylist.bind(this);
@@ -101,56 +138,177 @@ class PlaylistRandomizer extends React.Component {
     this.nextVideo = this.nextVideo.bind(this);
     this.prevVideo = this.prevVideo.bind(this);
     this.changeVideo = this.changeVideo.bind(this);
-  } //Handles changes in the search bar for users
-  //Each search will locate the user-id and then search for
-  //youtube user's playlists and display them
-  //returns a promise to wait on
+  } //Open and close search overlay
 
 
-  handleChange(event) {
-    let search = event.target.value;
-    return new Promise((resolve, reject) => {
-      this.setState({
-        term: search
-      }); //Find channel of user searched or display name of channel if there is one
+  openSearch() {
+    this.setState({
+      search: true
+    });
+  }
 
-      $.get(baseURL + 'channels', {
+  closeSearch() {
+    this.setState({
+      search: false
+    });
+    this.setState({
+      options: false
+    });
+  }
+
+  openOptions(event) {
+    event.stopPropagation();
+    this.setState({
+      options: true
+    });
+  }
+
+  closeOptions() {
+    this.setState({
+      options: false
+    });
+  } //Search youtube by username
+  //exact = true => search for exact username
+  //exact = false => search for display name
+  //limit specifies how many results are desired (max=50)
+  //token can be used if the request comes back with a nextpagetoken
+
+
+  searchUser(search, exact = true, limit, token = null) {
+    let request;
+    let url;
+
+    if (exact) {
+      url = baseURL + 'channels';
+      request = {
         part: "id",
         forUsername: search,
         key: APIKey
-      }, channel => {
-        //If username is valid, get playlists from user's channel
-        if (channel.items.length == 1) {
-          //console.log('results for channel names');
-          //console.log(channel);
-          this.getPlaylists(channel.items[0].id, [], null);
+      };
+    } else {
+      url = baseURL + 'search';
+      request = {
+        part: "snippet",
+        type: "channel",
+        q: search,
+        maxResults: limit,
+        pageToken: token,
+        key: APIKey
+      };
+    } //Make the request to youtube
+
+
+    return new Promise((resolve, reject) => {
+      $.get(url, request, channels => {
+        //If name is valid, resolve with channel/s info
+        if (channels.items.length > 0) {
+          resolve(channels);
         } else {
-          //If not, we will search for display names, which there can be multiple of
-          $.get(baseURL + 'search', {
-            part: "snippet",
-            type: "channel",
-            q: search,
-            key: APIKey
-          }, names => {
-            //Get Playlists for display names, if not there's no results
-            if (names.items.length > 0) {
-              //console.log('results for display names');
-              //console.log(names);
-              this.getPlaylists(names.items, [], null);
-            } else {
-              this.setState({
-                playlists: []
-              });
-            }
-          }).fail(() => {
-            reject('Failed to find other users of same name');
-          });
+          reject('No results for exact user');
         }
       }).fail(() => {
-        reject('Could not get youtube user');
+        reject('Youtube Get Error: Could not get exact youtube user');
       });
     });
+  }
+
+  searchVideos(search) {
+    return new Promise((resolve, reject) => {
+      resolve('search videos');
+    });
+  }
+
+  searchPlaylists(search) {
+    return new Promise((resolve, reject) => {
+      resolve('search playlists');
+    });
+  } //When something is searched for
+  //Handle the logic of the results and add them into a result array
+  //So that it can be displayed in the render function
+
+
+  searchButton() {
+    //Grab current searchbar state in case it changes during search
+    let text = this.state.term; //Reset search state
+
+    this.setState({
+      results: [],
+      more: false
+    }); //Check What option is selected (search by user by default)
+
+    switch ($("input[name=search-options]:checked").value) {
+      case "playlists":
+        this.searchPlaylists(text).then(results => {
+          console.log(result);
+        }).catch(error => {
+          console.log(error);
+          this.setState({
+            failure: true
+          });
+        });
+        break;
+
+      case "videos":
+        this.searchVideos(text).then(results => {
+          console.log(result);
+        }).catch(error => {
+          console.log(error);
+          this.setState({
+            failure: true
+          });
+        });
+        break;
+
+      default:
+        this.searchUser(text, false, 10).then(results => {
+          //console.log('Total Results: ' + results.pageInfo.totalResults);
+          //console.log('Showing: ' + results.pageInfo.resultsPerPage);
+          if (results.nextPageToken) {
+            this.setState({
+              more: true
+            });
+          } //Append to results in case we want to look back
+
+
+          results.items.forEach(element => {
+            this.setState(prevState => ({
+              failure: false,
+              results: prevState.results.concat({
+                id: element.id.ChannelId,
+                title: element.snippet.channelTitle,
+                desc: element.snippet.description,
+                thumb: element.snippet.thumbnails.default.url
+              })
+            }));
+          });
+        }).catch(error => {
+          console.log(error);
+          this.setState({
+            failure: true
+          });
+        });
+    }
+  } //Page navigation for search menu results
+
+
+  nextPage() {
+    console.log('hello from next page');
+  }
+
+  prevPage() {
+    console.log('hello from prev page');
+  } //Handles changes in the search bar
+  //And reset failure state if needed
+
+
+  handleChange(event) {
+    this.setState({
+      term: event.target.value,
+      failure: false
+    });
   } //Recursively get playlists from the user object (can be multiple or single)
+  //Note: Might not need to be recursive anymore
+  //this.getPlaylists(channels.items, [], null);
 
 
   getPlaylists(users, list, token) {
@@ -286,9 +444,12 @@ class PlaylistRandomizer extends React.Component {
 
 
   componentDidMount() {
-    $('.video-list-container').css('height', $(window).height() - $('#randomizer-list').offset().top);
+    fixDivHeight('.video-list-container');
+    fixDivHeight('.search-wrapper .content'); //Set Watcher
+
     $(window).resize(() => {
-      $('.video-list-container').css('height', $(window).height() - $('#randomizer-list').offset().top);
+      fixDivHeight('.video-list-container');
+      fixDivHeight('.search-wrapper .content');
     }); //Swipe Detection
     //On swipe right or left, switch to another video
 
@@ -303,34 +464,7 @@ class PlaylistRandomizer extends React.Component {
   }
 
   render() {
-    //Render playlists
-    const playlists = this.state.playlists.map((element, i) => {
-      return React.createElement(Playlist, {
-        addPlaylist: this.addPlaylist,
-        removePlaylist: this.removePlaylist,
-        owner: element.owner,
-        title: element.title,
-        id: element.id,
-        key: element.id
-      });
-    }); //Searchbar results
-
-    let result;
-
-    if (this.state.term != '') {
-      if (playlists.length == 0) {
-        result = React.createElement("a", {
-          href: encodeURI("https://www.youtube.com/user/" + this.state.term),
-          target: "_blank"
-        }, React.createElement("div", {
-          className: "rd-button"
-        }, "No results for -", this.state.term, "-"));
-      } else {
-        result = React.createElement("div", null);
-      }
-    } //Random List of Videos, can access id, title, videoId, and playlistId
-
-
+    //Random List of Videos, can access id, title, videoId, and playlistId
     let randomizer = null;
 
     if (this.state.randomizer.length) {
@@ -365,44 +499,149 @@ class PlaylistRandomizer extends React.Component {
           className: "fas fa-minus-circle"
         })));
       });
-    }
+    } //If the video queue isn't empty, set up variables to pass to the Player
 
-    let title = null;
+    /*let title = null;
     let videoId = null;
-
     if (this.state.randomizer.length) {
       title = this.state.randomizer[0].title;
       videoId = this.state.randomizer[0].videoId;
-    }
+    }*/
 
-    return React.createElement("div", null, React.createElement("div", {
-      className: "grid-x grid-padding-x"
+
+    const searchbar = React.createElement("div", {
+      className: "grid-x grid-padding-x searchbar"
     }, React.createElement("div", {
-      className: "cell small-12 large-6 large-order-2 center small-collapse"
-    }, React.createElement("div", {
-      className: "rd-wrapper"
-    }, React.createElement("div", {
-      className: "rd-header"
-    }, React.createElement("label", {
-      className: "rd-header-title",
-      htmlFor: "user-search"
-    }, "Search a username and add playlists to start!"), React.createElement("div", {
-      className: "grid-x"
+      className: "cell small-2 icon-button",
+      onClick: this.openOptions
+    }, React.createElement("i", {
+      className: "fas fa-filter fa-2x"
+    })), React.createElement("div", {
+      className: "cell small-8"
     }, React.createElement("input", {
-      className: "cell small-10",
       name: "user-search",
       type: "text",
       onChange: this.handleChange,
       value: this.state.term
-    }), React.createElement("div", {
-      className: "cell auto search-box"
+    })), React.createElement("div", {
+      className: "cell small-2 icon-button",
+      onClick: this.searchButton
     }, React.createElement("i", {
-      className: "fas fa-search-plus fa-2x"
-    })))), React.createElement("div", {
-      className: "rd-list"
-    }, result, playlists)), React.createElement(Player, {
-      title: title,
-      videoId: videoId,
+      className: "fas fa-search fa-2x"
+    }))); //Options menu for search box overlay
+
+    const options = React.createElement("div", {
+      className: "options"
+    }, React.createElement("div", null, "Search Options:"), React.createElement("div", null, React.createElement("input", {
+      type: "radio",
+      name: "search-options",
+      id: "option-user",
+      value: "users"
+    }), "Users", React.createElement("br", null), React.createElement("input", {
+      type: "radio",
+      name: "search-options",
+      id: "option-playlists",
+      value: "playlists"
+    }), "Playlists", React.createElement("br", null), React.createElement("input", {
+      type: "radio",
+      name: "search-options",
+      id: "option-videos",
+      value: "videos"
+    }), "Videos")); //Render playlists
+
+    /*const results = this.state.playlists.map((element, i) => {
+      return (
+        <Playlist
+          addPlaylist = {this.addPlaylist}
+          removePlaylist = {this.removePlaylist}
+          owner = {element.owner}
+          title = {element.title}
+          id = {element.id}
+          key = {element.id}
+        />
+      );
+    });*/
+
+    /*id: element.id.ChannelId,
+    title: element.snippet.channelTitle,
+    desc: element.snippet.description,
+    thumb: element.snippet.thumbnails.default.url,*/
+    //Searchbar results
+
+    let results = this.state.results.map(element => {
+      return React.createElement("div", {
+        className: "grid-x grid-padding-x content-item"
+      }, React.createElement("div", {
+        className: "cell small-4"
+      }, React.createElement("img", {
+        src: element.thumb,
+        alt: "User Icon"
+      })), React.createElement("div", {
+        className: "cell small-6"
+      }, React.createElement("div", {
+        className: "channel"
+      }, element.title), React.createElement("div", {
+        className: "desc"
+      }, element.desc)), React.createElement("div", {
+        className: "cell small-2 icon-button"
+      }, React.createElement("i", {
+        className: "fas fa-chevron-down fa-2x align-vertical"
+      })));
+    }); //Left and right arrow for searching
+
+    let arrows;
+
+    if (results.length > 0) {
+      arrows = React.createElement("div", {
+        className: "grid-x grid-padding-x page-arrows"
+      }, React.createElement("div", {
+        className: "cell small-6 icon-button"
+      }, React.createElement("i", {
+        className: "fas fa-chevron-left fa-2x"
+      })), React.createElement("div", {
+        className: "cell auto icon-button"
+      }, this.state.more && React.createElement("i", {
+        className: "fas fa-chevron-right fa-2x",
+        onClick: this.nextPage
+      })));
+    } //If there are no results (ie search was a failure)
+
+
+    if (this.state.term != '' && this.state.failure) {
+      results = React.createElement("div", {
+        className: "center"
+      }, "No results for ", this.state.term);
+    } //Search box overlay for youtube playlist/user searching
+    //<div id='search-overlay' className='search-wrapper'>
+
+
+    const search = React.createElement("div", {
+      className: "search-wrapper"
+    }, React.createElement("div", {
+      className: "search-area",
+      onClick: this.closeOptions
+    }, React.createElement("div", {
+      className: "grid-x grid-padding-x header"
+    }, React.createElement("div", {
+      className: "title cell small-8 small-offset-2"
+    }, "Search playlists or videos to start!"), React.createElement("div", {
+      className: "close cell small-2 icon-button",
+      onClick: this.closeSearch
+    }, "\xD7")), searchbar, React.createElement("div", {
+      id: "results-content",
+      className: "content"
+    }, results, arrows)), this.state.options && options);
+    return React.createElement("div", null, React.createElement("div", null, React.createElement(ReactTransitionGroup.CSSTransition, {
+      in: this.state.search,
+      classNames: "search-transition",
+      timeout: 500
+    }, search)), React.createElement("div", {
+      className: "grid-x grid-padding-x"
+    }, React.createElement("div", {
+      className: "cell small-12 large-6 large-order-2 center small-collapse"
+    }, React.createElement(Player, {
+      title: this.state.randomizer.length ? this.state.randomizer[0].title : null,
+      videoId: this.state.randomizer.length ? this.state.randomizer[0].videoId : null,
       nextVideo: this.nextVideo,
       pause: this.state.pause,
       id: "video-player",
@@ -410,32 +649,38 @@ class PlaylistRandomizer extends React.Component {
     }), React.createElement("div", {
       className: "grid-x"
     }, React.createElement("div", {
-      className: "cell small-4",
+      className: "cell small-3"
+    }, React.createElement("div", {
+      className: "playlist-icon-button"
+    }, React.createElement("i", {
+      className: "fas fa-step-backward fa-3x",
       onClick: this.prevVideo
+    }))), React.createElement("div", {
+      className: "cell small-3"
     }, React.createElement("div", {
       className: "playlist-icon-button"
     }, React.createElement("i", {
-      className: "fas fa-step-backward fa-3x"
-    }))), React.createElement("div", {
-      className: "cell small-4",
+      className: "fas fa-random fa-3x",
       onClick: this.shufflePlaylist
-    }, React.createElement("div", {
-      className: "playlist-icon-button"
-    }, React.createElement("i", {
-      className: "fas fa-random fa-3x"
     }))), React.createElement("div", {
-      className: "cell auto",
-      onClick: this.nextVideo
+      className: "cell small-3"
     }, React.createElement("div", {
       className: "playlist-icon-button"
     }, React.createElement("i", {
-      className: "fas fa-step-forward fa-3x"
+      className: "fas fa-search fa-3x",
+      onClick: this.openSearch
+    }))), React.createElement("div", {
+      className: "cell auto"
+    }, React.createElement("div", {
+      className: "playlist-icon-button"
+    }, React.createElement("i", {
+      className: "fas fa-step-forward fa-3x",
+      onClick: this.nextVideo
     }))))), React.createElement("div", {
       className: "video-list-container cell small-6 large-3 large-order-1 small-collapse"
     }, React.createElement("div", {
       className: "video-list center"
     }, "Current Playlists:", selected)), React.createElement("div", {
-      id: "randomizer-list",
       className: "video-list-container cell small-6 large-3 large-order-3 small-collapse"
     }, React.createElement("div", {
       className: "center"
@@ -683,19 +928,19 @@ class Playlist extends React.Component {
       });
     });
     return React.createElement("div", {
-      className: "rd-list-item grid-x"
+      className: "search-list-item grid-x"
     }, React.createElement("div", {
       className: "cell small-5"
     }, this.props.owner), React.createElement("div", {
       className: "cell small-5",
       key: this.props.id
     }, React.createElement("div", {
-      className: "rd-button",
+      className: "search-button",
       onClick: this.handleClick
     }, this.props.title)), React.createElement("div", {
       className: "cell auto"
     }, React.createElement("div", {
-      className: "rd-button",
+      className: "search-button",
       onClick: this.addPlaylist
     }, React.createElement("i", {
       className: "fas fa-plus"
