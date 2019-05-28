@@ -26,12 +26,12 @@
 //   Once done, go back and make youtube API request GETs more specific
 //   There's a lot of data that youtube gives us that we don't need
 //Contents:
-//## React Imports
 //## Random Number Functions
 //##   MurmurHash3's Mixing Function
 //##   Sfc32
 //##   Durstenfeld Array shuffler
 //## Fix Div Height
+//## HTML String Decode
 //## React App
 //##   Playlist Randomizer Class
 //##   Player Class
@@ -94,6 +94,13 @@ function fixDivHeight(ref) {
       $(ref).css('height', new_height);
     }
   });
+} //Takes string s and removes any html coding from it
+
+
+function decodeHtml(s) {
+  var txt = document.createElement("textarea");
+  txt.innerHTML = s;
+  return txt.value;
 } //React App
 //React Playlist Randomizer
 //App for generating playlists
@@ -121,11 +128,11 @@ class PlaylistRandomizer extends React.Component {
     this.openOptions = this.openOptions.bind(this);
     this.closeOptions = this.closeOptions.bind(this); //Keyboard Input
 
-    this.handleChange = this.handleChange.bind(this); //Search Functions
+    this.handleChange = this.handleChange.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this); //Search Functions
 
-    this.searchUser = this.searchUser.bind(this);
-    this.searchVideos = this.searchVideos.bind(this);
-    this.searchPlaylists = this.searchPlaylists.bind(this);
+    this.searchYoutube = this.searchYoutube.bind(this);
+    this.getYoutubeResults = this.getYoutubeResults.bind(this);
     this.searchButton = this.searchButton.bind(this);
     this.nextPage = this.nextPage.bind(this); //Playlist Construction
 
@@ -167,272 +174,6 @@ class PlaylistRandomizer extends React.Component {
     this.setState({
       options: false
     });
-  } //Search youtube by username
-  //exact = true => search for exact username
-  //exact = false => search for display name
-  //limit specifies how many results are desired (max=50)
-  //token can be used if the request comes back with a nextpagetoken
-
-
-  searchUser(search, exact = false, limit = this.pageSize, token = null) {
-    let request;
-    let url;
-
-    if (exact) {
-      url = baseURL + 'channels';
-      request = {
-        part: "id",
-        forUsername: search,
-        key: APIKey
-      };
-    } else {
-      url = baseURL + 'search';
-      request = {
-        part: "snippet",
-        type: "channel",
-        q: search,
-        maxResults: limit,
-        pageToken: token,
-        key: APIKey
-      };
-    } //Make the request to youtube
-
-
-    return new Promise((resolve, reject) => {
-      $.get(url, request, channels => {
-        //If name is valid, resolve with channel/s info
-        if (channels.items.length > 0) {
-          resolve(channels);
-        } else {
-          reject('No results for exact user');
-        }
-      }).fail(() => {
-        reject('Youtube Get Error: Could not get exact youtube user');
-      });
-    });
-  } //Search youtube for videos
-
-
-  searchVideos(search, limit = this.pageSize, token = null) {
-    let request;
-    let url;
-    return new Promise((resolve, reject) => {
-      url = baseURL + 'search';
-      request = {
-        part: "snippet",
-        type: "video",
-        q: search,
-        maxResults: limit,
-        pageToken: token,
-        key: APIKey
-      };
-      $.get(url, request, videos => {
-        //If name is valid, resolve with channel/s info
-        if (videos.items.length > 0) {
-          resolve(videos);
-        } else {
-          reject('No results for video');
-        }
-      }).fail(() => {
-        reject('Youtube Get Error: Could not get videos');
-      });
-    });
-  } //Search youtube for playlists
-
-
-  searchPlaylists(search, limit = this.pageSize, token = null) {
-    let request;
-    let url;
-    return new Promise((resolve, reject) => {
-      url = baseURL + 'search';
-      request = {
-        part: "snippet",
-        type: "playlist",
-        q: search,
-        maxResults: limit,
-        pageToken: token,
-        key: APIKey
-      };
-      $.get(url, request, videos => {
-        //If name is valid, resolve with channel/s info
-        if (videos.items.length > 0) {
-          resolve(videos);
-        } else {
-          reject('No results for playlist');
-        }
-      }).fail(() => {
-        reject('Youtube Get Error: Could not get playlists');
-      });
-    });
-  } //When something is searched for
-  //Handle the logic of the results and add them into a result array
-  //So that it can be displayed in the render function
-
-
-  searchButton() {
-    //Grab current searchbar state in case it changes during search
-    const text = this.state.term; //Reset search state
-
-    this.setState({
-      results: []
-    }); //Check What option is selected (search by user by default)
-
-    switch ($("input[name='search-options']:checked").val()) {
-      case 'playlists':
-        this.searchPlaylists(text).then(results => {
-          console.log(results); //If there are more results to be had, store info needed in page object
-
-          if (results.nextPageToken) {
-            this.setState({
-              page: [{
-                type: 'playlists',
-                query: text,
-                token: results.nextPageToken
-              }]
-            });
-          } else {
-            this.setState({
-              page: []
-            });
-          } //Append to results in case we want to look back
-
-
-          results.items.forEach(element => {
-            this.setState(prevState => ({
-              failure: false,
-              results: prevState.results.concat({
-                id: element.id.PlaylistId,
-                title: element.snippet.title,
-                desc: element.snippet.description,
-                thumb: element.snippet.thumbnails.default.url
-              })
-            }));
-          });
-        }).catch(error => {
-          console.log(error);
-          this.setState({
-            failure: true
-          });
-        });
-        break;
-
-      case 'videos':
-        this.searchVideos(text).then(results => {
-          console.log(results); //If there are more results to be had, store info needed in more object
-
-          if (results.nextPageToken) {
-            this.setState({
-              page: [{
-                type: 'videos',
-                query: text,
-                token: results.nextPageToken
-              }]
-            });
-          } else {
-            this.setState({
-              page: []
-            });
-          } //Append to results in case we want to look back
-
-
-          results.items.forEach(element => {
-            this.setState(prevState => ({
-              failure: false,
-              results: prevState.results.concat({
-                id: element.id.VideoId,
-                title: element.snippet.title,
-                desc: element.snippet.description,
-                thumb: element.snippet.thumbnails.default.url
-              })
-            }));
-          });
-        }).catch(error => {
-          console.log(error);
-          this.setState({
-            failure: true
-          });
-        });
-        break;
-
-      default:
-        this.searchUser(text).then(results => {
-          //console.log('Total Results: ' + results.pageInfo.totalResults);
-          //If there are more results to be had, store info needed in more object
-          if (results.nextPageToken) {
-            this.setState({
-              page: [{
-                type: 'user',
-                query: text,
-                token: results.nextPageToken
-              }]
-            });
-          } else {
-            this.setState({
-              page: []
-            });
-          } //Append to results in case we want to look back
-
-
-          results.items.forEach(element => {
-            this.setState(prevState => ({
-              failure: false,
-              results: prevState.results.concat({
-                id: element.id.ChannelId,
-                title: element.snippet.title,
-                desc: element.snippet.description,
-                thumb: element.snippet.thumbnails.default.url
-              })
-            }));
-          });
-        }).catch(error => {
-          console.log(error);
-          this.setState({
-            failure: true
-          });
-        });
-    }
-  } //Page navigation for search menu results
-  //Need to make this fire as user scrolls down the page
-
-
-  nextPage() {
-    console.log(this.state.more); //Call the search again, but this time get the next page
-
-    this.searchUser(this.state.page.query, false, this.pageSize, this.state.page.token).then(results => {
-      //console.log('Total Results: ' + results.pageInfo.totalResults);
-      //If there are more results to be had, store info needed in more object
-      if (results.nextPageToken) {
-        this.setState({
-          page: [{
-            type: 'user',
-            query: text,
-            token: results.nextPageToken
-          }]
-        });
-      } else {
-        this.setState({
-          page: []
-        });
-      } //Append to results in case we want to look back
-
-
-      results.items.forEach(element => {
-        this.setState(prevState => ({
-          failure: false,
-          results: prevState.results.concat({
-            id: element.id.ChannelId,
-            title: element.snippet.channelTitle,
-            desc: element.snippet.description,
-            thumb: element.snippet.thumbnails.default.url
-          })
-        }));
-      });
-    }).catch(error => {
-      console.log(error);
-      this.setState({
-        failure: true
-      });
-    });
   } //Handles changes in the search bar
   //And reset failure state if needed
 
@@ -442,6 +183,176 @@ class PlaylistRandomizer extends React.Component {
       term: event.target.value,
       failure: false
     });
+  } //Handle hitting enter key while in input box
+
+
+  handleKeyDown(event) {
+    if (event.key === 'Enter') {
+      this.searchButton();
+    }
+  } //Search Youtube
+  //search => text string to search for
+  //type => type to search for: playlist, video, or channel
+  //limit => amount of results desired (max 50)
+  //token => nextPageToken if there is one
+
+
+  searchYoutube(search, type = 'channel', limit = this.pageSize, token = null) {
+    return new Promise((resolve, reject) => {
+      $.get(baseURL + 'search', {
+        part: "snippet",
+        type: type,
+        q: search,
+        maxResults: limit,
+        pageToken: token,
+        key: APIKey
+      }, results => {
+        //If name is valid, resolve result's info
+        if (results.items.length > 0) {
+          resolve(results);
+        } else {
+          reject('No Results');
+        }
+      }).fail(err => {
+        if (typeof err.status !== "undefined") {
+          if (err.status == 403 && err.responseJSON.error.errors[0].domain == "youtube.quota") {
+            reject(403);
+          } else {
+            reject('Youtube Get Error: ' + err.status);
+          }
+        } else {
+          console.log('Unknown Error, Please See Error Object');
+          reject(err);
+        }
+      });
+    });
+  } //Search youtube, then store results in this.state.results
+  //search => text string to search for
+  //type => type to search for: playlist, video, or channel
+  //limit => amount of results desired (max 50)
+  //token => nextPageToken if there is one
+
+
+  getYoutubeResults(search, type = 'channel', limit = this.pageSize, token = null) {
+    this.searchYoutube(search, type, limit, token).then(results => {
+      //If there are more results to be had, set up page object
+      if (results.nextPageToken) {
+        this.setState({
+          page: [{
+            type: type,
+            query: search,
+            token: results.nextPageToken
+          }]
+        });
+      } else {
+        this.setState({
+          page: []
+        });
+      } //Creates the idKey as ChannelId, PlaylistId, or VideoId
+      //This is used to access the youtube results json
+
+
+      const idKey = type.charAt(0).toUpperCase() + type.slice(1) + 'Id';
+      results.items.forEach(element => {
+        //Check if thumbnails are present and what size they should be
+        let thumbnail;
+
+        if (typeof element.snippet !== "undefined" && typeof element.snippet.thumbnails !== "undefined") {
+          //Check for display size
+          if (screen.width > 1024) {
+            thumbnail = element.snippet.thumbnails.medium.url;
+          } else {
+            thumbnail = element.snippet.thumbnails.default.url;
+          }
+        } else {
+          thumbnail = '';
+        } //Check if id exists
+
+
+        let id;
+
+        if (typeof element.id !== "undefined" && typeof element.id[idKey] !== "undefined") {
+          id = element.id[idKey];
+        } else {
+          if (typeof element.snippet[idKey] !== "undefined") {
+            id = element.snippet[idKey];
+          } else {
+            id = 'Id Not Found';
+          }
+        } //Check if title exists
+        //Also decode any html to display it correctly
+
+
+        let title;
+
+        if (typeof element.snippet !== "undefined" && typeof element.snippet.title !== "undefined") {
+          title = decodeHtml(element.snippet.title);
+        } else {
+          title = 'Title Not Found';
+        } //Check if description exists
+        //Also decode any html to display it correctly
+
+
+        let description;
+
+        if (typeof element.snippet !== "undefined" && typeof element.snippet.description !== "undefined") {
+          description = decodeHtml(element.snippet.title);
+        } else {
+          description = 'Description Not Found';
+        } //Append to state.results so we can look through the search results
+
+
+        this.setState(prevState => ({
+          failure: false,
+          results: prevState.results.concat({
+            id: id,
+            title: title,
+            desc: description,
+            thumb: thumbnail
+          })
+        }));
+      });
+    }).catch(error => {
+      this.setState({
+        failure: true
+      });
+
+      if (error == 403) {
+        //User needs to log in to proceed because of quota
+        alert('Youtube public searches quota exceeded for website.' + 'Please login to keep searching');
+      } else {
+        console.log(error);
+      }
+    });
+  } //Search youtube and store results in this.state.results
+
+
+  searchButton() {
+    //Reset results and page objects
+    this.setState({
+      results: [],
+      page: []
+    }); //Search type is grabbed from the options checklist
+    //If nothing is checked, default to channel option
+
+    let type;
+
+    if ($("input[name='search-options']:checked").length > 0) {
+      type = $("input[name='search-options']:checked").val();
+    } else {
+      type = 'channel';
+    } //Search youtube for result
+
+
+    this.getYoutubeResults(this.state.term, type);
+  } //Page navigation for search menu results
+  //If the page object exists, call another youtube search
+
+
+  nextPage() {
+    if (this.state.page.length) {
+      this.getYoutubeResults(this.state.page[0].query, this.state.page[0].type, this.pageSize, this.state.page[0].token);
+    }
   } //Recursively get playlists from the user object (can be multiple or single)
   //Note: Might not need to be recursive anymore
   //this.getPlaylists(channels.items, [], null);
@@ -596,7 +507,14 @@ class PlaylistRandomizer extends React.Component {
       $(window).on('swiperight', () => {
         this.prevVideo();
       });
-    }
+    } //Scroll watcher to get the next page for results
+
+
+    $('#results-content').on('scroll', () => {
+      if ($('#results-content').scrollTop() + $('#results-content').innerHeight() >= $('#results-content')[0].scrollHeight) {
+        this.nextPage();
+      }
+    });
   }
 
   render() {
@@ -655,10 +573,11 @@ class PlaylistRandomizer extends React.Component {
     })), React.createElement("div", {
       className: "cell small-8"
     }, React.createElement("input", {
-      name: "user-search",
       type: "text",
       onChange: this.handleChange,
-      value: this.state.term
+      onKeyDown: this.handleKeyDown,
+      value: this.state.term,
+      tabIndex: "0"
     })), React.createElement("div", {
       className: "cell small-2 icon-button",
       onClick: this.searchButton
@@ -671,18 +590,18 @@ class PlaylistRandomizer extends React.Component {
     }, React.createElement("div", null, "Search Options:"), React.createElement("div", null, React.createElement("input", {
       type: "radio",
       name: "search-options",
-      id: "option-user",
-      value: "users"
-    }), "Users", React.createElement("br", null), React.createElement("input", {
+      id: "option-channel",
+      value: "channel"
+    }), "Channels", React.createElement("br", null), React.createElement("input", {
       type: "radio",
       name: "search-options",
-      id: "option-playlists",
-      value: "playlists"
+      id: "option-playlist",
+      value: "playlist"
     }), "Playlists", React.createElement("br", null), React.createElement("input", {
       type: "radio",
       name: "search-options",
-      id: "option-videos",
-      value: "videos"
+      id: "option-video",
+      value: "video"
     }), "Videos")); //Render playlists
 
     /*const results = this.state.playlists.map((element, i) => {
@@ -708,18 +627,18 @@ class PlaylistRandomizer extends React.Component {
       return React.createElement("div", {
         className: "grid-x grid-padding-x content-item"
       }, React.createElement("div", {
-        className: "cell small-4"
+        className: "cell small-4 large-2 large-offset-2"
       }, React.createElement("img", {
         src: element.thumb,
         alt: "User Icon"
       })), React.createElement("div", {
-        className: "cell small-6"
+        className: "cell small-6 large-5"
       }, React.createElement("div", {
-        className: "channel"
+        className: "name"
       }, element.title), React.createElement("div", {
         className: "desc"
       }, element.desc)), React.createElement("div", {
-        className: "cell small-2 icon-button"
+        className: "cell small-2 large-1 icon-button"
       }, React.createElement("i", {
         className: "fas fa-chevron-down fa-2x align-vertical"
       })));
