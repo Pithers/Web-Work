@@ -103,16 +103,17 @@ class PlaylistRandomizer extends React.Component {
   //Object constructor
   constructor(props) {
     super(props);
+    this.pageSize = 10;
     this.state = {
       term: '',
       results: [],
       playlists: [],
       selected: [],
       randomizer: [],
+      page: [],
       search: false,
       options: false,
-      failure: false,
-      more: false
+      failure: false
     }; //Menu Options
 
     this.openSearch = this.openSearch.bind(this);
@@ -126,8 +127,7 @@ class PlaylistRandomizer extends React.Component {
     this.searchVideos = this.searchVideos.bind(this);
     this.searchPlaylists = this.searchPlaylists.bind(this);
     this.searchButton = this.searchButton.bind(this);
-    this.nextPage = this.nextPage.bind(this);
-    this.prevPage = this.prevPage.bind(this); //Playlist Construction
+    this.nextPage = this.nextPage.bind(this); //Playlist Construction
 
     this.getPlaylists = this.getPlaylists.bind(this);
     this.addPlaylist = this.addPlaylist.bind(this);
@@ -174,7 +174,7 @@ class PlaylistRandomizer extends React.Component {
   //token can be used if the request comes back with a nextpagetoken
 
 
-  searchUser(search, exact = true, limit, token = null) {
+  searchUser(search, exact = false, limit = this.pageSize, token = null) {
     let request;
     let url;
 
@@ -210,17 +210,59 @@ class PlaylistRandomizer extends React.Component {
         reject('Youtube Get Error: Could not get exact youtube user');
       });
     });
-  }
+  } //Search youtube for videos
 
-  searchVideos(search) {
+
+  searchVideos(search, limit = this.pageSize, token = null) {
+    let request;
+    let url;
     return new Promise((resolve, reject) => {
-      resolve('search videos');
+      url = baseURL + 'search';
+      request = {
+        part: "snippet",
+        type: "video",
+        q: search,
+        maxResults: limit,
+        pageToken: token,
+        key: APIKey
+      };
+      $.get(url, request, videos => {
+        //If name is valid, resolve with channel/s info
+        if (videos.items.length > 0) {
+          resolve(videos);
+        } else {
+          reject('No results for video');
+        }
+      }).fail(() => {
+        reject('Youtube Get Error: Could not get videos');
+      });
     });
-  }
+  } //Search youtube for playlists
 
-  searchPlaylists(search) {
+
+  searchPlaylists(search, limit = this.pageSize, token = null) {
+    let request;
+    let url;
     return new Promise((resolve, reject) => {
-      resolve('search playlists');
+      url = baseURL + 'search';
+      request = {
+        part: "snippet",
+        type: "playlist",
+        q: search,
+        maxResults: limit,
+        pageToken: token,
+        key: APIKey
+      };
+      $.get(url, request, videos => {
+        //If name is valid, resolve with channel/s info
+        if (videos.items.length > 0) {
+          resolve(videos);
+        } else {
+          reject('No results for playlist');
+        }
+      }).fail(() => {
+        reject('Youtube Get Error: Could not get playlists');
+      });
     });
   } //When something is searched for
   //Handle the logic of the results and add them into a result array
@@ -229,17 +271,43 @@ class PlaylistRandomizer extends React.Component {
 
   searchButton() {
     //Grab current searchbar state in case it changes during search
-    let text = this.state.term; //Reset search state
+    const text = this.state.term; //Reset search state
 
     this.setState({
-      results: [],
-      more: false
+      results: []
     }); //Check What option is selected (search by user by default)
 
-    switch ($("input[name=search-options]:checked").value) {
-      case "playlists":
+    switch ($("input[name='search-options']:checked").val()) {
+      case 'playlists':
         this.searchPlaylists(text).then(results => {
-          console.log(result);
+          console.log(results); //If there are more results to be had, store info needed in page object
+
+          if (results.nextPageToken) {
+            this.setState({
+              page: [{
+                type: 'playlists',
+                query: text,
+                token: results.nextPageToken
+              }]
+            });
+          } else {
+            this.setState({
+              page: []
+            });
+          } //Append to results in case we want to look back
+
+
+          results.items.forEach(element => {
+            this.setState(prevState => ({
+              failure: false,
+              results: prevState.results.concat({
+                id: element.id.PlaylistId,
+                title: element.snippet.title,
+                desc: element.snippet.description,
+                thumb: element.snippet.thumbnails.default.url
+              })
+            }));
+          });
         }).catch(error => {
           console.log(error);
           this.setState({
@@ -248,9 +316,36 @@ class PlaylistRandomizer extends React.Component {
         });
         break;
 
-      case "videos":
+      case 'videos':
         this.searchVideos(text).then(results => {
-          console.log(result);
+          console.log(results); //If there are more results to be had, store info needed in more object
+
+          if (results.nextPageToken) {
+            this.setState({
+              page: [{
+                type: 'videos',
+                query: text,
+                token: results.nextPageToken
+              }]
+            });
+          } else {
+            this.setState({
+              page: []
+            });
+          } //Append to results in case we want to look back
+
+
+          results.items.forEach(element => {
+            this.setState(prevState => ({
+              failure: false,
+              results: prevState.results.concat({
+                id: element.id.VideoId,
+                title: element.snippet.title,
+                desc: element.snippet.description,
+                thumb: element.snippet.thumbnails.default.url
+              })
+            }));
+          });
         }).catch(error => {
           console.log(error);
           this.setState({
@@ -260,12 +355,20 @@ class PlaylistRandomizer extends React.Component {
         break;
 
       default:
-        this.searchUser(text, false, 10).then(results => {
+        this.searchUser(text).then(results => {
           //console.log('Total Results: ' + results.pageInfo.totalResults);
-          //console.log('Showing: ' + results.pageInfo.resultsPerPage);
+          //If there are more results to be had, store info needed in more object
           if (results.nextPageToken) {
             this.setState({
-              more: true
+              page: [{
+                type: 'user',
+                query: text,
+                token: results.nextPageToken
+              }]
+            });
+          } else {
+            this.setState({
+              page: []
             });
           } //Append to results in case we want to look back
 
@@ -275,7 +378,7 @@ class PlaylistRandomizer extends React.Component {
               failure: false,
               results: prevState.results.concat({
                 id: element.id.ChannelId,
-                title: element.snippet.channelTitle,
+                title: element.snippet.title,
                 desc: element.snippet.description,
                 thumb: element.snippet.thumbnails.default.url
               })
@@ -289,14 +392,47 @@ class PlaylistRandomizer extends React.Component {
         });
     }
   } //Page navigation for search menu results
+  //Need to make this fire as user scrolls down the page
 
 
   nextPage() {
-    console.log('hello from next page');
-  }
+    console.log(this.state.more); //Call the search again, but this time get the next page
 
-  prevPage() {
-    console.log('hello from prev page');
+    this.searchUser(this.state.page.query, false, this.pageSize, this.state.page.token).then(results => {
+      //console.log('Total Results: ' + results.pageInfo.totalResults);
+      //If there are more results to be had, store info needed in more object
+      if (results.nextPageToken) {
+        this.setState({
+          page: [{
+            type: 'user',
+            query: text,
+            token: results.nextPageToken
+          }]
+        });
+      } else {
+        this.setState({
+          page: []
+        });
+      } //Append to results in case we want to look back
+
+
+      results.items.forEach(element => {
+        this.setState(prevState => ({
+          failure: false,
+          results: prevState.results.concat({
+            id: element.id.ChannelId,
+            title: element.snippet.channelTitle,
+            desc: element.snippet.description,
+            thumb: element.snippet.thumbnails.default.url
+          })
+        }));
+      });
+    }).catch(error => {
+      console.log(error);
+      this.setState({
+        failure: true
+      });
+    });
   } //Handles changes in the search bar
   //And reset failure state if needed
 
@@ -589,24 +725,21 @@ class PlaylistRandomizer extends React.Component {
       })));
     }); //Left and right arrow for searching
 
-    let arrows;
-
-    if (results.length > 0) {
-      arrows = React.createElement("div", {
-        className: "grid-x grid-padding-x page-arrows"
-      }, React.createElement("div", {
-        className: "cell small-6 icon-button"
-      }, React.createElement("i", {
-        className: "fas fa-chevron-left fa-2x",
-        onClick: this.prevPage
-      })), React.createElement("div", {
-        className: "cell auto icon-button"
-      }, this.state.more && React.createElement("i", {
-        className: "fas fa-chevron-right fa-2x",
-        onClick: this.nextPage
-      })));
-    } //If there are no results (ie search was a failure)
-
+    /*let arrows;
+    if(results.length > 0) {
+      arrows =
+        <div className='grid-x grid-padding-x page-arrows'>
+          <div className='cell small-6 icon-button'>
+            <i className='fas fa-chevron-left fa-2x' onClick={this.prevPage}></i>
+          </div>
+          <div className='cell auto icon-button'>
+            {this.state.more &&
+              <i className='fas fa-chevron-right fa-2x' onClick={this.nextPage}></i>
+            }
+          </div>
+        </div>
+    }*/
+    //If there are no results (ie search was a failure)
 
     if (this.state.term != '' && this.state.failure) {
       results = React.createElement("div", {
@@ -631,7 +764,11 @@ class PlaylistRandomizer extends React.Component {
     }, "\xD7")), searchbar, React.createElement("div", {
       id: "results-content",
       className: "content"
-    }, results, arrows)), this.state.options && options);
+    }, results)), React.createElement(ReactTransitionGroup.CSSTransition, {
+      in: this.state.options,
+      classNames: "options-transition",
+      timeout: 500
+    }, options));
     return React.createElement("div", null, React.createElement("div", null, React.createElement(ReactTransitionGroup.CSSTransition, {
       in: this.state.search,
       classNames: "search-transition",
