@@ -122,6 +122,7 @@ class PlaylistRandomizer extends React.Component {
       results: [],
       playlists: [],
       selected: [],
+      individualVideos: [],
       randomizer: [],
       page: [],
       search: false,
@@ -144,12 +145,17 @@ class PlaylistRandomizer extends React.Component {
     this.getYoutubeResults = this.getYoutubeResults.bind(this);
     this.searchButton = this.searchButton.bind(this);
     this.nextPage = this.nextPage.bind(this);
+    this.channelExpand = this.channelExpand.bind(this);
+    this.playlistExpand = this.playlistExpand.bind(this);
 
     //Playlist Construction
     this.getPlaylists = this.getPlaylists.bind(this);
     this.addPlaylist = this.addPlaylist.bind(this);
     this.removePlaylist = this.removePlaylist.bind(this);
+    this.addIndividualVideo = this.addIndividualVideo.bind(this);
+    this.removeIndividualVideo = this.removeIndividualVideo.bind(this);
     this.clearPlaylist = this.clearPlaylist.bind(this);
+    this.getPlaylistVideos = this.getPlaylistVideos.bind(this);
 
     //Video Control
     this.shufflePlaylist = this.shufflePlaylist.bind(this);
@@ -253,9 +259,9 @@ class PlaylistRandomizer extends React.Component {
           });
         }
 
-        //Creates the idKey as ChannelId, PlaylistId, or VideoId
+        //Creates the idKey as channelId, playlistId, or videoId
         //This is used to access the youtube results json
-        const idKey =  type.charAt(0).toUpperCase() + type.slice(1) + 'Id';
+        const idKey =  type + 'Id';
 
         results.items.forEach((element) => {
           //Check if thumbnails are present and what size they should be
@@ -281,7 +287,7 @@ class PlaylistRandomizer extends React.Component {
             if (typeof element.snippet[idKey] !== "undefined") {
               id = element.snippet[idKey];
             } else {
-              id = 'Id Not Found';
+              id = null;
             }
           }
 
@@ -309,6 +315,7 @@ class PlaylistRandomizer extends React.Component {
           this.setState((prevState) => ({
             failure: false,
             results: prevState.results.concat({
+              type: type,
               id: id,
               title: title,
               desc: description,
@@ -365,30 +372,92 @@ class PlaylistRandomizer extends React.Component {
     }
   }
 
+  //From here we need to grab every playlist the user has
+  channelExpand(channelId) {
+    console.log('hi from channel Expand');
+  }
+
+  //Here we need to grab all videos associated with playlist
+  //For now just have it add the playlist to the thing
+  //We'll deal with showing videos later
+  playlistExpand(playlistId, title, owner='') {
+    this.setState((prevState) => ({
+      playlists: prevState.playlists.concat({
+        playlistId: playlistId,
+        title: title,
+        owner: owner,
+      }),
+    }));
+
+    //For now let's retrieve all videos from this playlist and add them in
+    this.getPlaylistVideos(playlistId, title);
+  }
+
+  //Recurse through get request through youtube via page tokens
+  //Send multiple get requests if the playlist is over 50 videos
+  //The list parameter will accumulate the playlist videos
+  //Once recursion is done, the list will be added to the randomizer
+  getPlaylistVideos(playlistId, title, list=[], token=null) {
+    return new Promise((resolve, reject) => {
+      $.get(baseURL + 'playlistItems', {
+        part: "snippet",
+        playlistId: playlistId,
+        maxResults: 50,
+        pageToken: token,
+        key: APIKey },
+        (videos) => {
+          //Push all videos into the list
+          videos.items.forEach((element) => {
+            list.push({
+              title: element.snippet.title,
+              videoId: element.snippet.resourceId.videoId,
+              id: element.id,
+              playlistId: playlistId,
+            });
+          });
+          //Recurse if there's a nextPageToken
+          //Propagate the promise recursively
+          if (videos.nextPageToken) {
+            this.getPlaylistVideos(playlistId, title, list, videos.nextPageToken)
+              .then(resolve)
+              .catch(reject);
+          } else {
+            //When done, if the list has more than one video
+            //Add the playlist to the randomizer
+            if (list.length >= 1) {
+              this.addPlaylist(list, {
+                playlistId: playlistId,
+                title: title,
+                owner: '',
+              });
+            }
+            resolve();
+          }
+        }
+      ).fail(() => {
+        reject('Could not retrieve youtube video/s');
+      });
+    });
+  }
+
+  //We'll need this when selecting a user
   //Recursively get playlists from the user object (can be multiple or single)
   //Note: Might not need to be recursive anymore
-  //this.getPlaylists(channels.items, [], null);
-  getPlaylists(users, list, token) {
+  getPlaylists(channelId, list=[], token=null) {
     return new Promise((resolve, reject) => {
       //Detect if we're dealing with a channel response or a display name response
       //since the objects returned from youtube are slightly different
-      let requestId;
-      if (typeof users === 'object') {
-        requestId = users[0].id.channelId;
-      } else {
-        requestId = users;
-      }
 
       $.get(baseURL + 'playlists', {
         part: "snippet",
-        channelId: requestId,
+        channelId: channelId,
         maxResults: 50,
         pageToken: token,
         key: APIKey },
         (results) => {
           results.items.forEach((element) => {
             list.push({
-              id: element.id,
+              playlistId: element.id,
               title: element.snippet.title,
               owner: '',
             });
@@ -396,7 +465,7 @@ class PlaylistRandomizer extends React.Component {
 
           //Recurse if there are more results
           if (results.nextPageToken) {
-            this.getPlaylists(users, list, results.nextPageToken)
+            this.getPlaylists(channelId, list, results.nextPageToken)
               .then(resolve)
               .catch(reject);
           } else {
@@ -420,13 +489,12 @@ class PlaylistRandomizer extends React.Component {
     });
   }
 
-  //Children Playlists of this object will return their playlist of videos
-  //and their id when their 'add' button is clicked
   //This function will check to see if the playlist is currently in the
-  //randomizer list or not then decided whether or not to add videos
-  //When new values are added to the randomizer randomize the order
+  //randomizer list then decide whether or not to add videos
+  //When new values are added to the randomizer, randomize the order
   addPlaylist(videos, playlist) {
-    if (!(this.state.selected.filter(element => (element.id == playlist.id))).length) {
+    if (!(this.state.selected.filter(
+      element => (element.playlitId == playlist.playlistId))).length) {
       this.setState((prevState) => ({
         selected: prevState.selected.concat(playlist),
         randomizer: prevState.randomizer.concat(videos),
@@ -437,19 +505,56 @@ class PlaylistRandomizer extends React.Component {
 
   //Remove playlist id from the selected list
   //and remove all videos in randomizer with playlistId
-  //Use the filter function to compare both arrays with
-  //the playlistId
+  //Use the filter function to compare both arrays
   removePlaylist(playlistId) {
-    if ((this.state.selected.filter(element => (element.id == playlistId))).length) {
+    if ((this.state.selected.filter(element => (element.playlistId == playlistId))).length) {
       this.setState((prevState) => ({
         selected: prevState.selected.filter((element) => {
-          return element.id != playlistId;
+          return element.playlistId != playlistId;
         }),
         randomizer: prevState.randomizer.filter((element) => {
           return element.playlistId != playlistId;
         }),
       }));
       this.shufflePlaylist();
+    }
+  }
+
+  //Inside the randomizer class
+  /*title: element.snippet.title,
+  videoId: element.snippet.resourceId.videoId,
+  id: element.id,
+  playlistId: this.props.id,*/
+
+  //Check to make sure video isn't on list, then add video id
+  addIndividualVideo(videoId, title) {
+    if (!(this.state.individualVideos.filter(element => (element.videoId == videoId))).length) {
+      this.setState((prevState) => ({
+        individualVideos: prevState.individualVideos.concat({
+          videoId: videoId,
+          title: title,
+        }),
+        randomizer: prevState.randomizer.concat({
+          videoId: videoId,
+          title: title,
+          id: null,
+          playlistId: null,
+        }),
+      }));
+    }
+  }
+
+  //Find videoId on list and remove from it
+  removeIndividualVideo(videoId) {
+    if ((this.state.individualVideos.filter(element => (element.videoId == videoId))).length) {
+      this.setState((prevState) => ({
+        individualVideos: prevState.individualVideos.filter((element) => {
+          return element.videoId != videoId;
+        }),
+        randomizer: prevState.randomizer.filter((element) => {
+          return (element.playlistId != null || element.videoId != videoId);
+        }),
+      }));
     }
   }
 
@@ -551,31 +656,40 @@ class PlaylistRandomizer extends React.Component {
     }
 
     //List of selected Playlists
-    let selected = null;
+    let selectedPlaylists;
     if (this.state.selected.length) {
       //Need to include a delete button here to remove from playlist
-      selected = this.state.selected.map((element) => {
+      selectedPlaylists = this.state.selected.map((element) => {
         return (
           <div className='grid-x' key={element.id}>
-              <div className='cell small-6'>{element.title}</div>
-              <div
-                className='playlist-button cell small-6'
-                onClick={() => {this.removePlaylist(element.id)}}
-              >
-                <i className='fas fa-minus-circle'></i>
-              </div>
+            <div
+              className='playlist-button cell small-2'
+              onClick={() => {this.removePlaylist(element.playlistId)}}
+            >
+              <i className='fas fa-minus-circle'></i>
+            </div>
+            <div className='cell auto'>{element.title}</div>
           </div>
         )
       });
     }
-
-    //If the video queue isn't empty, set up variables to pass to the Player
-    /*let title = null;
-    let videoId = null;
-    if (this.state.randomizer.length) {
-      title = this.state.randomizer[0].title;
-      videoId = this.state.randomizer[0].videoId;
-    }*/
+    //List of selected individual videos
+    let selectedVideos;
+    if (this.state.individualVideos.length) {
+      selectedVideos = this.state.individualVideos.map((element) => {
+        return (
+          <div className='grid-x' key={element.id}>
+              <div
+                className='playlist-button cell small-2'
+                onClick={() => {this.removeIndividualVideo(element.videoId)}}
+              >
+                <i className='fas fa-minus-circle'></i>
+              </div>
+              <div className='cell auto'>{element.title}</div>
+          </div>
+        )
+      });
+    }
 
     const searchbar =
       <div className='grid-x grid-padding-x searchbar'>
@@ -625,58 +739,64 @@ class PlaylistRandomizer extends React.Component {
         </div>
       </div>
 
-    //Render playlists
-    /*const results = this.state.playlists.map((element, i) => {
-      return (
-        <Playlist
-          addPlaylist = {this.addPlaylist}
-          removePlaylist = {this.removePlaylist}
-          owner = {element.owner}
-          title = {element.title}
-          id = {element.id}
-          key = {element.id}
-        />
-      );
-    });*/
-
-    /*id: element.id.ChannelId,
-    title: element.snippet.channelTitle,
-    desc: element.snippet.description,
-    thumb: element.snippet.thumbnails.default.url,*/
-
     //Searchbar results
+    //Next we need to expand this zone
+    //If only videos were searched, show + key with ability to add video straight to playlist
+    //If playlists were searched, allow playlist to be expanded or add straight to playlist via +
+    //If users were searched, allow expansion to playlists and then videos, all with +
     let results = this.state.results.map((element) => {
+      //Decide button functionality (for playlist, video, or channel)
+      let button;
+      if (element.type == 'channel') {
+        button =
+          <div className='cell small-2 large-1 icon-button'
+               onClick={() => {this.channelExpand(element.id)}}
+          >
+            <i className='fas fa-chevron-down fa-2x align-vertical'></i>
+          </div>
+      } else if (element.type == 'playlist') {
+        button =
+          <div className='cell small-2 large-1 icon-button'
+               onClick={() => {this.playlistExpand(element.id, element.title)}}
+          >
+            <i className='fas fa-chevron-up fa-2x align-vertical'></i>
+          </div>
+      } else {
+        button =
+          <div className='cell small-2 large-1 icon-button'
+               onClick={() => {this.addIndividualVideo(element.id, element.title)}}
+          >
+            <i className='fas fa-plus fa-2x align-vertical'></i>
+          </div>
+      }
+
       return (
         <div className='grid-x grid-padding-x content-item'>
-          <div className='cell small-4 large-2 large-offset-2'>
+          <div className='cell small-4 large-2 large-offset-2 center'>
             <img src={element.thumb} alt='User Icon'/>
           </div>
           <div className='cell small-6 large-5'>
             <div className='name'>{element.title}</div>
             <div className='desc'>{element.desc}</div>
           </div>
-          <div className='cell small-2 large-1 icon-button'>
-            <i className='fas fa-chevron-down fa-2x align-vertical'></i>
-          </div>
+          {button}
         </div>
       );
     });
 
-    //Left and right arrow for searching
-    /*let arrows;
-    if(results.length > 0) {
-      arrows =
-        <div className='grid-x grid-padding-x page-arrows'>
-          <div className='cell small-6 icon-button'>
-            <i className='fas fa-chevron-left fa-2x' onClick={this.prevPage}></i>
-          </div>
-          <div className='cell auto icon-button'>
-            {this.state.more &&
-              <i className='fas fa-chevron-right fa-2x' onClick={this.nextPage}></i>
-            }
-          </div>
-        </div>
-    }*/
+    //Render playlists
+    /*const playlists = this.state.playlists.map((element, i) => {
+      return (
+        <Playlist
+          addPlaylist = {this.addPlaylist}
+          removePlaylist = {this.removePlaylist}
+          owner = {element.owner}
+          title = {element.title}
+          id = {element.playlistId}
+          key = {element.id}
+        />
+      );
+    });*/
 
     //If there are no results (ie search was a failure)
     if (this.state.term != '' && this.state.failure) {
@@ -755,9 +875,10 @@ class PlaylistRandomizer extends React.Component {
             </div>
           </div>
           <div className="video-list-container cell small-6 large-3 large-order-1 small-collapse">
-            <div className="video-list center">
-              Current Playlists:
-              {selected}
+            <div className="video-list">
+              <div className="center">Selected Items:</div>
+              {selectedPlaylists}
+              {selectedVideos}
             </div>
           </div>
           <div className="video-list-container cell small-6 large-3 large-order-3 small-collapse">
