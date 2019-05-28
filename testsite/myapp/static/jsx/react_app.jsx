@@ -17,17 +17,10 @@
 
 //Future Ideas:
 // Place tutorial areas under Current and Next Up when they're empty
-// Add functionality to search-plus icon next to search bar
-//   -allow users to search for different properties
-//   -could search for only playlists without knowing user
-//   -could search for popular playlists etc.
-//   -(style) make icon space look like it's part of the input bar
 // Need to figure out how to deal with browsing and not hitting
 //   youtube's api limit when multiple people are using the app
-//   (making the user log in is nice, but not ideal for the user
-// Efficiency Note:
-//   Once done, go back and make youtube API request GETs more specific
-//   There's a lot of data that youtube gives us that we don't need
+//   (making the user login is nice, but not ideal for the user)
+//    ^^ Will probably be the fix sadly
 
 //Contents:
 //## Random Number Functions
@@ -759,7 +752,7 @@ class PlaylistRandomizer extends React.Component {
           <div className='cell small-2 large-1 icon-button'
                onClick={() => {this.playlistExpand(element.id, element.title)}}
           >
-            <i className='fas fa-chevron-up fa-2x align-vertical'></i>
+            <i className='fas fa-plus fa-2x align-vertical'></i>
           </div>
       } else {
         button =
