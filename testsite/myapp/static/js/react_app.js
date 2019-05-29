@@ -2,8 +2,9 @@
 //Author: Brandon Smith
 //File Description:
 //This is a youtube playlist randomizer app
-//Set up multiple playlists in youtube and this will
-//shuffle videos between them
+//Search for users, playlists, or videos
+//Then add in playlists or singular videos
+//The app will then randomize the videos into a large playlist
 //References:
 //Youtube API v3: https://developers.google.com/youtube/v3/
 //Durstenfeld shuffle:
@@ -13,27 +14,88 @@
 //  https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript/47593316#47593316
 //Swipe Detection: https://github.com/marcandre/detect_swipe
 //Future Ideas:
-// Place tutorial areas under Current and Next Up when they're empty
-// Need to figure out how to deal with browsing and not hitting
-//   youtube's api limit when multiple people are using the app
-//   (making the user login is nice, but not ideal for the user)
-//    ^^ Will probably be the fix sadly
-//Contents:
+// -Place tutorial areas under Current and Next Up when they're empty.
+// -Need to figure out how to deal with browsing and not hitting
+//    youtube's api limit when multiple people are using the app.
+//    Making the user login is nice, but not ideal for the user
+// -Give special screen animations to addPlaylist or addVideo so the user
+//    knows if they successfully added or didn't add an element.
+// -Add loading spiral or something to search bar area.
+// -Add loading spiral or something to channel expand.
+//Contents (ctrl-f or / to locate any of the following):
 //## Random Number Functions
 //##   MurmurHash3's Mixing Function
-//##   Sfc32
-//##   Durstenfeld Array shuffler
-//## Fix Div Height
-//## HTML String Decode
-//## React App
-//##   Playlist Randomizer Class
-//##   Player Class
-//##   Playlist Class
-//##   PlaylistVideo Class
-//## React Render Create DOM
+//##   Sfc32 Random Number Generator
+//##   Durstenfeld Array Shuffler
+//---------------------------------------------------------------------------------------
+//## Formatting Functions
+//##   Fix Div Height
+//##   Decode Html String
+//---------------------------------------------------------------------------------------
+//## Playlist Randomizer React Class
+//##   Object Constructor
+//##   Function Declarations
+//##   componentDidMount
+//##   componentDidUpdate
+//##   Menu Options
+//##     openSearch
+//##     closesearch
+//##     openOptions
+//##     closeOptions
+//##     searchButton
+//##     playlistExpand
+//##     channelExpand
+//##     closeChannel
+//##   Keyboard Input
+//##     handleChange
+//##     handleKeyDown
+//##   Search Functions
+//##     searchYoutube
+//##     getYoutubeResults
+//##     nextPage
+//##     nextChannelPage
+//##   Playlist/Video Construction
+//##     getPlaylists
+//##     getPlaylistvideos
+//##     addPlaylist
+//##     removePlaylist
+//##     addIndividualVideo
+//##     removeIndividualVideo
+//##     clearPlaylist
+//##   Video Player Control
+//##     shufflePlaylist
+//##     nextVideo
+//##     prevVideo
+//##     changeVideo
+//##   Render
+//##     Randomizer
+//##     Selected Playlists and Videos
+//##     Search Overlay
+//##     Channel Overlay
+//##     Render Return
+//---------------------------------------------------------------------------------------
+//## Player React Class
+//##   Constructor
+//##   Function Declarations
+//##   onYouTubeIframeAPIReady
+//##   shouldComponentUpdate
+//##   Functions
+//##     onPlayerError
+//##     onPlayerstateChange
+//##     init
+//##   Render
+//##     Render Return
+//---------------------------------------------------------------------------------------
+//## React DOM Render
+//---------------------------------------------------------------------------------------
 //Youtube Api and base Url
+//Note: consider obfuscating the key
 const APIKey = "AIzaSyCHDk3UdiZ5MEXlFKRwCdhzDGDPi2dD4x0";
-const baseURL = "https://www.googleapis.com/youtube/v3/"; //MurmurHash3's Mixing Function. Turns a string into a 32-bit hash
+const baseURL = "https://www.googleapis.com/youtube/v3/"; //***************************************************************************************
+// Random Number Functions
+//***************************************************************************************
+//MurmurHash3's Mixing Function
+//Turns a string into a 32-bit hash
 
 function xmur3(str) {
   for (var i = 0, h = 1779033703 ^ str.length; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 3432918353), h = h << 13 | h >>> 19;
@@ -43,7 +105,8 @@ function xmur3(str) {
     h = Math.imul(h ^ h >>> 13, 3266489909);
     return (h ^= h >>> 16) >>> 0;
   };
-} //Sfc32 random number generator. Provide it with 4 seeds.
+} //Sfc32 Random Number Generator
+//Provide it with 4 seeds.
 
 
 function sfc32(a, b, c, d) {
@@ -61,7 +124,7 @@ function sfc32(a, b, c, d) {
     c = c + t | 0;
     return (t >>> 0) / 4294967296;
   };
-} //Create random number generator
+} //Create RNG
 
 
 const seed = xmur3(new Date().toLocaleString());
@@ -74,7 +137,10 @@ function shuffleArray(array) {
   }
 
   return array;
-} //Fix Div Height
+} //***************************************************************************************
+// Formatting Functions
+//***************************************************************************************
+//Fix Div Height
 //Small jquery function to push height of divs to the bottom of the screen
 
 
@@ -87,20 +153,22 @@ function fixDivHeight(ref) {
       $(ref).css('height', new_height);
     }
   });
-} //Takes string s and removes any html coding from it
+} //Decode Html String
+//Takes string s and removes any html coding from it
 
 
 function decodeHtml(s) {
   var txt = document.createElement("textarea");
   txt.innerHTML = s;
   return txt.value;
-} //React App
-//React Playlist Randomizer
+} //***************************************************************************************
+// Playlist Randomizer React Class
+//***************************************************************************************
 //App for generating playlists
 
 
 class PlaylistRandomizer extends React.Component {
-  //Object constructor
+  //Object Constructor
   constructor(props) {
     super(props);
     this.pageSize = 10;
@@ -108,43 +176,87 @@ class PlaylistRandomizer extends React.Component {
       term: '',
       results: [],
       playlists: [],
+      channel: {},
+      channelSelected: false,
+      channelSelectedId: null,
       selected: [],
       individualVideos: [],
       randomizer: [],
       page: [],
+      channelPage: [],
       search: false,
       options: false,
       failure: false
-    }; //Menu Options
+    }; //Function Declarations
+    //--Menu Options--
 
     this.openSearch = this.openSearch.bind(this);
     this.closeSearch = this.closeSearch.bind(this);
     this.openOptions = this.openOptions.bind(this);
-    this.closeOptions = this.closeOptions.bind(this); //Keyboard Input
+    this.closeOptions = this.closeOptions.bind(this);
+    this.searchButton = this.searchButton.bind(this);
+    this.playlistExpand = this.playlistExpand.bind(this);
+    this.channelExpand = this.channelExpand.bind(this);
+    this.closeChannel = this.closeChannel.bind(this); //--Keyboard Input--
 
     this.handleChange = this.handleChange.bind(this);
-    this.handleKeyDown = this.handleKeyDown.bind(this); //Search Functions
+    this.handleKeyDown = this.handleKeyDown.bind(this); //--Search Functions--
 
     this.searchYoutube = this.searchYoutube.bind(this);
     this.getYoutubeResults = this.getYoutubeResults.bind(this);
-    this.searchButton = this.searchButton.bind(this);
     this.nextPage = this.nextPage.bind(this);
-    this.channelExpand = this.channelExpand.bind(this);
-    this.playlistExpand = this.playlistExpand.bind(this); //Playlist Construction
+    this.nextChannelPage = this.nextChannelPage.bind(this); //--Playlist/Video Construction--
 
     this.getPlaylists = this.getPlaylists.bind(this);
+    this.getPlaylistVideos = this.getPlaylistVideos.bind(this);
     this.addPlaylist = this.addPlaylist.bind(this);
     this.removePlaylist = this.removePlaylist.bind(this);
     this.addIndividualVideo = this.addIndividualVideo.bind(this);
     this.removeIndividualVideo = this.removeIndividualVideo.bind(this);
-    this.clearPlaylist = this.clearPlaylist.bind(this);
-    this.getPlaylistVideos = this.getPlaylistVideos.bind(this); //Video Control
+    this.clearPlaylist = this.clearPlaylist.bind(this); //currently unused
+    //--Video Player Control--
 
     this.shufflePlaylist = this.shufflePlaylist.bind(this);
     this.nextVideo = this.nextVideo.bind(this);
     this.prevVideo = this.prevVideo.bind(this);
     this.changeVideo = this.changeVideo.bind(this);
-  } //Open and close search overlay
+  } //componentDidMount
+  //Upon first render we need to calculate some css for elements
+  //Also set up event watcher for when the window resizes
+
+
+  componentDidMount() {
+    fixDivHeight('.video-list-container'); //Set Watcher
+
+    $(window).resize(() => {
+      fixDivHeight('.video-list-container');
+    }); //Swipe Detection
+    //On swipe right or left, switch to another video
+
+    if ($.detectSwipe.enabled) {
+      $(window).on('swipeleft', () => {
+        this.nextVideo();
+      });
+      $(window).on('swiperight', () => {
+        this.prevVideo();
+      });
+    } //Scroll watcher to get the next page for results
+
+
+    $('#results-content').on('scroll', () => {
+      if ($('#results-content').scrollTop() + $('#results-content').innerHeight() >= $('#results-content')[0].scrollHeight) {
+        this.nextPage();
+      }
+    });
+    $('#channel-content').on('scroll', () => {
+      if ($('#channel-content').scrollTop() + $('#channel-content').innerHeight() >= $('#channel-content')[0].scrollHeight) {
+        this.nextChannelPage();
+      }
+    });
+  } //=====================================================================================
+  // Menu Options
+  //=====================================================================================
+  //Open and close search/options overlays
 
 
   openSearch() {
@@ -173,7 +285,88 @@ class PlaylistRandomizer extends React.Component {
     this.setState({
       options: false
     });
-  } //Handles changes in the search bar
+  } //searchButton
+  //Search youtube and store results in this.state.results
+
+
+  searchButton() {
+    //Reset results and page objects
+    this.setState({
+      results: [],
+      page: []
+    }); //Search type is grabbed from the options checklist
+    //If nothing is checked, default to channel option
+
+    let type;
+
+    if ($("input[name='search-options']:checked").length > 0) {
+      type = $("input[name='search-options']:checked").val();
+    } else {
+      type = 'channel';
+    } //Search youtube for result
+
+
+    this.getYoutubeResults(this.state.term, type);
+  } //playlistExpand
+  //When a playlist is clicked on, verify it's not already in the randomizer,
+  //then pull all the videos from the playlist and add them to the randomizer
+
+
+  playlistExpand(playlistId, title, owner = '') {
+    if (!this.state.selected.filter(element => {
+      element.playlistId == playlistId;
+    }).length) {
+      //Retrieve all videos from this playlist and add them in
+      this.getPlaylistVideos(playlistId, title).then(results => {
+        this.addPlaylist(results, {
+          playlistId: playlistId,
+          title: title,
+          owner: owner
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+    }
+  } //channelExpand
+  //When a channel is clicked on, verify that it hasn't already been clicked on
+  //Then get the playlists associated with that channel
+
+
+  channelExpand(channelId, channelTitle, channelThumb, channelDesc) {
+    if (this.state.channelSelectedId != channelId) {
+      this.getPlaylists(channelId).then(results => {
+        this.setState({
+          channel: {
+            playlists: results,
+            channelId: channelId,
+            title: channelTitle,
+            thumb: channelThumb,
+            desc: channelDesc
+          },
+          channelSelected: true,
+          channelSelectedId: channelId
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+    } else {
+      this.setState({
+        channelSelected: true
+      });
+    }
+  } //closeChannel
+  //Toggle the channel submenu off
+
+
+  closeChannel() {
+    this.setState({
+      channelSelected: false
+    });
+  } //=====================================================================================
+  // Keyboard Input
+  //=====================================================================================
+  //handleChange
+  //Handles changes in the search bar
   //And reset failure state if needed
 
 
@@ -182,14 +375,18 @@ class PlaylistRandomizer extends React.Component {
       term: event.target.value,
       failure: false
     });
-  } //Handle hitting enter key while in input box
+  } //handleKeyDown
+  //Handle hitting enter key while in input box
 
 
   handleKeyDown(event) {
     if (event.key === 'Enter') {
       this.searchButton();
     }
-  } //Search Youtube
+  } //=====================================================================================
+  // Search Functions
+  //=====================================================================================
+  //searchYoutube
   //search => text string to search for
   //type => type to search for: playlist, video, or channel
   //limit => amount of results desired (max 50)
@@ -225,14 +422,15 @@ class PlaylistRandomizer extends React.Component {
         }
       });
     });
-  } //Search youtube, then store results in this.state.results
+  } //getYoutubeResults
+  //Search youtube, then store results in this.state.results
   //search => text string to search for
   //type => type to search for: playlist, video, or channel
   //limit => amount of results desired (max 50)
   //token => nextPageToken if there is one
 
 
-  getYoutubeResults(search, type = 'channel', limit = this.pageSize, token = null) {
+  getYoutubeResults(search, type = 'channel', token = null, limit = this.pageSize) {
     this.searchYoutube(search, type, limit, token).then(results => {
       //If there are more results to be had, set up page object
       if (results.nextPageToken) {
@@ -324,56 +522,101 @@ class PlaylistRandomizer extends React.Component {
         console.log(error);
       }
     });
-  } //Search youtube and store results in this.state.results
-
-
-  searchButton() {
-    //Reset results and page objects
-    this.setState({
-      results: [],
-      page: []
-    }); //Search type is grabbed from the options checklist
-    //If nothing is checked, default to channel option
-
-    let type;
-
-    if ($("input[name='search-options']:checked").length > 0) {
-      type = $("input[name='search-options']:checked").val();
-    } else {
-      type = 'channel';
-    } //Search youtube for result
-
-
-    this.getYoutubeResults(this.state.term, type);
-  } //Page navigation for search menu results
+  } //nextPage
+  //Page navigation for search menu results
   //If the page object exists, call another youtube search
 
 
   nextPage() {
     if (this.state.page.length) {
-      this.getYoutubeResults(this.state.page[0].query, this.state.page[0].type, this.pageSize, this.state.page[0].token);
+      this.getYoutubeResults(this.state.page[0].query, this.state.page[0].type, this.state.page[0].token);
     }
-  } //From here we need to grab every playlist the user has
+  } //nextChannelPage
+  //Gets the next page of results for the channel
 
 
-  channelExpand(channelId) {
-    console.log('hi from channel Expand');
-  } //Here we need to grab all videos associated with playlist
-  //For now just have it add the playlist to the thing
-  //We'll deal with showing videos later
+  nextChannelPage() {
+    if (this.state.channelPage.length) {
+      this.getPlaylists(this.state.channelPage[0].channelId, this.state.channelPage[0].token).then(results => {
+        this.setState(prevState => ({
+          channel: {
+            playlists: prevState.channel.playlists.concat(results),
+            channelId: prevState.channel.channelId,
+            title: prevState.channel.title,
+            thumb: prevState.channel.thumb,
+            desc: prevState.channel.desc
+          }
+        }));
+      }).catch(error => {
+        console.log(error);
+      });
+    }
+  } //=====================================================================================
+  // Playlist/Video Construction
+  //=====================================================================================
+  //getPlaylists
+  //When selecting a user, grab all of the playlists.
+  //If there are a bunch, set up the channel page object so
+  //if the user scrolls down we can grab more
 
 
-  playlistExpand(playlistId, title, owner = '') {
-    this.setState(prevState => ({
-      playlists: prevState.playlists.concat({
-        playlistId: playlistId,
-        title: title,
-        owner: owner
-      })
-    })); //For now let's retrieve all videos from this playlist and add them in
+  getPlaylists(channelId, token = null, list = [], pageSize = this.pageSize) {
+    return new Promise((resolve, reject) => {
+      $.get(baseURL + 'playlists', {
+        part: "snippet",
+        channelId: channelId,
+        maxResults: pageSize,
+        pageToken: token,
+        key: APIKey
+      }, results => {
+        results.items.forEach(element => {
+          //Determine thumbnail size
+          let thumbnail;
 
-    this.getPlaylistVideos(playlistId, title);
-  } //Recurse through get request through youtube via page tokens
+          if (typeof element.snippet !== "undefined" && typeof element.snippet.thumbnails !== "undefined") {
+            //Check for display size
+            if (screen.width > 1024) {
+              thumbnail = element.snippet.thumbnails.medium.url;
+            } else {
+              thumbnail = element.snippet.thumbnails.default.url;
+            }
+          } else {
+            thumbnail = '';
+          }
+
+          list.push({
+            playlistId: element.id,
+            title: element.snippet.title,
+            thumb: thumbnail
+          });
+        }); //Recurse if there are more results
+
+        if (results.nextPageToken) {
+          this.setState({
+            channelPage: [{
+              channelId: channelId,
+              token: results.nextPageToken
+            }]
+          });
+        } else {
+          this.setState({
+            channelPage: []
+          });
+        } //When done, if the list has more than one playlist
+        //put the list into the playlists variable
+
+
+        if (list.length >= 1) {
+          resolve(list);
+        } else {
+          reject([]);
+        }
+      }).fail(() => {
+        reject('Could not get playlists for youtube user');
+      });
+    });
+  } //getPlaylistVideos
+  //Recurse through get request to youtube via page tokens
   //Send multiple get requests if the playlist is over 50 videos
   //The list parameter will accumulate the playlist videos
   //Once recursion is done, the list will be added to the randomizer
@@ -400,76 +643,31 @@ class PlaylistRandomizer extends React.Component {
         //Propagate the promise recursively
 
         if (videos.nextPageToken) {
-          this.getPlaylistVideos(playlistId, title, list, videos.nextPageToken).then(resolve).catch(reject);
+          this.getPlaylistVideos(playlistId, title, list, videos.nextPageToken).then(results => {
+            resolve(results);
+          }).catch(error => {
+            reject(error);
+          });
         } else {
-          //When done, if the list has more than one video
-          //Add the playlist to the randomizer
+          //When done, if the list has more than one video return it
           if (list.length >= 1) {
-            this.addPlaylist(list, {
-              playlistId: playlistId,
-              title: title,
-              owner: ''
-            });
+            resolve(list);
+          } else {
+            reject('Playlist empty');
           }
-
-          resolve();
         }
       }).fail(() => {
         reject('Could not retrieve youtube video/s');
       });
     });
-  } //We'll need this when selecting a user
-  //Recursively get playlists from the user object (can be multiple or single)
-  //Note: Might not need to be recursive anymore
-
-
-  getPlaylists(channelId, list = [], token = null) {
-    return new Promise((resolve, reject) => {
-      //Detect if we're dealing with a channel response or a display name response
-      //since the objects returned from youtube are slightly different
-      $.get(baseURL + 'playlists', {
-        part: "snippet",
-        channelId: channelId,
-        maxResults: 50,
-        pageToken: token,
-        key: APIKey
-      }, results => {
-        results.items.forEach(element => {
-          list.push({
-            playlistId: element.id,
-            title: element.snippet.title,
-            owner: ''
-          });
-        }); //Recurse if there are more results
-
-        if (results.nextPageToken) {
-          this.getPlaylists(channelId, list, results.nextPageToken).then(resolve).catch(reject);
-        } else {
-          //When done, if the list has more than one playlist
-          //put the list into the playlists variable
-          if (list.length >= 1) {
-            this.setState({
-              playlists: list
-            });
-          } else {
-            this.setState({
-              playlists: []
-            });
-          }
-
-          resolve();
-        }
-      }).fail(() => {
-        reject('Could not get playlists for youtube user');
-      });
-    });
-  } //This function will check to see if the playlist is currently in the
+  } //addPlaylist
+  //This function will check to see if the playlist is currently in the
   //randomizer list then decide whether or not to add videos
   //When new values are added to the randomizer, randomize the order
 
 
   addPlaylist(videos, playlist) {
-    if (!this.state.selected.filter(element => element.playlitId == playlist.playlistId).length) {
+    if (!this.state.selected.filter(element => element.playlistId == playlist.playlistId).length) {
       this.setState(prevState => ({
         selected: prevState.selected.concat(playlist),
         randomizer: prevState.randomizer.concat(videos)
@@ -478,7 +676,8 @@ class PlaylistRandomizer extends React.Component {
     }
 
     ;
-  } //Remove playlist id from the selected list
+  } //removePlaylist
+  //Remove playlist id from the selected list
   //and remove all videos in randomizer with playlistId
   //Use the filter function to compare both arrays
 
@@ -495,12 +694,7 @@ class PlaylistRandomizer extends React.Component {
       }));
       this.shufflePlaylist();
     }
-  } //Inside the randomizer class
-
-  /*title: element.snippet.title,
-  videoId: element.snippet.resourceId.videoId,
-  id: element.id,
-  playlistId: this.props.id,*/
+  } //addIndividualVideo
   //Check to make sure video isn't on list, then add video id
 
 
@@ -519,7 +713,8 @@ class PlaylistRandomizer extends React.Component {
         })
       }));
     }
-  } //Find videoId on list and remove from it
+  } //removeIndividualVideo
+  //Find videoId on list and remove from it
 
 
   removeIndividualVideo(videoId) {
@@ -533,7 +728,8 @@ class PlaylistRandomizer extends React.Component {
         })
       }));
     }
-  } //Remove all playlists
+  } //clearPlaylist
+  //Remove all playlists
 
 
   clearPlaylist() {
@@ -541,14 +737,19 @@ class PlaylistRandomizer extends React.Component {
       selected: [],
       randomizer: []
     });
-  } //Randomizes this.state.randomizer using a Durstenfeld shuffle
+  } //=====================================================================================
+  // Video Player Control
+  //=====================================================================================
+  //shufflePlaylist
+  //Randomizes this.state.randomizer using a Durstenfeld shuffle
 
 
   shufflePlaylist() {
     this.setState(prevState => ({
       randomizer: shuffleArray(prevState.randomizer)
     }));
-  } //Puts the first element of the randomizer onto the back of the randomizer
+  } //nextVideo
+  //Puts the first element of the randomizer onto the back of the randomizer
 
 
   nextVideo() {
@@ -557,7 +758,8 @@ class PlaylistRandomizer extends React.Component {
         randomizer: prevState.randomizer.concat(prevState.randomizer.shift())
       }));
     }
-  } //Puts the last element of the randomizer onto the front of the randomizer
+  } //prevVideo
+  //Puts the last element of the randomizer onto the front of the randomizer
   //The odd array functionality was used instead of unshift due to the need
   //to return a new array
 
@@ -568,7 +770,8 @@ class PlaylistRandomizer extends React.Component {
         randomizer: [prevState.randomizer.pop()].concat(prevState.randomizer)
       }));
     }
-  } //Change randomizer array to have selected index be the 0th element
+  } //changeVideo
+  //Change randomizer array to have selected index be the 0th element
 
 
   changeVideo(i) {
@@ -578,38 +781,15 @@ class PlaylistRandomizer extends React.Component {
         randomizer: prevState.randomizer.slice(i, prevState.randomizer.length).concat(prevState.randomizer.slice(0, i))
       }));
     }
-  } //Upon first render we need to calculate some css for elements
-  //Also set up event watcher for when the window resizes
+  } //=====================================================================================
+  // Render
+  //=====================================================================================
 
-
-  componentDidMount() {
-    fixDivHeight('.video-list-container');
-    fixDivHeight('.search-wrapper .content'); //Set Watcher
-
-    $(window).resize(() => {
-      fixDivHeight('.video-list-container');
-      fixDivHeight('.search-wrapper .content');
-    }); //Swipe Detection
-    //On swipe right or left, switch to another video
-
-    if ($.detectSwipe.enabled) {
-      $(window).on('swipeleft', () => {
-        this.nextVideo();
-      });
-      $(window).on('swiperight', () => {
-        this.prevVideo();
-      });
-    } //Scroll watcher to get the next page for results
-
-
-    $('#results-content').on('scroll', () => {
-      if ($('#results-content').scrollTop() + $('#results-content').innerHeight() >= $('#results-content')[0].scrollHeight) {
-        this.nextPage();
-      }
-    });
-  }
 
   render() {
+    //-----------------------------------------------------------------------------------
+    // Randomizer
+    //-----------------------------------------------------------------------------------
     //Random List of Videos, can access id, title, videoId, and playlistId
     let randomizer = null;
 
@@ -623,7 +803,10 @@ class PlaylistRandomizer extends React.Component {
           }
         }, element.title);
       });
-    } //List of selected Playlists
+    } //-----------------------------------------------------------------------------------
+    // Selected Playlists and Videos
+    //-----------------------------------------------------------------------------------
+    //List of selected Playlists
 
 
     let selectedPlaylists;
@@ -666,7 +849,10 @@ class PlaylistRandomizer extends React.Component {
           className: "cell auto"
         }, element.title));
       });
-    }
+    } //-----------------------------------------------------------------------------------
+    // Search Overlay
+    //-----------------------------------------------------------------------------------
+
 
     const searchbar = React.createElement("div", {
       className: "grid-x grid-padding-x searchbar"
@@ -721,7 +907,7 @@ class PlaylistRandomizer extends React.Component {
         button = React.createElement("div", {
           className: "cell small-2 large-1 icon-button",
           onClick: () => {
-            this.channelExpand(element.id);
+            this.channelExpand(element.id, element.title, element.thumb, element.desc);
           }
         }, React.createElement("i", {
           className: "fas fa-chevron-down fa-2x align-vertical"
@@ -760,28 +946,13 @@ class PlaylistRandomizer extends React.Component {
       }, element.title), React.createElement("div", {
         className: "desc"
       }, element.desc)), button);
-    }); //Render playlists
-
-    /*const playlists = this.state.playlists.map((element, i) => {
-      return (
-        <Playlist
-          addPlaylist = {this.addPlaylist}
-          removePlaylist = {this.removePlaylist}
-          owner = {element.owner}
-          title = {element.title}
-          id = {element.playlistId}
-          key = {element.id}
-        />
-      );
-    });*/
-    //If there are no results (ie search was a failure)
+    }); //If there are no results (ie search was a failure)
 
     if (this.state.term != '' && this.state.failure) {
       results = React.createElement("div", {
         className: "center"
       }, "No results for ", this.state.term);
     } //Search box overlay for youtube playlist/user searching
-    //<div id='search-overlay' className='search-wrapper'>
 
 
     const search = React.createElement("div", {
@@ -798,17 +969,78 @@ class PlaylistRandomizer extends React.Component {
       onClick: this.closeSearch
     }, "\xD7")), searchbar, React.createElement("div", {
       id: "results-content",
-      className: "content"
+      className: "search-content"
     }, results)), React.createElement(ReactTransitionGroup.CSSTransition, {
       in: this.state.options,
       classNames: "options-transition",
-      timeout: 500
-    }, options));
+      timeout: 250
+    }, options)); //-----------------------------------------------------------------------------------
+    // Channel Overlay
+    //-----------------------------------------------------------------------------------
+    //Make sure channel info/playlists exist
+
+    let channelInfo;
+    let channelPlaylists;
+
+    if (this.state.channelSelected && this.state.channel.playlists !== "undefined") {
+      channelInfo = React.createElement("div", {
+        id: "channel-header",
+        className: "grid-x grid-padding-x header"
+      }, React.createElement("div", {
+        className: "cell small-4 large-2 large-offset-2 center"
+      }, React.createElement("img", {
+        src: this.state.channel.thumb,
+        alt: "User Icon"
+      })), React.createElement("div", {
+        className: "cell small-6 large-5"
+      }, React.createElement("div", {
+        className: "title center align-vertical"
+      }, React.createElement("div", null, this.state.channel.title), React.createElement("div", null, "Playlists:"))), React.createElement("div", {
+        className: "close cell small-2 icon-button",
+        onClick: this.closeChannel
+      }, "\xD7"));
+      channelPlaylists = this.state.channel.playlists.map(element => {
+        return React.createElement("div", {
+          className: "grid-x grid-padding-x content-item"
+        }, React.createElement("div", {
+          className: "cell small-4 large-2 large-offset-2 center"
+        }, React.createElement("img", {
+          src: element.thumb,
+          alt: "Image"
+        })), React.createElement("div", {
+          className: "cell small-6 large-5"
+        }, React.createElement("div", {
+          className: "name"
+        }, element.title)), React.createElement("div", {
+          className: "cell small-2 large-1 icon-button",
+          onClick: () => {
+            this.playlistExpand(element.playlistId, element.title);
+          }
+        }, React.createElement("i", {
+          className: "fas fa-plus fa-2x align-vertical"
+        })));
+      });
+    } //Channel overlay for when a user wants to search through channel's playlists
+
+
+    const channel = React.createElement("div", {
+      className: "search-wrapper"
+    }, channelInfo, React.createElement("hr", null), React.createElement("div", {
+      id: "channel-content",
+      className: "channel-content"
+    }, channelPlaylists)); //-----------------------------------------------------------------------------------
+    // Render Return
+    //-----------------------------------------------------------------------------------
+
     return React.createElement("div", null, React.createElement("div", null, React.createElement(ReactTransitionGroup.CSSTransition, {
       in: this.state.search,
       classNames: "search-transition",
       timeout: 500
-    }, search)), React.createElement("div", {
+    }, search), React.createElement(ReactTransitionGroup.CSSTransition, {
+      in: this.state.channelSelected,
+      classNames: "channel-transition",
+      timeout: 500
+    }, channel)), React.createElement("div", {
       className: "grid-x grid-padding-x"
     }, React.createElement("div", {
       className: "cell small-12 large-6 large-order-2 center small-collapse"
@@ -864,17 +1096,20 @@ class PlaylistRandomizer extends React.Component {
     }, randomizer))));
   }
 
-} //Player Class
+} //***************************************************************************************
+// Player React Class
+//***************************************************************************************
 
 
 class Player extends React.Component {
   constructor(props) {
-    super(props); //Bind functions
+    super(props); //Function Declarations
 
     this.onPlayerError = this.onPlayerError.bind(this);
     this.onPlayerStateChange = this.onPlayerStateChange.bind(this); //Init Player
 
-    this.init(); //This function gets exposed globally as it
+    this.init(); //onYouTubeIframeAPIReady
+    //This function gets exposed globally as
     //Youtube's API will call it when ready
 
     this.player;
@@ -897,7 +1132,11 @@ class Player extends React.Component {
 
   shouldComponentUpdate(nextProps) {
     return this.props.videoId != nextProps.videoId;
-  } //Error usually play on a broken video link
+  } //=====================================================================================
+  // Functions
+  //=====================================================================================
+  //onPlayerError
+  //Error usually play on a broken video link
   //Cycle to the next video if possible
 
 
@@ -927,7 +1166,8 @@ class Player extends React.Component {
         this.props.nextVideo();
         break;
     }
-  } //We can respond to player state changes here
+  } //onPlayerStateChange
+  //We can respond to player state changes here
   //If the video ends, request another one from the randomizer
 
 
@@ -941,7 +1181,8 @@ class Player extends React.Component {
         this.props.nextVideo();
         break;
     }
-  } //On creation, grab the youtube iframe helper script
+  } //init
+  //On creation, grab the youtube iframe helper script
 
 
   init() {
@@ -949,13 +1190,17 @@ class Player extends React.Component {
     tag.src = 'https://www.youtube.com/iframe_api';
     const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-  }
+  } //=====================================================================================
+  // Render
+  //=====================================================================================
+
 
   render() {
     //If the player exists and is ready with a video
     if (this.player && this.props.videoId) {
       this.player.loadVideoById(this.props.videoId);
-    }
+    } //Render Return
+
 
     return React.createElement("div", null, React.createElement("div", {
       className: "video-container"
@@ -969,189 +1214,9 @@ class Player extends React.Component {
     }, "Now playing: ", this.props.title)));
   }
 
-} //Playlist Class
-//Object that holds each playlist
-
-
-class Playlist extends React.Component {
-  //Object constructor
-  constructor(props) {
-    super(props);
-    this.state = {
-      active: false,
-      loaded: false,
-      added: false,
-      videos: []
-    }; //Bind functions
-
-    this.handleClick = this.handleClick.bind(this);
-    this.getPlaylistVideos = this.getPlaylistVideos.bind(this);
-    this.addPlaylist = this.addPlaylist.bind(this);
-    this.removePlaylist = this.removePlaylist.bind(this);
-  } //Recurse through get request through youtube via page tokens
-  //and create a promise to wait on
-  //Send multiple get requests if the playlist is over 50 videos
-  //The list parameter will accumulate the playlist videos
-  //Once recursion is done, the list will be saved to the
-  //videos state variable
-
-
-  getPlaylistVideos(list, token) {
-    return new Promise((resolve, reject) => {
-      $.get(baseURL + 'playlistItems', {
-        part: "snippet",
-        playlistId: this.props.id,
-        maxResults: 50,
-        pageToken: token,
-        key: APIKey
-      }, videos => {
-        //Push all videos into the list
-        videos.items.forEach(element => {
-          list.push({
-            title: element.snippet.title,
-            videoId: element.snippet.resourceId.videoId,
-            id: element.id,
-            playlistId: this.props.id
-          });
-        }); //Recurse if there's a nextPageToken
-        //Propagate the promise recursively
-
-        if (videos.nextPageToken) {
-          this.getPlaylistVideos(list, videos.nextPageToken).then(resolve).catch(reject);
-        } else {
-          //When done, if the list has more than one video
-          //put the list into the videos state variable
-          if (list.length >= 1) {
-            this.setState({
-              videos: list
-            });
-          } else {
-            this.setState({
-              videos: []
-            });
-          } //Once done, set video state to loaded and resolve the promise
-
-
-          this.setState({
-            loaded: true
-          });
-          resolve();
-        }
-      }).fail(() => {
-        reject('Could not retrieve youtube video/s');
-      });
-    });
-  } //When a Playlist Item is Clicked
-  //On first click, grab all videos associated with the playlist
-  //Don't bother with .then or .catch here.
-  //If nothing loads, nothing will be rendered
-
-
-  handleClick() {
-    //Toggle active state
-    this.setState({
-      active: !this.state.active
-    });
-
-    if (!this.state.loaded) {
-      this.getPlaylistVideos([], null);
-    }
-  } //When we want to add the playlist to the randomizer
-  //If the videos are not loaded load them and await on the promise
-  //Once the videos are loaded or if they are already loaded, pass
-  //the video list up to the parent class (randomizer)
-
-
-  addPlaylist() {
-    //We only need to store the video title and videoId
-    if (!this.state.loaded) {
-      this.getPlaylistVideos([], null).then(() => {
-        this.props.addPlaylist(this.state.videos, {
-          id: this.props.id,
-          title: this.props.title
-        });
-      }).catch(() => {
-        console.log('Unable to add playlist to randomizer. Get failed');
-      });
-    } else {
-      this.props.addPlaylist(this.state.videos, {
-        id: this.props.id,
-        title: this.props.title
-      });
-    }
-
-    this.setState({
-      added: true
-    });
-  } //This removes the playlist from the randomizer list
-
-
-  removePlaylist() {
-    this.props.removePlaylist(this.props.id);
-    this.setState({
-      added: false
-    });
-  }
-
-  render() {
-    const playlist = this.state.videos.map(element => {
-      return React.createElement(PlaylistVideo, {
-        title: element.title,
-        urlId: element.videoId,
-        id: element.id,
-        key: element.id
-      });
-    });
-    return React.createElement("div", {
-      className: "search-list-item grid-x"
-    }, React.createElement("div", {
-      className: "cell small-5"
-    }, this.props.owner), React.createElement("div", {
-      className: "cell small-5",
-      key: this.props.id
-    }, React.createElement("div", {
-      className: "search-button",
-      onClick: this.handleClick
-    }, this.props.title)), React.createElement("div", {
-      className: "cell auto"
-    }, React.createElement("div", {
-      className: "search-button",
-      onClick: this.addPlaylist
-    }, React.createElement("i", {
-      className: "fas fa-plus"
-    }))), React.createElement("div", null, this.state.active && playlist));
-  }
-
-} //PlaylistVideo Class
-//Object that holds each Video
-
-
-class PlaylistVideo extends React.Component {
-  //Object constructor
-  constructor(props) {
-    super(props); //Bind functions
-
-    this.handleClick = this.handleClick.bind(this);
-  } //When a Playlist Video is Clicked
-
-
-  handleClick() {//console.log(this.props.id);
-    //console.log(this.props.title);
-  }
-
-  render() {
-    //Get the youtube url of the video
-    const ref = "https://www.youtube.com/watch?v=" + this.props.urlId;
-    return React.createElement("div", {
-      key: this.props.id,
-      onClick: this.handleClick
-    }, React.createElement("a", {
-      href: ref,
-      target: "_blank"
-    }, this.props.title));
-  }
-
-} //React Render Create DOM
+} //***************************************************************************************
+// React DOM Render
+//***************************************************************************************
 
 
 ReactDOM.render(React.createElement(PlaylistRandomizer, null), document.getElementById('react-block'));

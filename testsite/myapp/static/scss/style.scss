@@ -26,8 +26,9 @@
 //## Loading Page
 //## React App
 //##   Playlist Title
-//##   Search Menu
+//##   Search/Channel Menu
 //##   Search Menu Transition
+//##   Channel Menu Transition
 //##   Video Container
 //##   Video List Container
 //##   Marquee
@@ -795,8 +796,7 @@ $angle: 45deg;
   margin-bottom: 20px;
 }
 
-
-//Search Menu
+//Search Menu (also used for channel menu)
 .search-wrapper {
   height: 0;
   width: 100%;
@@ -807,6 +807,8 @@ $angle: 45deg;
   background-color: rgb(0,0,0);
   background-color: rgba(0,0,0,0.9);
   overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
 
   .icon-button {
     color: white;
@@ -817,18 +819,20 @@ $angle: 45deg;
       color: var(--color-text-highlight);
       cursor: pointer;
     }
+  }
 
-    .align-vertical {
-      position: relative;
-      top: 50%;
-      transform: translateY(-50%);
-    }
+  .align-vertical {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   //This area is used to click out of the options menu
   .search-area {
     width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
   .header {
@@ -852,28 +856,46 @@ $angle: 45deg;
     }
   }
 
-  //Search Results
-  .content {
+  //Specific containers, these will have their height changed in the javascript
+  //Search Result Container
+  .search-content {
     overflow-y: auto;
-    padding-bottom: 5px;
+    margin-bottom: 5px;
     height: 100%;
+    flex: 1;
+  }
+  //Channel Result Container
+  .channel-content {
+    overflow-y: auto;
+    margin-bottom: 5px;
+    height: 100%;
+    flex: 1;
+  }
 
-    .content-item {
-      padding-top: 10px;
+  //Search/Channel Results
+  .content-item {
+    padding-top: 10px;
 
-      .name {
-        font-size: calc(15px + (30 - 15) * ((100vw - 320px) / (1080 - 320)));
-      }
-      .desc {
-        font-size: calc(12px + (20 - 12) * ((100vw - 320px) / (1080 - 320)));
-      }
-
-      img {
-        position: relative;
-        top: 50%;
-        transform: translateY(-50%);
-      }
+    .name {
+      font-size: calc(15px + (30 - 15) * ((100vw - 320px) / (1080 - 320)));
     }
+    .desc {
+      font-size: calc(12px + (20 - 12) * ((100vw - 320px) / (1080 - 320)));
+    }
+
+    img {
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  //Flex makes hr vanish so this is a fix for it
+  hr {
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 8px;
   }
 
   .options {
@@ -890,7 +912,7 @@ $angle: 45deg;
   }
 
   //Options Menu Transitions
-  $options-transition-speed: 500ms;
+  $options-transition-speed: 250ms;
   .options-transition-enter {
     visibility: hidden;
   }
@@ -933,6 +955,29 @@ $search-transition-speed: 500ms;
   transition: $search-transition-speed;
 }
 .search-transition-exit-done {
+  height: 0%;
+}
+
+//Channel Menu Transitions
+$channel-transition-speed: 500ms;
+.channel-transition-enter {
+  height: 0%;
+}
+.channel-transition-enter-active {
+  height: 100%;
+  transition: $search-transition-speed;
+}
+.channel-transition-enter-done {
+  height: 100%;
+}
+.channel-transition-exit {
+  height: 100%;
+}
+.channel-transition-exit-active {
+  height: 0%;
+  transition: $search-transition-speed;
+}
+.channel-transition-exit-done {
   height: 0%;
 }
 
