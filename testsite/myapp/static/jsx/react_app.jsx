@@ -865,7 +865,7 @@ class PlaylistRandomizer extends React.Component {
         return (
           <div className='grid-x' key={element.id}>
               <div
-                className='playlist-button cell small-2'
+                className='playlist-button cell small-2 center'
                 onClick={() => {this.removeIndividualVideo(element.videoId)}}
               >
                 <i className='fas fa-minus-circle'></i>
