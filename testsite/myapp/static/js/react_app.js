@@ -96,14 +96,7 @@
 //Youtube Api and base Url
 //Localhost key (swap out for production key in production server)
 const APIKey = "AIzaSyCHDk3UdiZ5MEXlFKRwCdhzDGDPi2dD4x0";
-const baseURL = "https://www.googleapis.com/youtube/v3/";
-/*function authenticate() {
-  return gapi.auth2.getAuthInstance()
-    .signIn({"https://www.googleapis.com/auth/youtube/readonly"})
-    .then(function() {console.log("Sign-in successful");},
-          function(err) {console.error("Error signing in", err);});
-}*/
-//***************************************************************************************
+const baseURL = "https://www.googleapis.com/youtube/v3/"; //***************************************************************************************
 // Random Number Functions
 //***************************************************************************************
 //MurmurHash3's Mixing Function
@@ -425,9 +418,7 @@ class PlaylistRandomizer extends React.Component {
         pageToken: token,
         key: APIKey
       }, results => {
-        console.log('getting oversearch results');
-        console.log(results); //If there are actually results resolve with them
-
+        //If there are actually results resolve with them
         if (results.items.length > 0) {
           resolve(results);
         } else {
