@@ -16,6 +16,10 @@
 //  https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript/47593316#47593316
 //Swipe Detection: https://github.com/marcandre/detect_swipe
 
+//Current Bugs:
+//  Adding individual videos and then selecting them in the Next Up section can lead to
+//  weird visual bugs or most likely video title corruption.
+
 //Future Ideas:
 // -Place tutorial areas under Current and Next Up when they're empty.
 // -Need to figure out how to deal with browsing and not hitting
@@ -96,9 +100,16 @@
 //---------------------------------------------------------------------------------------
 
 //Youtube Api and base Url
-//Note: consider obfuscating the key
+//Localhost key (swap out for production key in production server)
 const APIKey = "AIzaSyCHDk3UdiZ5MEXlFKRwCdhzDGDPi2dD4x0";
 const baseURL = "https://www.googleapis.com/youtube/v3/";
+
+/*function authenticate() {
+  return gapi.auth2.getAuthInstance()
+    .signIn({"https://www.googleapis.com/auth/youtube/readonly"})
+    .then(function() {console.log("Sign-in successful");},
+          function(err) {console.error("Error signing in", err);});
+}*/
 
 //***************************************************************************************
 // Random Number Functions
@@ -405,17 +416,30 @@ class PlaylistRandomizer extends React.Component {
   //limit => amount of results desired (max 50)
   //token => nextPageToken if there is one
   searchYoutube(search, type='channel', limit=this.pageSize, token=null) {
+    //Implement fields to cut down on quota costs. Only retrieve what we need
+    let fields;
+    if (type == 'channel') {
+      fields = 'nextPageToken,items(id/channelId,snippet(' +
+       'channelId,title,description, thumbnails(default/url,medium/url)))';
+    } else {
+      fields = 'nextPageToken,items(id/' + type + 'Id,snippet(' +
+        'title,description, thumbnails(default/url,medium/url)))';
+    }
+
     return new Promise((resolve, reject) => {
       $.get(baseURL + 'search', {
           part: "snippet",
           type: type,
           q: search,
+          fields: fields,
           maxResults: limit,
           pageToken: token,
           key: APIKey,
         },
         (results) => {
-          //If name is valid, resolve result's info
+          console.log('getting oversearch results');
+          console.log(results);
+          //If there are actually results resolve with them
           if (results.items.length > 0) {
             resolve(results);
           } else {
@@ -483,16 +507,15 @@ class PlaylistRandomizer extends React.Component {
           }
 
           //Check if id exists
+          //Sometimes a missing id.channelId can be found under snippet.channelId
           let id;
           if (typeof element.id !== "undefined" &&
               typeof element.id[idKey] !== "undefined") {
             id = element.id[idKey];
+          } else if (typeof element.snippet.channelId !== "undefined") {
+            id = element.snippet.channelId;
           } else {
-            if (typeof element.snippet[idKey] !== "undefined") {
-              id = element.snippet[idKey];
-            } else {
-              id = null;
-            }
+            id = null;
           }
 
           //Check if title exists
@@ -588,12 +611,16 @@ class PlaylistRandomizer extends React.Component {
   //If there are a bunch, set up the channel page object so
   //if the user scrolls down we can grab more
   getPlaylists(channelId, token=null, list=[], pageSize=this.pageSize) {
+    //Only get what we need
+    const fields = 'nextPageToken,items(id,snippet(' +
+      'title,thumbnails(default/url,medium/url)))';
     return new Promise((resolve, reject) => {
       $.get(baseURL + 'playlists', {
         part: "snippet",
         channelId: channelId,
         maxResults: pageSize,
         pageToken: token,
+        fields: fields,
         key: APIKey },
         (results) => {
           results.items.forEach((element) => {
@@ -652,11 +679,15 @@ class PlaylistRandomizer extends React.Component {
   //The list parameter will accumulate the playlist videos
   //Once recursion is done, the list will be added to the randomizer
   getPlaylistVideos(playlistId, title, list=[], token=null) {
+    //Only get what we need
+    const fields = 'nextPageToken,items(id,snippet(' +
+      'title,resourceId/videoId))';
     return new Promise((resolve, reject) => {
       $.get(baseURL + 'playlistItems', {
         part: "snippet",
         playlistId: playlistId,
         maxResults: 50,
+        fields: fields,
         pageToken: token,
         key: APIKey },
         (videos) => {

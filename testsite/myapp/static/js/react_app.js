@@ -13,6 +13,9 @@
 //Seeding Random:
 //  https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript/47593316#47593316
 //Swipe Detection: https://github.com/marcandre/detect_swipe
+//Current Bugs:
+//  Adding individual videos and then selecting them in the Next Up section can lead to
+//  weird visual bugs or most likely video title corruption.
 //Future Ideas:
 // -Place tutorial areas under Current and Next Up when they're empty.
 // -Need to figure out how to deal with browsing and not hitting
@@ -22,6 +25,8 @@
 //    knows if they successfully added or didn't add an element.
 // -Add loading spiral or something to search bar area.
 // -Add loading spiral or something to channel expand.
+// -Figure out way to hide either the Pithers bar (I'd rather not) or
+//   instead hide the webpage searchbar until a swipe down
 //Contents (ctrl-f or / to locate any of the following):
 //## Random Number Functions
 //##   MurmurHash3's Mixing Function
@@ -89,9 +94,16 @@
 //## React DOM Render
 //---------------------------------------------------------------------------------------
 //Youtube Api and base Url
-//Note: consider obfuscating the key
+//Localhost key (swap out for production key in production server)
 const APIKey = "AIzaSyCHDk3UdiZ5MEXlFKRwCdhzDGDPi2dD4x0";
-const baseURL = "https://www.googleapis.com/youtube/v3/"; //***************************************************************************************
+const baseURL = "https://www.googleapis.com/youtube/v3/";
+/*function authenticate() {
+  return gapi.auth2.getAuthInstance()
+    .signIn({"https://www.googleapis.com/auth/youtube/readonly"})
+    .then(function() {console.log("Sign-in successful");},
+          function(err) {console.error("Error signing in", err);});
+}*/
+//***************************************************************************************
 // Random Number Functions
 //***************************************************************************************
 //MurmurHash3's Mixing Function
@@ -394,16 +406,28 @@ class PlaylistRandomizer extends React.Component {
 
 
   searchYoutube(search, type = 'channel', limit = this.pageSize, token = null) {
+    //Implement fields to cut down on quota costs. Only retrieve what we need
+    let fields;
+
+    if (type == 'channel') {
+      fields = 'nextPageToken,items(id/channelId,snippet(' + 'channelId,title,description, thumbnails(default/url,medium/url)))';
+    } else {
+      fields = 'nextPageToken,items(id/' + type + 'Id,snippet(' + 'title,description, thumbnails(default/url,medium/url)))';
+    }
+
     return new Promise((resolve, reject) => {
       $.get(baseURL + 'search', {
         part: "snippet",
         type: type,
         q: search,
+        fields: fields,
         maxResults: limit,
         pageToken: token,
         key: APIKey
       }, results => {
-        //If name is valid, resolve result's info
+        console.log('getting oversearch results');
+        console.log(results); //If there are actually results resolve with them
+
         if (results.items.length > 0) {
           resolve(results);
         } else {
@@ -464,18 +488,17 @@ class PlaylistRandomizer extends React.Component {
         } else {
           thumbnail = '';
         } //Check if id exists
+        //Sometimes a missing id.channelId can be found under snippet.channelId
 
 
         let id;
 
         if (typeof element.id !== "undefined" && typeof element.id[idKey] !== "undefined") {
           id = element.id[idKey];
+        } else if (typeof element.snippet.channelId !== "undefined") {
+          id = element.snippet.channelId;
         } else {
-          if (typeof element.snippet[idKey] !== "undefined") {
-            id = element.snippet[idKey];
-          } else {
-            id = null;
-          }
+          id = null;
         } //Check if title exists
         //Also decode any html to display it correctly
 
@@ -561,12 +584,15 @@ class PlaylistRandomizer extends React.Component {
 
 
   getPlaylists(channelId, token = null, list = [], pageSize = this.pageSize) {
+    //Only get what we need
+    const fields = 'nextPageToken,items(id,snippet(' + 'title,thumbnails(default/url,medium/url)))';
     return new Promise((resolve, reject) => {
       $.get(baseURL + 'playlists', {
         part: "snippet",
         channelId: channelId,
         maxResults: pageSize,
         pageToken: token,
+        fields: fields,
         key: APIKey
       }, results => {
         results.items.forEach(element => {
@@ -623,11 +649,14 @@ class PlaylistRandomizer extends React.Component {
 
 
   getPlaylistVideos(playlistId, title, list = [], token = null) {
+    //Only get what we need
+    const fields = 'nextPageToken,items(id,snippet(' + 'title,resourceId/videoId))';
     return new Promise((resolve, reject) => {
       $.get(baseURL + 'playlistItems', {
         part: "snippet",
         playlistId: playlistId,
         maxResults: 50,
+        fields: fields,
         pageToken: token,
         key: APIKey
       }, videos => {
@@ -818,7 +847,7 @@ class PlaylistRandomizer extends React.Component {
           className: "grid-x",
           key: element.id
         }, React.createElement("div", {
-          className: "playlist-button cell small-2",
+          className: "playlist-button cell small-2 center",
           onClick: () => {
             this.removePlaylist(element.playlistId);
           }
@@ -839,7 +868,7 @@ class PlaylistRandomizer extends React.Component {
           className: "grid-x",
           key: element.id
         }, React.createElement("div", {
-          className: "playlist-button cell small-2",
+          className: "playlist-button cell small-2 center",
           onClick: () => {
             this.removeIndividualVideo(element.videoId);
           }
