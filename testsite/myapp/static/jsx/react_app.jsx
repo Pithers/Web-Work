@@ -1007,7 +1007,7 @@ class PlaylistRandomizer extends React.Component {
         <div className='search-area' onClick={this.closeOptions}>
           <div className='grid-x grid-padding-x header'>
             <div className='title cell small-8 small-offset-2'>
-              Search playlists or videos to start!
+              Search something to start!
             </div>
             <div className='close cell small-2 icon-button' onClick={this.closeSearch}>
               &times;
