@@ -14,8 +14,10 @@
 //  https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript/47593316#47593316
 //Swipe Detection: https://github.com/marcandre/detect_swipe
 //Current Bugs:
-//  Adding individual videos and then selecting them in the Next Up section can lead to
-//  weird visual bugs or most likely video title corruption.
+// -Adding individual videos and then selecting them in the Next Up section can lead to
+//    weird visual bugs or most likely video title corruption.
+// -Resizing window from large to small can break page layout
+//    this means something's wrong with the jQuery watch code for resizing
 //Future Ideas:
 // -Place tutorial areas under Current and Next Up when they're empty.
 // -Need to figure out how to deal with browsing and not hitting
@@ -984,7 +986,7 @@ class PlaylistRandomizer extends React.Component {
       className: "grid-x grid-padding-x header"
     }, React.createElement("div", {
       className: "title cell small-8 small-offset-2"
-    }, "Search playlists or videos to start!"), React.createElement("div", {
+    }, "Search something to start!"), React.createElement("div", {
       className: "close cell small-2 icon-button",
       onClick: this.closeSearch
     }, "\xD7")), searchbar, React.createElement("div", {

@@ -17,8 +17,10 @@
 //Swipe Detection: https://github.com/marcandre/detect_swipe
 
 //Current Bugs:
-//  Adding individual videos and then selecting them in the Next Up section can lead to
-//  weird visual bugs or most likely video title corruption.
+// -Adding individual videos and then selecting them in the Next Up section can lead to
+//    weird visual bugs or most likely video title corruption.
+// -Resizing window from large to small can break page layout
+//    this means something's wrong with the jQuery watch code for resizing
 
 //Future Ideas:
 // -Place tutorial areas under Current and Next Up when they're empty.
