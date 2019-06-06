@@ -394,6 +394,7 @@ class PlaylistRandomizer extends React.Component {
   }
 
   //handleKeyDown
+  //new thingy
   //Handle hitting enter key while in input box
   handleKeyDown(event) {
     if (event.key === 'Enter') {
